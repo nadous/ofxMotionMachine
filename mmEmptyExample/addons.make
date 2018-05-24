@@ -1,4 +1,4 @@
 ofxOsc
-ofxUI
+ofxGui
 ofxXmlSettings
 ofxMoMa

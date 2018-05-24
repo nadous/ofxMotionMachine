@@ -107,6 +107,8 @@ string MoMa::getAppPath( void ) {
 #else
 #ifdef  __APPLE__
     return"../../../";
+#else
+    return "";
 #endif
 #endif
 }

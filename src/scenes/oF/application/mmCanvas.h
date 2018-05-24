@@ -16,7 +16,7 @@
 *           int group = 1 : (begins at 1) a parent may have several groups of children. group defines in which group add the child 
 *           bool minified = false : minify or not the canvas at its construction
 *
-* Created by Mickaël Tits on 03/07/2015
+* Created by Mickaï¿½l Tits on 03/07/2015
 * @file mmCanvas.h
 * @brief MotionMachine header file for Canvas class.
 * @copyright Numediart Institute, UMONS (c) 2014-2015

@@ -37,6 +37,7 @@ libs/compiled/project/win/x64
 **.build/*
 */build/*
 .vs/*
+.vscode
 
 # Exclude any app but examples
 
