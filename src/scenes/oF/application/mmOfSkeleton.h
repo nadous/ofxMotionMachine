@@ -8,49 +8,54 @@
 
 #ifndef __mmOfSkeleton__
 #define __mmOfSkeleton__
-namespace MoMa { class ofSkeleton; }
+namespace MoMa
+{
+class ofSkeleton;
+}
 
 #include <armadillo>
+#include <tinyxml.h>
 
 #include "ofMain.h"
 #include "ofxOsc.h"
-#include "ofxUI.h"
 
 #include "MoMa.h"
 #include "mmCam.h"
 #include "mmOfBone.h"
 #include "mmOfUtils.h"
 #include "mmCanvas.h"
-namespace MoMa {
-    class ofSkeleton
-    {
-        /**
+
+namespace MoMa
+{
+class ofSkeleton
+{
+    /**
         * A class that provides a way to display a skeleton in a MotionMachine OFX windows
         *
         */
-    public:
-        ofSkeleton( const MoMa::Track &pTrack );
-        ~ofSkeleton();
-		void init(void);
-        void draw( unsigned int index );
-        void draw( double time );
+  public:
+    ofSkeleton(const MoMa::Track &pTrack);
+    ~ofSkeleton();
+    void init(void);
+    void draw(unsigned int index);
+    void draw(double time);
 
-        void boneLocalDraw( const arma::mat &rotation, const arma::mat &position, boneMapType::iterator it );
-        void boneGlobalDraw( const arma::mat &rotation, const arma::mat &position, boneMapType::iterator it );
-        inline bool isValid() const { return _isValid; };
-        inline void setNodeSize( double nodeSize ) { mNodeSize = nodeSize; };
-		void displayNameListBone() const;
-		bool save(std::string fileName);
-	protected:
-		bool _isValid;
-		bool _initiated;
-		const MoMa::Track &track;
-		const std::shared_ptr<MoMa::BoneList>boneList;
-		const std::shared_ptr<MoMa::NodeList> nodeList;
-		std::vector<MoMa::ofBone> bones;
-        ofSpherePrimitive mNodeSphere;
-        double mNodeSize;
-	};
-}
+    void boneLocalDraw(const arma::mat &rotation, const arma::mat &position, boneMapType::iterator it);
+    void boneGlobalDraw(const arma::mat &rotation, const arma::mat &position, boneMapType::iterator it);
+    inline bool isValid() const { return _isValid; };
+    inline void setNodeSize(double nodeSize) { mNodeSize = nodeSize; };
+    void displayNameListBone() const;
+    bool save(std::string fileName);
+
+  protected:
+    bool _isValid;
+    bool _initiated;
+    const MoMa::Track &track;
+    const std::shared_ptr<MoMa::BoneList> boneList;
+    const std::shared_ptr<MoMa::NodeList> nodeList;
+    std::vector<MoMa::ofBone> bones;
+    ofSpherePrimitive mNodeSphere;
+    double mNodeSize;
+};
+} // namespace MoMa
 #endif
-
