@@ -11,27 +11,27 @@
 #include "mmTrack.h"
 #include "mmQuaternion.h"
 
-namespace MoMa {
+namespace MoMa
+{
 
-    class V3dParser {
+class V3dParser
+{
 
-      public:
+public:
+  V3dParser(std::string const &fileName, Track *track);
+  void load(std::string const &fileName, Track *track);
 
-        V3dParser( std::string const &fileName, Track *track );
-        void load( std::string const &fileName, Track *track );
+private:
+  std::vector<std::string> rawJoint;
+  std::vector<int> axisIndex;
+  std::shared_ptr<NodeList> nodeList;
+  std::shared_ptr<BoneList> boneList;
+  int dim;
 
-      private :
-
-        std::vector<std::string> rawJoint;
-        std::vector<int> axisIndex;
-        std::shared_ptr<NodeList> nodeList;
-        std::shared_ptr<BoneList> boneList;
-        int dim;
-
-        std::stringstream thisStream;
-        std::string thisLine;
-        quaternion quat;
-    };
-}
+  std::stringstream thisStream;
+  std::string thisLine;
+  quaternion quat;
+};
+} // namespace MoMa
 
 #endif

@@ -3,15 +3,16 @@
 
 #include "mmTrack.h"
 
-namespace MoMa {
+namespace MoMa
+{
 
-	class KinParser {
+class KinParser
+{
 
-	public:
-
-		KinParser( std::string const &fileName, Track *track );
-		void load( std::string const &fileName, Track *track );
-	};
-}
+  public:
+	KinParser(std::string const &fileName, Track *track);
+	void load(std::string const &fileName, Track *track);
+};
+} // namespace MoMa
 
 #endif

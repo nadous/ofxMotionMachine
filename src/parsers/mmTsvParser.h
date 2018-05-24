@@ -10,27 +10,28 @@
 
 #include "mmTrack.h"
 
-namespace MoMa {
+namespace MoMa
+{
 
-    class TsvParser {
+class TsvParser
+{
 
-    public:
+  public:
+    TsvParser(std::string const &fileName, Track *track);
+    void load(std::string const &fileName, Track *track);
+    void checkemptytabs(std::string &mystring);
 
-        TsvParser(std::string const &fileName, Track *track);
-        void load(std::string const &fileName, Track *track);
-        void checkemptytabs(std::string &mystring);
-    private:
+  private:
+    std::vector<std::string> rawJoint;
+    std::vector<int> axisIndex;
+    std::shared_ptr<NodeList> nodeList;
+    std::shared_ptr<BoneList> boneList;
 
-        std::vector<std::string> rawJoint;
-        std::vector<int> axisIndex;
-        std::shared_ptr<NodeList> nodeList;
-        std::shared_ptr<BoneList> boneList;
-
-        std::stringstream thisStream;
-        std::string thisLine;
-        bool isTimed;
-        arma::vec timestamps;
-    };
-}
+    std::stringstream thisStream;
+    std::string thisLine;
+    bool isTimed;
+    arma::vec timestamps;
+};
+} // namespace MoMa
 
 #endif

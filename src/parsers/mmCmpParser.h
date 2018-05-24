@@ -15,35 +15,37 @@
 #include <iostream>
 
 #include "mmTrack.h"
-namespace MoMa {
+namespace MoMa
+{
 class CmpParser
 {
-    typedef struct {              /* HTK File Header */
+    typedef struct
+    { /* HTK File Header */
         int nSamples;
         int sampPeriod;
         short sampSize;
         short sampKind;
     } HTKhdr;
-public:
+
+  public:
     CmpParser();
     CmpParser(std::string filename);
-    bool load( std::string fileName, MoMa::Track *tr, bool hasRotation =false );
+    bool load(std::string fileName, MoMa::Track *tr, bool hasRotation = false);
     ~CmpParser();
-    bool openFile(std::string filename);//ReadHTKHeader();
-    bool readData(arma::Col<double> &data,short code=0);
-    bool getNextFrame(arma::Col<double> &frame, int derivate=0);
-    bool closeFile();//ReadHTKHeader();
-    bool isOpen(){return file.is_open();}
-    unsigned int getNumberOfFrames(){return (this->isOpen()?hdr.nSamples:0);}
-    
-private:
-    
+    bool openFile(std::string filename); //ReadHTKHeader();
+    bool readData(arma::Col<double> &data, short code = 0);
+    bool getNextFrame(arma::Col<double> &frame, int derivate = 0);
+    bool closeFile(); //ReadHTKHeader();
+    bool isOpen() { return file.is_open(); }
+    unsigned int getNumberOfFrames() { return (this->isOpen() ? hdr.nSamples : 0); }
+
+  private:
     std::fstream file;
     HTKhdr hdr;
     arma::colvec prev1;
     arma::colvec prev2;
-    
+
     bool bSwap;
 };
-}
+} // namespace MoMa
 #endif /* defined(__MotionMachine__mmCmpParser__) */

@@ -7,40 +7,45 @@
 #include <iostream>
 #include <sstream>
 
-template<typename T>
-std::string toString(const T& value)
+template <typename T>
+std::string toString(const T &value)
 {
 	std::ostringstream oss;
 	oss << value;
 	return oss.str();
 }
-class sqlArchiver:: DataBuf : public std::streambuf
+class sqlArchiver::DataBuf : public std::streambuf
 {
-public:
-	DataBuf(char * d, size_t s) {
+  public:
+	DataBuf(char *d, size_t s)
+	{
 		setg(d, d, d + s);
 	}
 };
 
-sqlArchiver::sqlArchiver() {
+sqlArchiver::sqlArchiver()
+{
 	con = 0;
 	driver = get_driver_instance();
 	mFrameCpt = 0;
 }
 
-
-sqlArchiver::~sqlArchiver() {
+sqlArchiver::~sqlArchiver()
+{
 }
 
-void sqlArchiver::createDataBase(std::string ipAdress, std::string port) {
-	try {
+void sqlArchiver::createDataBase(std::string ipAdress, std::string port)
+{
+	try
+	{
 		sql::Statement *stmt;
 		//MYSQL *mysql;
 		SYSTEMTIME st1, st2;
 		GetSystemTime(&st1);
 		driver = get_driver_instance();
 		std::string serverAdress = "tcp://" + ipAdress + ":" + port;
-		if (con) {
+		if (con)
+		{
 			delete con;
 			con = 0;
 		}
@@ -52,22 +57,26 @@ void sqlArchiver::createDataBase(std::string ipAdress, std::string port) {
 		stmt->execute("DROP DATABASE IF EXISTS atvb");
 		stmt->execute("CREATE DATABASE atvb CHARACTER SET 'utf8'");
 	}
-	catch (sql::SQLException &e) {
+	catch (sql::SQLException &e)
+	{
 		std::cout << "# ERR: SQLException in " << __FILE__;
 		std::cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << std::endl;
 		std::cout << "# ERR: " << e.what();
 		std::cout << " (MySQL error code: " << e.getErrorCode() << ")" << std::endl;
 	}
 }
-void sqlArchiver::createIdentityTable(std::string ipAdress, std::string port) {
-	try {
+void sqlArchiver::createIdentityTable(std::string ipAdress, std::string port)
+{
+	try
+	{
 		sql::Statement *stmt;
 		//MYSQL *mysql;
 		SYSTEMTIME st1, st2;
 		GetSystemTime(&st1);
 		driver = get_driver_instance();
 		std::string serverAdress = "tcp://" + ipAdress + ":" + port;
-		if (con) {
+		if (con)
+		{
 			delete con;
 			con = 0;
 		}
@@ -91,23 +100,26 @@ void sqlArchiver::createIdentityTable(std::string ipAdress, std::string port) {
 		stmt->execute(queryString.c_str());
 
 		delete stmt;
-
 	}
-	catch (sql::SQLException &e) {
+	catch (sql::SQLException &e)
+	{
 		std::cout << "# ERR: SQLException in " << __FILE__;
 		std::cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << std::endl;
 		std::cout << "# ERR: " << e.what();
 		std::cout << " (MySQL error code: " << e.getErrorCode() << ")" << std::endl;
 	}
 }
-void sqlArchiver::createframesDataTable(std::string ipAdress, std::string port) {
-	try {
+void sqlArchiver::createframesDataTable(std::string ipAdress, std::string port)
+{
+	try
+	{
 		sql::Statement *stmt;
 		//MYSQL *mysql;
 		SYSTEMTIME st1, st2;
 		GetSystemTime(&st1);
 		std::string serverAdress = "tcp://" + ipAdress + ":" + port;
-		if (con) {
+		if (con)
+		{
 			delete con;
 			con = 0;
 		}
@@ -136,9 +148,9 @@ void sqlArchiver::createframesDataTable(std::string ipAdress, std::string port) 
 
 		stmt->execute(queryString.c_str());
 		delete stmt;
-
 	}
-	catch (sql::SQLException &e) {
+	catch (sql::SQLException &e)
+	{
 		std::cout << "# ERR: SQLException in " << __FILE__;
 		std::cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << std::endl;
 		std::cout << "# ERR: " << e.what();
@@ -146,14 +158,17 @@ void sqlArchiver::createframesDataTable(std::string ipAdress, std::string port) 
 	}
 }
 
-void sqlArchiver::createSkeletonDataTable(std::string ipAdress, std::string port) {
-	try {
+void sqlArchiver::createSkeletonDataTable(std::string ipAdress, std::string port)
+{
+	try
+	{
 		sql::Statement *stmt;
 		//MYSQL *mysql;
 		SYSTEMTIME st1, st2;
 		GetSystemTime(&st1);
 		std::string serverAdress = "tcp://" + ipAdress + ":" + port;
-		if (con) {
+		if (con)
+		{
 			delete con;
 			con = 0;
 		}
@@ -186,17 +201,19 @@ void sqlArchiver::createSkeletonDataTable(std::string ipAdress, std::string port
 
 		stmt->execute(queryString.c_str());
 		delete stmt;
-
 	}
-	catch (sql::SQLException &e) {
+	catch (sql::SQLException &e)
+	{
 		std::cout << "# ERR: SQLException in " << __FILE__;
 		std::cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << std::endl;
 		std::cout << "# ERR: " << e.what();
 		std::cout << " (MySQL error code: " << e.getErrorCode() << ")" << std::endl;
 	}
 }
-void sqlArchiver::connect(std::string ipAdress, std::string port) {
-	if (con) {
+void sqlArchiver::connect(std::string ipAdress, std::string port)
+{
+	if (con)
+	{
 		delete con;
 		con = 0;
 	}
@@ -205,24 +222,27 @@ void sqlArchiver::connect(std::string ipAdress, std::string port) {
 	con = driver->connect(serverAdress.c_str(), "user", "user");
 }
 
-
-int sqlArchiver::identify() {
+int sqlArchiver::identify()
+{
 	return 0;
 }
 
-void sqlArchiver::clearDataBase() {
+void sqlArchiver::clearDataBase()
+{
 }
 
-void sqlArchiver::pushFrameData(double* data0, int dataSize0, double* data1, int dataSize1,int frameId,double frameRate) {
-	try {
-		sql::Statement*  stmt = con->createStatement();
+void sqlArchiver::pushFrameData(double *data0, int dataSize0, double *data1, int dataSize1, int frameId, double frameRate)
+{
+	try
+	{
+		sql::Statement *stmt = con->createStatement();
 
 		stmt->execute("USE atvb");
 		delete stmt;
 		sql::PreparedStatement *prep_stmt;
-		DataBuf dataBuffer0((char*)data0, dataSize0 * 8);// (&mTrack.back()->position.getRefData().slice(getAppIndex()).at(0)), mTrack.back()->nOfNodes() * 3 * 8);
+		DataBuf dataBuffer0((char *)data0, dataSize0 * 8); // (&mTrack.back()->position.getRefData().slice(getAppIndex()).at(0)), mTrack.back()->nOfNodes() * 3 * 8);
 		std::istream dataStream0(&dataBuffer0);
-		DataBuf dataBuffer1((char*)data1, dataSize1 * 8);// (&mTrack.back()->position.getRefData().slice(getAppIndex()).at(0)), mTrack.back()->nOfNodes() * 3 * 8);
+		DataBuf dataBuffer1((char *)data1, dataSize1 * 8); // (&mTrack.back()->position.getRefData().slice(getAppIndex()).at(0)), mTrack.back()->nOfNodes() * 3 * 8);
 		std::istream dataStream1(&dataBuffer1);
 
 		//prep_stmt = con->prepareStatement("INSERT INTO frames VALUES (?, ?,?, ?,?, ?,?)");
@@ -230,7 +250,7 @@ void sqlArchiver::pushFrameData(double* data0, int dataSize0, double* data1, int
 
 		//prep_stmt->setInt(1, ++mFrameCpt);
 		prep_stmt->setInt(1, frameId);
-		prep_stmt->setDouble(2, 1.0*(frameId + 1) / frameRate);
+		prep_stmt->setDouble(2, 1.0 * (frameId + 1) / frameRate);
 		prep_stmt->setInt(3, dataSize0);
 		prep_stmt->setBlob(4, &dataStream0);
 		prep_stmt->setInt(5, dataSize1);
@@ -238,19 +258,20 @@ void sqlArchiver::pushFrameData(double* data0, int dataSize0, double* data1, int
 
 		prep_stmt->executeUpdate();
 		delete prep_stmt;
-
 	}
-	catch (sql::SQLException &e) {
+	catch (sql::SQLException &e)
+	{
 		std::cout << "# ERR: SQLException in " << __FILE__;
 		std::cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << std::endl;
 		std::cout << "# ERR: " << e.what();
 		std::cout << " (MySQL error code: " << e.getErrorCode() << ")" << std::endl;
 	}
 }
-void sqlArchiver::getFrameData(double** data0, int &dataSize0, double** data1, int &dataSize1, int framecounter) {
+void sqlArchiver::getFrameData(double **data0, int &dataSize0, double **data1, int &dataSize1, int framecounter)
+{
 	try
 	{
-		sql::Statement*  stmt = con->createStatement();
+		sql::Statement *stmt = con->createStatement();
 		stmt->execute("USE atvb");
 		std::string queryString("");
 		queryString += "SELECT * FROM frames where framecounter = ";
@@ -260,60 +281,7 @@ void sqlArchiver::getFrameData(double** data0, int &dataSize0, double** data1, i
 		prep_stmt = con->prepareStatement(queryString.c_str());
 		sql::ResultSet *res = prep_stmt->executeQuery();
 		int cpt = 0;
-		while (res->next()) {
-			cpt++;
-			int i = res->getInt("id") - 1;
-			int frameId = res->getInt("framecounter");
-			//std::cout << id << std::endl;
-			dataSize0 = res->getInt("positionSize");
-			char *s;
-			std::streamsize blobSize;
-			std::istream *PosStream = res->getBlob("position");
-
-			PosStream->seekg(0, std::ios::end);
-			blobSize = PosStream->tellg();
-			PosStream->seekg(0, std::ios::beg);
-			s = new char[blobSize];
-			PosStream->read((char*)s, blobSize);
-			(*data0) = (double*)s;
-			dataSize1 = res->getInt("rotationSize");
-			std::istream *RotStream = res->getBlob("rotation");
-			RotStream->seekg(0, std::ios::end);
-			blobSize = RotStream->tellg();
-			RotStream->seekg(0, std::ios::beg);
-			s = new char[blobSize];
-			RotStream->read((char*)s, blobSize);
-			(*data1) = (double*)s;
-			delete RotStream;
-			delete PosStream;
-		}
-//		std::cout << cpt << std::endl;
-
-
-	}
-	catch (sql::SQLException &e) {
-		std::cout << "# ERR: SQLException in " << __FILE__;
-		std::cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << std::endl;
-		std::cout << "# ERR: " << e.what();
-		std::cout << " (MySQL error code: " << e.getErrorCode() << ")" << std::endl;
-	}
-}
-
-void sqlArchiver::getFrameData(double** data0, int &dataSize0, double** data1, int &dataSize1, double frameTime) {
-	try
-	{
-		sql::Statement*  stmt = con->createStatement();
-		stmt->execute("USE atvb");
-		std::string queryString("");
-		queryString += "SELECT * FROM frames ORDER BY ABS(";
-		queryString += toString(frameTime);
-		queryString += " - timestamp) ASC ";
-		sql::PreparedStatement *prep_stmt;
-
-		prep_stmt = con->prepareStatement(queryString.c_str());
-		sql::ResultSet *res = prep_stmt->executeQuery();
-		int cpt = 0;
-		res->next(); 
+		while (res->next())
 		{
 			cpt++;
 			int i = res->getInt("id") - 1;
@@ -328,30 +296,84 @@ void sqlArchiver::getFrameData(double** data0, int &dataSize0, double** data1, i
 			blobSize = PosStream->tellg();
 			PosStream->seekg(0, std::ios::beg);
 			s = new char[blobSize];
-			PosStream->read((char*)s, blobSize);
-			(*data0) = (double*)s;
+			PosStream->read((char *)s, blobSize);
+			(*data0) = (double *)s;
 			dataSize1 = res->getInt("rotationSize");
 			std::istream *RotStream = res->getBlob("rotation");
 			RotStream->seekg(0, std::ios::end);
 			blobSize = RotStream->tellg();
 			RotStream->seekg(0, std::ios::beg);
 			s = new char[blobSize];
-			RotStream->read((char*)s, blobSize);
-			(*data1) = (double*)s;
+			RotStream->read((char *)s, blobSize);
+			(*data1) = (double *)s;
 			delete RotStream;
 			delete PosStream;
 		}
 		//		std::cout << cpt << std::endl;
-
-
 	}
-	catch (sql::SQLException &e) {
+	catch (sql::SQLException &e)
+	{
 		std::cout << "# ERR: SQLException in " << __FILE__;
 		std::cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << std::endl;
 		std::cout << "# ERR: " << e.what();
 		std::cout << " (MySQL error code: " << e.getErrorCode() << ")" << std::endl;
 	}
 }
-void sqlArchiver::destroyDataBase() {
+
+void sqlArchiver::getFrameData(double **data0, int &dataSize0, double **data1, int &dataSize1, double frameTime)
+{
+	try
+	{
+		sql::Statement *stmt = con->createStatement();
+		stmt->execute("USE atvb");
+		std::string queryString("");
+		queryString += "SELECT * FROM frames ORDER BY ABS(";
+		queryString += toString(frameTime);
+		queryString += " - timestamp) ASC ";
+		sql::PreparedStatement *prep_stmt;
+
+		prep_stmt = con->prepareStatement(queryString.c_str());
+		sql::ResultSet *res = prep_stmt->executeQuery();
+		int cpt = 0;
+		res->next();
+		{
+			cpt++;
+			int i = res->getInt("id") - 1;
+			int frameId = res->getInt("framecounter");
+			//std::cout << id << std::endl;
+			dataSize0 = res->getInt("positionSize");
+			char *s;
+			std::streamsize blobSize;
+			std::istream *PosStream = res->getBlob("position");
+
+			PosStream->seekg(0, std::ios::end);
+			blobSize = PosStream->tellg();
+			PosStream->seekg(0, std::ios::beg);
+			s = new char[blobSize];
+			PosStream->read((char *)s, blobSize);
+			(*data0) = (double *)s;
+			dataSize1 = res->getInt("rotationSize");
+			std::istream *RotStream = res->getBlob("rotation");
+			RotStream->seekg(0, std::ios::end);
+			blobSize = RotStream->tellg();
+			RotStream->seekg(0, std::ios::beg);
+			s = new char[blobSize];
+			RotStream->read((char *)s, blobSize);
+			(*data1) = (double *)s;
+			delete RotStream;
+			delete PosStream;
+		}
+		//		std::cout << cpt << std::endl;
+	}
+	catch (sql::SQLException &e)
+	{
+		std::cout << "# ERR: SQLException in " << __FILE__;
+		std::cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << std::endl;
+		std::cout << "# ERR: " << e.what();
+		std::cout << " (MySQL error code: " << e.getErrorCode() << ")" << std::endl;
+	}
+}
+void sqlArchiver::destroyDataBase()
+{
 }
 #endif

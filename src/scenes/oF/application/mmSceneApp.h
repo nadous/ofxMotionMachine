@@ -7,7 +7,7 @@ namespace MoMa {class SceneApp;}
 
 #include "ofMain.h"
 #include "ofxOsc.h"
-#include "ofxUI.h"
+#include "ofxGui.h"
 
 #include "MoMa.h"
 #include "mmCam.h"

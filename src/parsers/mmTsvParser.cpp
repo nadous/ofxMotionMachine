@@ -38,19 +38,22 @@ optional columns (from line 11) if timestamps included:
 using namespace std;
 using namespace MoMa;
 
-TsvParser::TsvParser(string const &fileName, Track *track) {
+TsvParser::TsvParser(string const &fileName, Track *track)
+{
 
     load(fileName, track);
 }
 
-void TsvParser::load(string const &fileName, Track *track) {
+void TsvParser::load(string const &fileName, Track *track)
+{
 
     isTimed = false;
     track->clearData(); // Clear the track before
 
     ifstream tsvFile(fileName.c_str());
 
-    if (!tsvFile.is_open()) {
+    if (!tsvFile.is_open())
+    {
 
         cout << "Track: File could not be opened!" << endl;
         throw std::runtime_error("File could not be opened.");
@@ -60,51 +63,59 @@ void TsvParser::load(string const &fileName, Track *track) {
     string thisString;
     //Header
     //Line 1: number of frames
-    if (tsvFile.good()) getline(tsvFile, thisLine);//Line 1 (first line)
+    if (tsvFile.good())
+        getline(tsvFile, thisLine); //Line 1 (first line)
     thisStream.clear();
     thisStream << thisLine;
-    thisStream >> thisString;//Elem 1
-    thisStream >> thisString;//Elem 2
+    thisStream >> thisString; //Elem 1
+    thisStream >> thisString; //Elem 2
     //size_t tab = thisLine.find_last_of("\t");
     //string nframes = thisLine.substr(tab + 1, thisLine.size() -tab -1);
     unsigned int nbOfFrames = atoi(thisString.c_str());
 
     //Line 3: numer of markers
-    if (tsvFile.good()) getline(tsvFile, thisLine);//Line 2
-    if (tsvFile.good()) getline(tsvFile, thisLine);//Line 3
+    if (tsvFile.good())
+        getline(tsvFile, thisLine); //Line 2
+    if (tsvFile.good())
+        getline(tsvFile, thisLine); //Line 3
     //tab = thisLine.find_last_of("\t");
     //string nmarkers = thisLine.substr(tab + 1, thisLine.size() -tab -1);
     thisStream.clear();
     thisStream << thisLine;
-    thisStream >> thisString;//Elem 1
-    thisStream >> thisString;//Elem 2
+    thisStream >> thisString; //Elem 1
+    thisStream >> thisString; //Elem 2
     unsigned int nbOfNodes = atoi(thisString.c_str());
 
     //Line 4: frequency
-    if (tsvFile.good()) getline(tsvFile, thisLine);//Line 4
+    if (tsvFile.good())
+        getline(tsvFile, thisLine); //Line 4
     //tab = thisLine.find_last_of("\t");
     //string freq = thisLine.substr(tab + 1, thisLine.size() -tab -1);
     thisStream.clear();
     thisStream << thisLine;
-    thisStream >> thisString;//Elem 1
-    thisStream >> thisString;//Elem 2
+    thisStream >> thisString; //Elem 1
+    thisStream >> thisString; //Elem 2
     float framerate = atoi(thisString.c_str());
 
     track->setFrameRate(framerate);
 
+    if (tsvFile.good())
+        getline(tsvFile, thisLine); // 5
+    if (tsvFile.good())
+        getline(tsvFile, thisLine); // 6
+    if (tsvFile.good())
+        getline(tsvFile, thisLine); // 7
+    if (tsvFile.good())
+        getline(tsvFile, thisLine); // 8
+    if (tsvFile.good())
+        getline(tsvFile, thisLine); // 9
 
-    if (tsvFile.good()) getline(tsvFile, thisLine); // 5
-    if (tsvFile.good()) getline(tsvFile, thisLine); // 6
-    if (tsvFile.good()) getline(tsvFile, thisLine); // 7
-    if (tsvFile.good()) getline(tsvFile, thisLine); // 8
-    if (tsvFile.good()) getline(tsvFile, thisLine); // 9
-
-
-    //Line 10: marker names  
-    if (tsvFile.good()) getline(tsvFile, thisLine); // 10
+    //Line 10: marker names
+    if (tsvFile.good())
+        getline(tsvFile, thisLine);          // 10
     nodeList = std::make_shared<NodeList>(); // We create a nodeList,
-    track->nodeList = nodeList; // add it to the track
-    track->hasNodeList = true; // and tell everybody  
+    track->nodeList = nodeList;              // add it to the track
+    track->hasNodeList = true;               // and tell everybody
     track->hasRotation = false;
     //track->position.getRefData().resize(3, nbOfNodes, nbOfFrames);
     arma::cube positionData(3, nbOfNodes, nbOfFrames);
@@ -116,9 +127,11 @@ void TsvParser::load(string const &fileName, Track *track) {
     thisStream.clear();
     thisStream << thisLine; // We store the line in a string stream
 
-    string tag; thisStream >> tag;
+    string tag;
+    thisStream >> tag;
 
-    while (thisStream.good()) {
+    while (thisStream.good())
+    {
 
         // We save the list of tags
         thisStream >> tag;
@@ -128,7 +141,8 @@ void TsvParser::load(string const &fileName, Track *track) {
     //if (rawJoint[rawJoint.size() -1] == rawJoint[rawJoint.size() -2])
     //    rawJoint.resize(rawJoint.size() -1); //(streamstring bug, it repeats last value if there was a tab at the end of the line)
 
-    for (int r = 0, n = 0; n < nbOfNodes; r += 1, n++) {
+    for (int r = 0, n = 0; n < nbOfNodes; r += 1, n++)
+    {
 
         //track->nodeList->at(n) = rawJoint[r];
         track->nodeList->insert(make_pair(rawJoint[r], n));
@@ -140,48 +154,51 @@ void TsvParser::load(string const &fileName, Track *track) {
     string tmpstring;
     tmpstream << thisLine;
     tmpstream >> tmpstring;
-    if(tmpstring == "Frame")//optional column (timestamps)
+    if (tmpstring == "Frame") //optional column (timestamps)
         isTimed = true;
-    if (tmpstring == "Frame" || tmpstring == rawJoint[0])//optional line
+    if (tmpstring == "Frame" || tmpstring == rawJoint[0]) //optional line
         getline(tsvFile, thisLine);
 
     //Data
 
     unsigned int frameCpt = 0; // Init frame count
 
-
-    if (thisLine.substr(0, 2) == "1\t") { //if the first line begins with "1  ...", it is timed. So the first to columns are frme number and timestamp
+    if (thisLine.substr(0, 2) == "1\t")
+    { //if the first line begins with "1  ...", it is timed. So the first to columns are frme number and timestamp
 
         isTimed = true;
     }
 
+    do
+    { //we already extracted first data line in "thisLine"
 
-    do { //we already extracted first data line in "thisLine"
+        if (thisLine != "" && thisLine != " " && thisLine != "\t" && thisLine != "\n")
+        {
 
-
-        if (thisLine != "" && thisLine != " " && thisLine != "\t" && thisLine != "\n") {
-            
             checkemptytabs(thisLine);
 
             arma::mat posMat(3, nbOfNodes);
 
-            thisStream.clear(); // Clear and grab
+            thisStream.clear();     // Clear and grab
             thisStream << thisLine; // a new line
-            
+
             //thisStream >> std::noskipws;
-            if (isTimed) {
+            if (isTimed)
+            {
 
                 float ts;
-                thisStream >> ts;//frame index
-                thisStream >> ts;//timestamp
+                thisStream >> ts; //frame index
+                thisStream >> ts; //timestamp
                 timestamps[frameCpt] = ts;
             }
 
-            if (thisStream.good()) {
+            if (thisStream.good())
+            {
 
                 unsigned int nodeCpt = 0;
 
-                for (int k = 0; k < nbOfNodes; k++) {
+                for (int k = 0; k < nbOfNodes; k++)
+                {
 
                     string value[12];
 
@@ -189,14 +206,16 @@ void TsvParser::load(string const &fileName, Track *track) {
                     thisStream >> value[1];
                     thisStream >> value[2];
 
-                    if (value[0] == "NaN" || atof(value[0].c_str()) > MOMAINF) {
+                    if (value[0] == "NaN" || atof(value[0].c_str()) > MOMAINF)
+                    {
 
                         // Data are ignored and the matrices
                         // take arma's NaNs as positions/rotations
 
                         posMat.col(nodeCpt) = arma::ones(3) * arma::datum::nan;
                     }
-                    else {
+                    else
+                    {
 
                         posMat(0, nodeCpt) = atof(value[0].c_str());
                         posMat(1, nodeCpt) = atof(value[1].c_str());
@@ -205,7 +224,6 @@ void TsvParser::load(string const &fileName, Track *track) {
                         /*posMat( axisIndex[k], nodeCpt ) *= 1000;
                         posMat( axisIndex[k+1], nodeCpt ) *= 1000;
                         posMat( axisIndex[k+2], nodeCpt ) *= 1000;*/
-
                     }
                     nodeCpt++;
                 }
@@ -226,29 +244,32 @@ void TsvParser::load(string const &fileName, Track *track) {
     //if (track->hasRotation)
     //    track->rotation.SetValidParam();
 
-    if (!isTimed) track->position.setData(framerate, positionData);
-    else track->position.setData(timestamps, positionData);
+    if (!isTimed)
+        track->position.setData(framerate, positionData);
+    else
+        track->position.setData(timestamps, positionData);
 
     tsvFile.close();
 }
 
-void TsvParser::checkemptytabs(std::string &mystring) {
+void TsvParser::checkemptytabs(std::string &mystring)
+{
 
     if (mystring[0] == '\t')
-        mystring.insert(0, "NaN");//Note supposed to begin with a tab, unless the first value is missing
+        mystring.insert(0, "NaN"); //Note supposed to begin with a tab, unless the first value is missing
 
     size_t found;
     //Replace empty tabs by NaN
     while ((mystring.find("\t\t")) != string::npos)
     {
         found = mystring.find("\t\t");
-        mystring.insert(found + 1, "NaN");//Insert NaN between two tabs
+        mystring.insert(found + 1, "NaN"); //Insert NaN between two tabs
     }
 
     //Replace whitespaces by NaN
     while ((mystring.find(" ")) != string::npos)
     {
         found = mystring.find(" ");
-        mystring.insert(found + 1, "NaN");//Insert NaN between two tabs
+        mystring.insert(found + 1, "NaN"); //Insert NaN between two tabs
     }
 }

@@ -23,7 +23,7 @@ Project{
         of.addons: [
             'ofxMotionMachine',
             'ofxOsc',
-            'ofxUI',
+            'ofxGui',
             'ofxXmlSettings',
         ]
 

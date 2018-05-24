@@ -17,22 +17,22 @@
 #include "mmTsvParser.h"
 #include "mmUtils.h"
 
-namespace MoMa {
+namespace MoMa
+{
 
-    class Parser {
-        
-      public:
-        
-        Parser( std::string const &fileName, Track *tr );
-        
-      private:
-        
-       // bool setJointOffsetRotation(Track *tr);
-        std::string extension;
-        std::string fileName;
-        
-        Track *track;
-    };
-}
+class Parser
+{
+
+public:
+  Parser(std::string const &fileName, Track *tr);
+
+private:
+  // bool setJointOffsetRotation(Track *tr);
+  std::string extension;
+  std::string fileName;
+
+  Track *track;
+};
+} // namespace MoMa
 
 #endif

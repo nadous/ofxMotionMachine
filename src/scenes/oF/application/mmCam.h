@@ -5,6 +5,8 @@
 #include "ofEvents.h"
 #include "ofUtils.h"
 #include "ofMath.h"
+#include "ofGraphics.h"
+#include "ofQuaternion.h"
 
 // Modified version of ofEasyCam to have human caracteristics :
 // - Human see the world upside-down,

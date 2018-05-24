@@ -15,28 +15,28 @@
 #include <iostream>
 #include "mmUtils.h"
 
-namespace MoMa {
-    
-    const std::string NameNotFound = "Name not found";
-    
-    class SynoList {
-    
-      public:
-        
-        SynoList( void ) {} // Default constructor: do nothing
-        SynoList( std::string fileName ); // Create object from text file
-        bool load( std::string fileName ); // Load synonyms from text file
-        
-        bool search( std::string query, std::string &answer ); // Search
-        
-        void print( void ); // Print the list of synonyms
+namespace MoMa
+{
 
-        static const std::string DefaultPath; // Path
+const std::string NameNotFound = "Name not found";
 
-      private:
+class SynoList
+{
 
-        std::map< std::string, std::string> syno;
-    };
-}
+public:
+  SynoList(void) {}                // Default constructor: do nothing
+  SynoList(std::string fileName);  // Create object from text file
+  bool load(std::string fileName); // Load synonyms from text file
+
+  bool search(std::string query, std::string &answer); // Search
+
+  void print(void); // Print the list of synonyms
+
+  static const std::string DefaultPath; // Path
+
+private:
+  std::map<std::string, std::string> syno;
+};
+} // namespace MoMa
 
 #endif

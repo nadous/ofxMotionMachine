@@ -6,61 +6,70 @@ using namespace arma;
 using namespace std;
 using namespace MoMa;
 
-
-
-mat MoMa::speedm(const Trace &trace) {
+mat MoMa::speedm(const Trace &trace)
+{
 
     return speedm(trace.position);
 }
 
-mat MoMa::accelerationm(const Trace &trace) {
+mat MoMa::accelerationm(const Trace &trace)
+{
 
     return accelerationm(trace.position);
 }
 
-vec MoMa::normSpeedm(const Trace &trace) {
+vec MoMa::normSpeedm(const Trace &trace)
+{
 
     return normSpeedm(trace.position);
 }
 
-vec MoMa::normAccelerationm(const Trace &trace) {
+vec MoMa::normAccelerationm(const Trace &trace)
+{
 
     return normAccelerationm(trace.position);
 }
 
-mat MoMa::speedm(const TimedMat &data) {
-    
+mat MoMa::speedm(const TimedMat &data)
+{
+
     return derivate(data.getData(), data.frameRate());
 }
 
-mat MoMa::accelerationm(const TimedMat &data) {
+mat MoMa::accelerationm(const TimedMat &data)
+{
 
     mat s = derivate(data.getData(), data.frameRate());
     return derivate(s, data.frameRate());
 }
 
-vec MoMa::normSpeedm(const TimedMat &data) {
+vec MoMa::normSpeedm(const TimedMat &data)
+{
 
     mat s = derivate(data.getData(), data.frameRate());
     return norm_col(s);
 }
 
-vec MoMa::normAccelerationm(const TimedMat &data) {
+vec MoMa::normAccelerationm(const TimedMat &data)
+{
 
     mat s = derivate(data.getData(), data.frameRate());
     mat a = derivate(s, data.frameRate());
     return norm_col(a);
 }
 
-mat MoMa::derivate(const arma::mat &data, const double frameRate, int type) {
-    
+mat MoMa::derivate(const arma::mat &data, const double frameRate, int type)
+{
+
     int n = data.n_cols;
     mat d;
-        d.set_size(data.n_rows,n);
+    d.set_size(data.n_rows, n);
 
-    if (type == 0) {
+    if (type == 0)
+    {
 
-        if (n < 5) {
+        if (n < 5)
+        {
 
             d.zeros();
 
@@ -78,34 +87,39 @@ mat MoMa::derivate(const arma::mat &data, const double frameRate, int type) {
         float h = 1.0f / frameRate;
         d /= 12 * h;
     }
-    if(type == 1) {
+    if (type == 1)
+    {
 
         //Asymmetric version
-        d.cols(1,n-1) = data.cols( 1, n-1 );
-        d.cols(1,n-1) -= data.cols(0, n-2 );
+        d.cols(1, n - 1) = data.cols(1, n - 1);
+        d.cols(1, n - 1) -= data.cols(0, n - 2);
         d.col(0) = d.col(1);
         d *= frameRate;
     }
-    else if(type == 2){
+    else if (type == 2)
+    {
 
         //Symmetric version
-        d.cols(1,n-2) = data.cols( 2, n-1 );
-        d.cols(1,n-2) -= data.cols(0, n-3 );
+        d.cols(1, n - 2) = data.cols(2, n - 1);
+        d.cols(1, n - 2) -= data.cols(0, n - 3);
         d.col(0) = d.col(1);
-        d.col(n-1) = d.col(n-2);
-        d *= 2*frameRate;
+        d.col(n - 1) = d.col(n - 2);
+        d *= 2 * frameRate;
     }
     return d;
 }
 
-vec MoMa::derivate(const arma::vec &data, const double frameRate, int type) {
-    
+vec MoMa::derivate(const arma::vec &data, const double frameRate, int type)
+{
+
     int n = data.n_rows;
     vec d(n);
-    
-    if (type == 0) {
 
-        if (n < 5) {
+    if (type == 0)
+    {
+
+        if (n < 5)
+        {
 
             d.zeros();
 
@@ -123,7 +137,8 @@ vec MoMa::derivate(const arma::vec &data, const double frameRate, int type) {
         float h = 1.0f / frameRate;
         d /= 12 * h;
     }
-    if (type == 1) {
+    if (type == 1)
+    {
 
         //Asymmetric version
         d.rows(1, n - 1) = data.cols(1, n - 1);
@@ -131,7 +146,8 @@ vec MoMa::derivate(const arma::vec &data, const double frameRate, int type) {
         d.row(0) = d.row(1);
         d *= frameRate;
     }
-    else if (type == 2) {
+    else if (type == 2)
+    {
 
         //Symmetric version
         d.rows(1, n - 2) = data.cols(2, n - 1);
@@ -143,32 +159,35 @@ vec MoMa::derivate(const arma::vec &data, const double frameRate, int type) {
     return d;
 }
 
-mat MoMa::derivate(const arma::mat &data, const arma::vec &timeVec, int type) {
+mat MoMa::derivate(const arma::mat &data, const arma::vec &timeVec, int type)
+{
 
     int n = data.n_cols;
     mat d;
     d.set_size(data.n_rows, n);
     vec h(n);
 
-
-    if (type == 0) {
+    if (type == 0)
+    {
 
         type = 2; //No five-point derivation for timed data
     }
-    if (type == 1) {
+    if (type == 1)
+    {
 
         //Asymmetric version
         d.cols(1, n - 1) = data.cols(1, n - 1);
         d.cols(1, n - 1) -= data.cols(0, n - 2);
-        
+
         h(1, n - 1) = timeVec(1, n - 1);
         h(1, n - 1) -= timeVec(0, n - 2);
-        
+
         d.each_row() /= h.t();
 
         d.col(0) = d.col(1);
     }
-    else if (type == 2) {
+    else if (type == 2)
+    {
 
         //Symmetric version
         d.cols(1, n - 2) = data.cols(2, n - 1);
@@ -185,19 +204,21 @@ mat MoMa::derivate(const arma::mat &data, const arma::vec &timeVec, int type) {
     return d;
 }
 
-vec MoMa::derivate(const arma::vec &data, const arma::vec &timeVec, int type) {
+vec MoMa::derivate(const arma::vec &data, const arma::vec &timeVec, int type)
+{
 
     int n = data.n_cols;
     mat d;
     d.set_size(data.n_rows, n);
     vec h(n);
 
-
-    if (type == 0) {
+    if (type == 0)
+    {
 
         type = 2; //No five-point derivation for timed data
     }
-    if (type == 1) {
+    if (type == 1)
+    {
 
         //Asymmetric version
         d.rows(1, n - 1) = data.rows(1, n - 1);
@@ -210,7 +231,8 @@ vec MoMa::derivate(const arma::vec &data, const arma::vec &timeVec, int type) {
 
         d.row(0) = d.row(1);
     }
-    else if (type == 2) {
+    else if (type == 2)
+    {
 
         //Symmetric version
         d.rows(1, n - 2) = data.rows(2, n - 1);
@@ -227,91 +249,104 @@ vec MoMa::derivate(const arma::vec &data, const arma::vec &timeVec, int type) {
     return d;
 }
 
+vec MoMa::norm_col(const arma::mat &data)
+{
 
-
-vec MoMa::norm_col(const arma::mat &data) {
-
-    return sqrt(sum(data%data)).t(); // calculate the norm of each column and stores it in a rowvec, that we translate in a vec
+    return sqrt(sum(data % data)).t(); // calculate the norm of each column and stores it in a rowvec, that we translate in a vec
 }
 
-TimedMat MoMa::derivate(const MoMa::TimedMat &data, int type) {
-    
-    if(!data.isTimed())
+TimedMat MoMa::derivate(const MoMa::TimedMat &data, int type)
+{
+
+    if (!data.isTimed())
         return TimedMat(data.frameRate(), derivate(data.getData(), data.frameRate(), type), data.initialTime());
     else
         return TimedMat(data.getTimeVec(), derivate(data.getData(), data.getTimeVec(), type));
 }
-TimedVec MoMa::derivate(const MoMa::TimedVec &data, int type) {
+TimedVec MoMa::derivate(const MoMa::TimedVec &data, int type)
+{
 
     if (!data.isTimed())
         return TimedVec(data.frameRate(), derivate(data.getData(), data.frameRate(), type), data.initialTime());
     else
         return TimedVec(data.getTimeVec(), derivate(data.getData(), data.getTimeVec(), type));
 }
-TimedVec MoMa::norm(const MoMa::TimedMat &data) {
+TimedVec MoMa::norm(const MoMa::TimedMat &data)
+{
 
     if (!data.isTimed())
         return TimedVec(data.frameRate(), norm_col(data.getData()), data.initialTime());
     else
         return TimedVec(data.getTimeVec(), norm_col(data.getData()));
 }
-TimedVec MoMa::abs(const MoMa::TimedVec &data) {
+TimedVec MoMa::abs(const MoMa::TimedVec &data)
+{
 
     if (!data.isTimed())
         return TimedVec(data.frameRate(), abs(data.getData()), data.initialTime());
     else
         return TimedVec(data.getTimeVec(), abs(data.getData()));
 }
-TimedMat MoMa::speed(const MoMa::Trace &trace) {
+TimedMat MoMa::speed(const MoMa::Trace &trace)
+{
 
     return speed(trace.position);
-
 }
-TimedMat MoMa::acceleration(const MoMa::Trace &trace) {
+TimedMat MoMa::acceleration(const MoMa::Trace &trace)
+{
 
     return acceleration(trace.position);
 }
-TimedVec MoMa::normSpeed(const MoMa::Trace &trace) {
+TimedVec MoMa::normSpeed(const MoMa::Trace &trace)
+{
 
     return normSpeed(trace.position);
 }
-TimedVec MoMa::normAcceleration(const MoMa::Trace &trace) {
+TimedVec MoMa::normAcceleration(const MoMa::Trace &trace)
+{
 
     return normAcceleration(trace.position);
 }
 
-TimedMat MoMa::speed(const MoMa::TimedMat &data) {
+TimedMat MoMa::speed(const MoMa::TimedMat &data)
+{
 
     return derivate(data);
 }
-TimedMat MoMa::acceleration(const MoMa::TimedMat &data) {
+TimedMat MoMa::acceleration(const MoMa::TimedMat &data)
+{
 
     return derivate(derivate(data));
 }
-TimedVec MoMa::speed(const MoMa::TimedVec &data) {
+TimedVec MoMa::speed(const MoMa::TimedVec &data)
+{
 
     return derivate(data);
 }
-TimedVec MoMa::acceleration(const MoMa::TimedVec &data) {
+TimedVec MoMa::acceleration(const MoMa::TimedVec &data)
+{
 
     return derivate(derivate(data));
 }
-TimedVec MoMa::normSpeed(const MoMa::TimedMat &data) {
+TimedVec MoMa::normSpeed(const MoMa::TimedMat &data)
+{
 
     return norm(speed(data));
 }
-TimedVec MoMa::normAcceleration(const MoMa::TimedMat &data) {
+TimedVec MoMa::normAcceleration(const MoMa::TimedMat &data)
+{
 
     return norm(acceleration(data));
 }
 
-float MoMa::meanFemurLength(const MoMa::Track &tr) {
+float MoMa::meanFemurLength(const MoMa::Track &tr)
+{
 
     vec flPerFrame;
     const cube &data(tr.position.getData());
 
-
-    if (tr.hasNodeList) {
+    if (tr.hasNodeList)
+    {
 
         int LHip = tr.nodeList->index("LHip");
         int RHip = tr.nodeList->index("RHip");
@@ -323,33 +358,35 @@ float MoMa::meanFemurLength(const MoMa::Track &tr) {
         hop = max(hop, 1);
         int j = 0;
 
-        for (int t = 0; t < data.n_slices; t = t + hop) {
+        for (int t = 0; t < data.n_slices; t = t + hop)
+        {
 
             ++j;
             flPerFrame.resize(j + 1);
 
             const mat sliceT = data.slice(t);
 
-            flPerFrame(j) = (Geometry::distance(sliceT.unsafe_col(LHip), sliceT.unsafe_col(LKnee))
-                + Geometry::distance(sliceT.unsafe_col(RHip), sliceT.unsafe_col(RKnee))) / 2.0f;
+            flPerFrame(j) = (Geometry::distance(sliceT.unsafe_col(LHip), sliceT.unsafe_col(LKnee)) + Geometry::distance(sliceT.unsafe_col(RHip), sliceT.unsafe_col(RKnee))) / 2.0f;
         }
     }
-    else {
+    else
+    {
 
         cout << "WARNING (MoMa::meanFemurLength): The Track needs a nodeList containing the necessary nodes to compute femur length." << endl;
         return arma::datum::nan;
     }
 
-    return(nanmean(flPerFrame));
+    return (nanmean(flPerFrame));
 }
 
-float MoMa::meanSizeToArm(const Track &tr) {
+float MoMa::meanSizeToArm(const Track &tr)
+{
 
     vec sizePerFrame;
     const cube &data = tr.position.getData();
 
-
-    if (tr.hasNodeList) {
+    if (tr.hasNodeList)
+    {
 
         int LHip = tr.nodeList->index("LHip");
         int RHip = tr.nodeList->index("RHip");
@@ -373,7 +410,8 @@ float MoMa::meanSizeToArm(const Track &tr) {
 
         int j = 0;
 
-        for (int t = 0; t < data.n_slices; t = t + hop) {
+        for (int t = 0; t < data.n_slices; t = t + hop)
+        {
 
             ++j;
 
@@ -381,32 +419,34 @@ float MoMa::meanSizeToArm(const Track &tr) {
 
             const mat sliceT = data.slice(t);
 
-            sizePerFrame(j) = (Geometry::distance(sliceT.unsafe_col(LHip), sliceT.unsafe_col(LKnee)) + Geometry::distance(sliceT.unsafe_col(RHip), sliceT.unsafe_col(RKnee))) / 2.0f //thigh
-                + (Geometry::distance(sliceT.unsafe_col(LAnkle), sliceT.unsafe_col(LKnee)) + Geometry::distance(sliceT.unsafe_col(RAnkle), sliceT.unsafe_col(RKnee))) / 2.0f //shank
-                + (Geometry::distance(sliceT.unsafe_col(LHip), sliceT.unsafe_col(Thorax)) + Geometry::distance(sliceT.unsafe_col(RHip), sliceT.unsafe_col(Thorax))) / 2.0f //trunk1
-                + Geometry::distance(sliceT.unsafe_col(Neck), sliceT.unsafe_col(Thorax)) //trunk2
-                + (Geometry::distance(sliceT.unsafe_col(Neck), sliceT.unsafe_col(LShoulder)) + Geometry::distance(sliceT.unsafe_col(Neck), sliceT.unsafe_col(RShoulder))) / 2.0f //scapula
-                + (Geometry::distance(sliceT.unsafe_col(LElbow), sliceT.unsafe_col(LShoulder)) + Geometry::distance(sliceT.unsafe_col(RElbow), sliceT.unsafe_col(RShoulder))) / 2.0f //arm
-                + (Geometry::distance(sliceT.unsafe_col(LElbow), sliceT.unsafe_col(LWrist)) + Geometry::distance(sliceT.unsafe_col(RElbow), sliceT.unsafe_col(RWrist))) / 2.0f; //forearm
+            sizePerFrame(j) = (Geometry::distance(sliceT.unsafe_col(LHip), sliceT.unsafe_col(LKnee)) + Geometry::distance(sliceT.unsafe_col(RHip), sliceT.unsafe_col(RKnee))) / 2.0f               //thigh
+                              + (Geometry::distance(sliceT.unsafe_col(LAnkle), sliceT.unsafe_col(LKnee)) + Geometry::distance(sliceT.unsafe_col(RAnkle), sliceT.unsafe_col(RKnee))) / 2.0f         //shank
+                              + (Geometry::distance(sliceT.unsafe_col(LHip), sliceT.unsafe_col(Thorax)) + Geometry::distance(sliceT.unsafe_col(RHip), sliceT.unsafe_col(Thorax))) / 2.0f           //trunk1
+                              + Geometry::distance(sliceT.unsafe_col(Neck), sliceT.unsafe_col(Thorax))                                                                                             //trunk2
+                              + (Geometry::distance(sliceT.unsafe_col(Neck), sliceT.unsafe_col(LShoulder)) + Geometry::distance(sliceT.unsafe_col(Neck), sliceT.unsafe_col(RShoulder))) / 2.0f     //scapula
+                              + (Geometry::distance(sliceT.unsafe_col(LElbow), sliceT.unsafe_col(LShoulder)) + Geometry::distance(sliceT.unsafe_col(RElbow), sliceT.unsafe_col(RShoulder))) / 2.0f //arm
+                              + (Geometry::distance(sliceT.unsafe_col(LElbow), sliceT.unsafe_col(LWrist)) + Geometry::distance(sliceT.unsafe_col(RElbow), sliceT.unsafe_col(RWrist))) / 2.0f;      //forearm
         }
     }
-    else {
+    else
+    {
 
         cout << "WARNING (MoMa::meanSizeToArm): The Track needs a nodeList containing the necessary nodes to compute mean size to arm." << endl;
         return arma::datum::nan;
     }
 
-    return(nanmean(sizePerFrame));
+    return (nanmean(sizePerFrame));
 }
 
-float MoMa::meanArmSize(const Track &tr) {
+float MoMa::meanArmSize(const Track &tr)
+{
 
     vec sizePerFrame;
     const cube &data = tr.position.getData();
 
+    if (tr.hasNodeList)
+    {
 
-    if (tr.hasNodeList) {
-       
         int LShoulder = tr.nodeList->index("LShoulder");
         int RShoulder = tr.nodeList->index("RShoulder");
         int LElbow = tr.nodeList->index("LElbow");
@@ -420,7 +460,8 @@ float MoMa::meanArmSize(const Track &tr) {
 
         int j = 0;
 
-        for (int t = 0; t < data.n_slices; t = t + hop) {
+        for (int t = 0; t < data.n_slices; t = t + hop)
+        {
 
             ++j;
 
@@ -429,25 +470,27 @@ float MoMa::meanArmSize(const Track &tr) {
             const mat sliceT = data.slice(t);
 
             sizePerFrame(j) = (Geometry::distance(sliceT.unsafe_col(LElbow), sliceT.unsafe_col(LShoulder)) + Geometry::distance(sliceT.unsafe_col(RElbow), sliceT.unsafe_col(RShoulder))) / 2.0f //arm
-                + (Geometry::distance(sliceT.unsafe_col(LElbow), sliceT.unsafe_col(LWrist)) + Geometry::distance(sliceT.unsafe_col(RElbow), sliceT.unsafe_col(RWrist))) / 2.0f; //forearm
+                              + (Geometry::distance(sliceT.unsafe_col(LElbow), sliceT.unsafe_col(LWrist)) + Geometry::distance(sliceT.unsafe_col(RElbow), sliceT.unsafe_col(RWrist))) / 2.0f;    //forearm
         }
     }
-    else {
+    else
+    {
 
         cout << "WARNING (MoMa::meanArmSize): The Track needs a nodeList containing the necessary nodes to compute mean arm size." << endl;
         return arma::datum::nan;
     }
 
-    return(nanmean(sizePerFrame));
+    return (nanmean(sizePerFrame));
 }
 
-float MoMa::meanTrunkSize(const Track &tr) {
+float MoMa::meanTrunkSize(const Track &tr)
+{
 
     vec sizePerFrame;
     const cube &data = tr.position.getData();
 
-
-    if (tr.hasNodeList) {
+    if (tr.hasNodeList)
+    {
 
         int Pelvis = tr.nodeList->index("Pelvis");
         int Thorax = tr.nodeList->index("Thorax");
@@ -459,7 +502,8 @@ float MoMa::meanTrunkSize(const Track &tr) {
 
         int j = 0;
 
-        for (int t = 0; t < data.n_slices; t = t + hop) {
+        for (int t = 0; t < data.n_slices; t = t + hop)
+        {
 
             ++j;
 
@@ -467,26 +511,28 @@ float MoMa::meanTrunkSize(const Track &tr) {
 
             const mat sliceT = data.slice(t);
 
-            sizePerFrame(j) = Geometry::distance(sliceT.unsafe_col(Pelvis), sliceT.unsafe_col(Thorax)) //trunk1
-                + Geometry::distance(sliceT.unsafe_col(Neck), sliceT.unsafe_col(Thorax)); //trunk2
+            sizePerFrame(j) = Geometry::distance(sliceT.unsafe_col(Pelvis), sliceT.unsafe_col(Thorax))  //trunk1
+                              + Geometry::distance(sliceT.unsafe_col(Neck), sliceT.unsafe_col(Thorax)); //trunk2
         }
     }
-    else {
+    else
+    {
 
         cout << "WARNING (MoMa::meanTrunkSize): The Track needs a nodeList containing the necessary nodes to compute mean trunk size." << endl;
         return arma::datum::nan;
     }
 
-    return(nanmean(sizePerFrame));
+    return (nanmean(sizePerFrame));
 }
 
-float MoMa::meanLegSize(const Track &tr) {
+float MoMa::meanLegSize(const Track &tr)
+{
 
     vec sizePerFrame;
     const cube &data = tr.position.getData();
 
-
-    if (tr.hasNodeList) {
+    if (tr.hasNodeList)
+    {
 
         int LHip = tr.nodeList->index("LHip");
         int RHip = tr.nodeList->index("RHip");
@@ -501,7 +547,8 @@ float MoMa::meanLegSize(const Track &tr) {
 
         int j = 0;
 
-        for (int t = 0; t < data.n_slices; t = t + hop) {
+        for (int t = 0; t < data.n_slices; t = t + hop)
+        {
 
             ++j;
 
@@ -509,26 +556,28 @@ float MoMa::meanLegSize(const Track &tr) {
 
             const mat sliceT = data.slice(t);
 
-            sizePerFrame(j) = (Geometry::distance(sliceT.unsafe_col(LHip), sliceT.unsafe_col(LKnee)) + Geometry::distance(sliceT.unsafe_col(RHip), sliceT.unsafe_col(RKnee))) / 2.0f //thigh
-                + (Geometry::distance(sliceT.unsafe_col(LAnkle), sliceT.unsafe_col(LKnee)) + Geometry::distance(sliceT.unsafe_col(RAnkle), sliceT.unsafe_col(RKnee))) / 2.0f; //shank
+            sizePerFrame(j) = (Geometry::distance(sliceT.unsafe_col(LHip), sliceT.unsafe_col(LKnee)) + Geometry::distance(sliceT.unsafe_col(RHip), sliceT.unsafe_col(RKnee))) / 2.0f        //thigh
+                              + (Geometry::distance(sliceT.unsafe_col(LAnkle), sliceT.unsafe_col(LKnee)) + Geometry::distance(sliceT.unsafe_col(RAnkle), sliceT.unsafe_col(RKnee))) / 2.0f; //shank
         }
     }
-    else {
+    else
+    {
 
         cout << "WARNING (MoMa::meanLegSize): The Track needs a nodeList containing the necessary nodes to compute mean leg size." << endl;
         return arma::datum::nan;
     }
 
-    return(nanmean(sizePerFrame));
+    return (nanmean(sizePerFrame));
 }
 
-float MoMa::meanFootSize(const Track &tr) {
+float MoMa::meanFootSize(const Track &tr)
+{
 
     vec sizePerFrame;
     const cube &data = tr.position.getData();
 
-
-    if (tr.hasNodeList) {
+    if (tr.hasNodeList)
+    {
 
         int LAnkle = tr.nodeList->index("LAnkle");
         int RAnkle = tr.nodeList->index("RAnkle");
@@ -541,7 +590,8 @@ float MoMa::meanFootSize(const Track &tr) {
 
         int j = 0;
 
-        for (int t = 0; t < data.n_slices; t = t + hop) {
+        for (int t = 0; t < data.n_slices; t = t + hop)
+        {
 
             ++j;
 
@@ -552,22 +602,24 @@ float MoMa::meanFootSize(const Track &tr) {
             sizePerFrame(j) = (Geometry::distance(sliceT.unsafe_col(LAnkle), sliceT.unsafe_col(LFoot)) + Geometry::distance(sliceT.unsafe_col(RAnkle), sliceT.unsafe_col(RFoot))) / 2.0f; //foot
         }
     }
-    else {
+    else
+    {
 
         cout << "WARNING (MoMa::meanFootSize): The Track needs a nodeList containing the necessary nodes to compute mean foot size." << endl;
         return arma::datum::nan;
     }
 
-    return(nanmean(sizePerFrame));
+    return (nanmean(sizePerFrame));
 }
 
-float MoMa::meanHumerusLength(const Track &tr) {
+float MoMa::meanHumerusLength(const Track &tr)
+{
 
     vec sizePerFrame;
     const cube &data = tr.position.getData();
 
-
-    if (tr.hasNodeList) {
+    if (tr.hasNodeList)
+    {
 
         int LShoulder = tr.nodeList->index("LShoulder");
         int RShoulder = tr.nodeList->index("RShoulder");
@@ -580,7 +632,8 @@ float MoMa::meanHumerusLength(const Track &tr) {
 
         int j = 0;
 
-        for (int t = 0; t < data.n_slices; t = t + hop) {
+        for (int t = 0; t < data.n_slices; t = t + hop)
+        {
 
             ++j;
 
@@ -591,22 +644,24 @@ float MoMa::meanHumerusLength(const Track &tr) {
             sizePerFrame(j) = (Geometry::distance(sliceT.unsafe_col(LElbow), sliceT.unsafe_col(LShoulder)) + Geometry::distance(sliceT.unsafe_col(RElbow), sliceT.unsafe_col(RShoulder))) / 2.0f;
         }
     }
-    else {
+    else
+    {
 
         cout << "WARNING (MoMa::meanHumerusLength): The Track needs a nodeList containing the necessary nodes to compute mean humerus length." << endl;
         return arma::datum::nan;
     }
 
-    return(nanmean(sizePerFrame));
+    return (nanmean(sizePerFrame));
 }
 
-float MoMa::meanShoulderWidth(const Track &tr) {
+float MoMa::meanShoulderWidth(const Track &tr)
+{
 
     vec sizePerFrame;
     const cube &data = tr.position.getData();
 
-
-    if (tr.hasNodeList) {
+    if (tr.hasNodeList)
+    {
 
         int LShoulder = tr.nodeList->index("LShoulder");
         int RShoulder = tr.nodeList->index("RShoulder");
@@ -617,7 +672,8 @@ float MoMa::meanShoulderWidth(const Track &tr) {
 
         int j = 0;
 
-        for (int t = 0; t < data.n_slices; t = t + hop) {
+        for (int t = 0; t < data.n_slices; t = t + hop)
+        {
 
             ++j;
 
@@ -628,22 +684,24 @@ float MoMa::meanShoulderWidth(const Track &tr) {
             sizePerFrame(j) = Geometry::distance(sliceT.unsafe_col(RShoulder), sliceT.unsafe_col(LShoulder));
         }
     }
-    else {
+    else
+    {
 
         cout << "WARNING (MoMa::meanShoulderWidth): The Track needs a nodeList containing the necessary nodes to compute mean shoulder width." << endl;
         return arma::datum::nan;
     }
 
-    return(nanmean(sizePerFrame));
+    return (nanmean(sizePerFrame));
 }
 
-float MoMa::meanHipWidth(const Track &tr) {
+float MoMa::meanHipWidth(const Track &tr)
+{
 
     vec sizePerFrame;
     const cube &data = tr.position.getData();
 
-
-    if (tr.hasNodeList) {
+    if (tr.hasNodeList)
+    {
 
         int LHip = tr.nodeList->index("LHip");
         int RHip = tr.nodeList->index("RHip");
@@ -654,7 +712,8 @@ float MoMa::meanHipWidth(const Track &tr) {
 
         int j = 0;
 
-        for (int t = 0; t < data.n_slices; t = t + hop) {
+        for (int t = 0; t < data.n_slices; t = t + hop)
+        {
 
             ++j;
 
@@ -665,22 +724,24 @@ float MoMa::meanHipWidth(const Track &tr) {
             sizePerFrame(j) = Geometry::distance(sliceT.unsafe_col(RHip), sliceT.unsafe_col(LHip));
         }
     }
-    else {
+    else
+    {
 
         cout << "WARNING (MoMa::meanHipWidth): The Track needs a nodeList containing the necessary nodes to compute hip width." << endl;
         return arma::datum::nan;
     }
 
-    return(nanmean(sizePerFrame));
+    return (nanmean(sizePerFrame));
 }
 
-float MoMa::meanForearmLength(const Track &tr) {
+float MoMa::meanForearmLength(const Track &tr)
+{
 
     vec sizePerFrame;
     const cube &data = tr.position.getData();
 
-
-    if (tr.hasNodeList) {
+    if (tr.hasNodeList)
+    {
 
         int LWrist = tr.nodeList->index("LWrist");
         int RWrist = tr.nodeList->index("RWrist");
@@ -693,7 +754,8 @@ float MoMa::meanForearmLength(const Track &tr) {
 
         int j = 0;
 
-        for (int t = 0; t < data.n_slices; t = t + hop) {
+        for (int t = 0; t < data.n_slices; t = t + hop)
+        {
 
             ++j;
 
@@ -704,23 +766,24 @@ float MoMa::meanForearmLength(const Track &tr) {
             sizePerFrame(j) = (Geometry::distance(sliceT.unsafe_col(LElbow), sliceT.unsafe_col(LWrist)) + Geometry::distance(sliceT.unsafe_col(RElbow), sliceT.unsafe_col(RWrist))) / 2.0f;
         }
     }
-    else {
+    else
+    {
 
         cout << "WARNING (MoMa::meanForearmLength): The Track needs a nodeList containing the necessary nodes to compute mean forearm length." << endl;
         return arma::datum::nan;
     }
 
-    return(nanmean(sizePerFrame));
-
+    return (nanmean(sizePerFrame));
 }
 
-float MoMa::meanShankLength(const Track &tr) {
+float MoMa::meanShankLength(const Track &tr)
+{
 
     vec sizePerFrame;
     const cube &data = tr.position.getData();
 
-
-    if (tr.hasNodeList) {
+    if (tr.hasNodeList)
+    {
 
         int LAnkle = tr.nodeList->index("LAnkle");
         int RAnkle = tr.nodeList->index("RAnkle");
@@ -733,7 +796,8 @@ float MoMa::meanShankLength(const Track &tr) {
 
         int j = 0;
 
-        for (int t = 0; t < data.n_slices; t = t + hop) {
+        for (int t = 0; t < data.n_slices; t = t + hop)
+        {
 
             ++j;
 
@@ -744,23 +808,24 @@ float MoMa::meanShankLength(const Track &tr) {
             sizePerFrame(j) = (Geometry::distance(sliceT.unsafe_col(LAnkle), sliceT.unsafe_col(LKnee)) + Geometry::distance(sliceT.unsafe_col(RAnkle), sliceT.unsafe_col(RKnee))) / 2.0f;
         }
     }
-    else {
+    else
+    {
 
         cout << "WARNING (MoMa::meanShankLength): The Track needs a nodeList containing the necessary nodes to compute mean shank length." << endl;
         return arma::datum::nan;
     }
 
-    return(nanmean(sizePerFrame));
-
+    return (nanmean(sizePerFrame));
 }
 
-float MoMa::meanHeadHeight(const Track &tr) {
+float MoMa::meanHeadHeight(const Track &tr)
+{
 
     vec sizePerFrame;
     const cube &data = tr.position.getData();
 
-
-    if (tr.hasNodeList) {
+    if (tr.hasNodeList)
+    {
 
         int Neck = tr.nodeList->index("Neck");
         int Head = tr.nodeList->index("Head");
@@ -771,7 +836,8 @@ float MoMa::meanHeadHeight(const Track &tr) {
 
         int j = 0;
 
-        for (int t = 0; t < data.n_slices; t = t + hop) {
+        for (int t = 0; t < data.n_slices; t = t + hop)
+        {
 
             ++j;
 
@@ -782,23 +848,24 @@ float MoMa::meanHeadHeight(const Track &tr) {
             sizePerFrame(j) = Geometry::distance(sliceT.unsafe_col(Neck), sliceT.unsafe_col(Head));
         }
     }
-    else {
+    else
+    {
 
         cout << "WARNING (MoMa::meanHeadHeight): The Track needs a nodeList containing the necessary nodes to compute mean head height." << endl;
         return arma::datum::nan;
     }
 
-    return(nanmean(sizePerFrame));
-
+    return (nanmean(sizePerFrame));
 }
 
-float MoMa::meanSize(const Track &tr) {
+float MoMa::meanSize(const Track &tr)
+{
 
     vec sizePerFrame;
     const cube &data = tr.position.getData();
 
-
-    if (tr.hasNodeList) {
+    if (tr.hasNodeList)
+    {
 
         int LHip = tr.nodeList->index("LHip");
         int RHip = tr.nodeList->index("RHip");
@@ -816,20 +883,21 @@ float MoMa::meanSize(const Track &tr) {
 
         int j = 0;
 
-        for (int t = 0; t < data.n_slices; t = t + hop) {
+        for (int t = 0; t < data.n_slices; t = t + hop)
+        {
 
             ++j;
             sizePerFrame.resize(j + 1, 1);
 
             const mat sliceT = data.slice(t);
 
-            sizePerFrame(j) = (Geometry::distance(sliceT.unsafe_col(LHip), sliceT.unsafe_col(LKnee)) + Geometry::distance(sliceT.unsafe_col(RHip), sliceT.unsafe_col(RKnee))) / 2.0f //thigh
-                + (Geometry::distance(sliceT.unsafe_col(LAnkle), sliceT.unsafe_col(LKnee)) + Geometry::distance(sliceT.unsafe_col(RAnkle), sliceT.unsafe_col(RKnee))) / 2.0f //shank
-                + (Geometry::distance(sliceT.unsafe_col(LHip), sliceT.unsafe_col(Thorax)) + Geometry::distance(sliceT.unsafe_col(RHip), sliceT.unsafe_col(Thorax))) / 2.0f //trunk1
-                + Geometry::distance(sliceT.unsafe_col(Neck), sliceT.unsafe_col(Thorax)) //trunk2
-                + Geometry::distance(sliceT.unsafe_col(Neck), sliceT.unsafe_col(Head)); //head
+            sizePerFrame(j) = (Geometry::distance(sliceT.unsafe_col(LHip), sliceT.unsafe_col(LKnee)) + Geometry::distance(sliceT.unsafe_col(RHip), sliceT.unsafe_col(RKnee))) / 2.0f       //thigh
+                              + (Geometry::distance(sliceT.unsafe_col(LAnkle), sliceT.unsafe_col(LKnee)) + Geometry::distance(sliceT.unsafe_col(RAnkle), sliceT.unsafe_col(RKnee))) / 2.0f //shank
+                              + (Geometry::distance(sliceT.unsafe_col(LHip), sliceT.unsafe_col(Thorax)) + Geometry::distance(sliceT.unsafe_col(RHip), sliceT.unsafe_col(Thorax))) / 2.0f   //trunk1
+                              + Geometry::distance(sliceT.unsafe_col(Neck), sliceT.unsafe_col(Thorax))                                                                                     //trunk2
+                              + Geometry::distance(sliceT.unsafe_col(Neck), sliceT.unsafe_col(Head));                                                                                      //head
         }
     }
 
-    return(nanmean(sizePerFrame));
+    return (nanmean(sizePerFrame));
 }

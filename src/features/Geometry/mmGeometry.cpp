@@ -4,32 +4,36 @@
 using namespace arma;
 using namespace MoMa;
 
+float Geometry::degToRad(float deg)
+{
 
-float Geometry::degToRad(float deg) {
-
-	return(deg * M_PI / 180.0);
+	return (deg * M_PI / 180.0);
 }
 
-float Geometry::radToDeg(float rad) {
+float Geometry::radToDeg(float rad)
+{
 
-	return(rad * 180.0 / M_PI);
+	return (rad * 180.0 / M_PI);
 }
 
-float Geometry::distance(const arma::vec &a, const arma::vec &b) {
+float Geometry::distance(const arma::vec &a, const arma::vec &b)
+{
 
 	float dist;
 
 	dist = sqrt(pow(a(X) - b(X), 2) + pow(a(Y) - b(Y), 2) + pow(a(Z) - b(Z), 2));
 
-	return(dist);
+	return (dist);
 }
 
-vec Geometry::distance(const mat &a, const mat &b) {
+vec Geometry::distance(const mat &a, const mat &b)
+{
 
 	return sqrt(sum(pow(a - b, 2))).t();
 }
 
-TimedVec Geometry::distance(const TimedMat &a, const TimedMat &b) {
+TimedVec Geometry::distance(const TimedMat &a, const TimedMat &b)
+{
 
 	vec tmp = sqrt(sum(pow(a.getData() - b.getData(), 2)).t());
 	TimedVec ret;
@@ -38,7 +42,8 @@ TimedVec Geometry::distance(const TimedMat &a, const TimedMat &b) {
 }
 
 //Distance of point d to plane defined by points a, b and c
-float Geometry::distanceToPlane(const arma::vec &a, const arma::vec &b, const arma::vec &c, const arma::vec &d) {
+float Geometry::distanceToPlane(const arma::vec &a, const arma::vec &b, const arma::vec &c, const arma::vec &d)
+{
 
 	float dist;
 
@@ -54,11 +59,12 @@ float Geometry::distanceToPlane(const arma::vec &a, const arma::vec &b, const ar
 	dc = d - c;
 	dist = dot(dc, n);
 
-	return(dist);
+	return (dist);
 }
 
 //Distance between d and plane fixed in c and normal to vector a->b
-float Geometry::distanceToNPlane(const arma::vec &a, const arma::vec &b, const arma::vec &c, const arma::vec &d) {
+float Geometry::distanceToNPlane(const arma::vec &a, const arma::vec &b, const arma::vec &c, const arma::vec &d)
+{
 
 	float dist;
 
@@ -70,11 +76,11 @@ float Geometry::distanceToNPlane(const arma::vec &a, const arma::vec &b, const a
 	dc = d - c;
 	dist = dot(dc, n);
 
-	return(dist);
-
+	return (dist);
 }
 
-float Geometry::velocityToVect(const arma::vec &a, const arma::vec &b, const arma::vec &c1, const arma::vec &c2, const arma::vec &d1, const arma::vec &d2) {
+float Geometry::velocityToVect(const arma::vec &a, const arma::vec &b, const arma::vec &c1, const arma::vec &c2, const arma::vec &d1, const arma::vec &d2)
+{
 	//Speed of d relative to c in direction determined by a->b
 	float velo;
 
@@ -87,10 +93,11 @@ float Geometry::velocityToVect(const arma::vec &a, const arma::vec &b, const arm
 
 	velo = dot(vRel, n);
 
-	return(velo);
+	return (velo);
 }
 
-float Geometry::velocityToNPlane(const arma::vec &a1, const arma::vec &a2, const arma::vec &b, const arma::vec &c, const arma::vec &d1, const arma::vec &d2) {
+float Geometry::velocityToNPlane(const arma::vec &a1, const arma::vec &a2, const arma::vec &b, const arma::vec &c, const arma::vec &d1, const arma::vec &d2)
+{
 
 	float velo;
 
@@ -106,10 +113,11 @@ float Geometry::velocityToNPlane(const arma::vec &a1, const arma::vec &a2, const
 
 	velo = dot(vRel, n);
 
-	return(velo);
+	return (velo);
 }
 
-float Geometry::angleBtwVectors(const arma::vec &a, const arma::vec &b, const arma::vec &c, const arma::vec &d) {
+float Geometry::angleBtwVectors(const arma::vec &a, const arma::vec &b, const arma::vec &c, const arma::vec &d)
+{
 
 	vec v1, v2;
 	float angle;
@@ -119,10 +127,11 @@ float Geometry::angleBtwVectors(const arma::vec &a, const arma::vec &b, const ar
 
 	angle = atan2(norm(cross(v1, v2)), arma::dot(v1, v2));
 
-	return(angle);
+	return (angle);
 }
 
-float Geometry::angleBtwVectors2D(const arma::vec &a, const arma::vec &b, const arma::vec &c, const arma::vec &d) {
+float Geometry::angleBtwVectors2D(const arma::vec &a, const arma::vec &b, const arma::vec &c, const arma::vec &d)
+{
 
 	vec v1, v2;
 	float angle;
@@ -133,9 +142,9 @@ float Geometry::angleBtwVectors2D(const arma::vec &a, const arma::vec &b, const 
 	//tmp=norm(v1);
 	//tmp = norm(v2);
 	//tmp = arma::dot(v1,v2)/(norm(v1)*norm(v2));
-	angle = acos(arma::dot(v1, v2) / (norm(v1)*norm(v2)));
+	angle = acos(arma::dot(v1, v2) / (norm(v1) * norm(v2)));
 
-	return(angle);
+	return (angle);
 }
 
 mat Geometry::projection(const mat &a, const mat &b, const mat &c, const mat &p, bool invert)
@@ -149,7 +158,8 @@ mat Geometry::projection(const mat &a, const mat &b, const mat &c, const mat &p,
 	v3.copy_size(v1);
 	proj.copy_size(v1);
 
-	for (int i = 0; i < v3.n_cols; ++i) {
+	for (int i = 0; i < v3.n_cols; ++i)
+	{
 
 		v3.col(i) = cross(v1.col(i), c.col(i) - a.col(i)); //v3 normal to plan
 		v3.col(i) /= norm(v3.col(i));
@@ -157,23 +167,28 @@ mat Geometry::projection(const mat &a, const mat &b, const mat &c, const mat &p,
 
 		//Compute projection matrix
 		mat projmat(3, 3);
-		projmat.col(0) = v1.col(i); projmat.col(1) = v2.col(i); projmat.col(2) = v3.col(i);
+		projmat.col(0) = v1.col(i);
+		projmat.col(1) = v2.col(i);
+		projmat.col(2) = v3.col(i);
 
 		if (invert == 0)
 			//Compute projection
-			proj.col(i) = ((p.col(i) - a.col(i)).t()*projmat).t();
+			proj.col(i) = ((p.col(i) - a.col(i)).t() * projmat).t();
 
-		else {
+		else
+		{
 
-			if (projmat.is_finite()) {
+			if (projmat.is_finite())
+			{
 
 				//Compute inverse projection matrix
 				mat invprojmat = pinv(projmat);
 
 				//Compute inverse projection
-				proj.col(i) = (p.col(i).t()*invprojmat).t() + a.col(i);
+				proj.col(i) = (p.col(i).t() * invprojmat).t() + a.col(i);
 			}
-			else {
+			else
+			{
 
 				proj.col(i).fill(datum::nan);
 			}
@@ -183,7 +198,7 @@ mat Geometry::projection(const mat &a, const mat &b, const mat &c, const mat &p,
 	return proj;
 }
 
-arma::mat MoMa::Geometry::quatprojection(const arma::mat & a, const arma::mat & b, const arma::mat & c, const arma::mat & q, bool invert)
+arma::mat MoMa::Geometry::quatprojection(const arma::mat &a, const arma::mat &b, const arma::mat &c, const arma::mat &q, bool invert)
 {
 	mat v1, v2, v3, proj;
 
@@ -194,7 +209,8 @@ arma::mat MoMa::Geometry::quatprojection(const arma::mat & a, const arma::mat & 
 	v3.copy_size(v1);
 	proj.set_size(4, v1.n_cols);
 
-	for (int i = 0; i < v3.n_cols; ++i) {
+	for (int i = 0; i < v3.n_cols; ++i)
+	{
 
 		v3.col(i) = cross(v1.col(i), c.col(i) - a.col(i)); //v3 normal to plan
 		v3.col(i) /= norm(v3.col(i));
@@ -207,48 +223,52 @@ arma::mat MoMa::Geometry::quatprojection(const arma::mat & a, const arma::mat & 
 		vec2 << v2.col(i)(0) << v2.col(i)(1) << v2.col(i)(2) << 0;
 		vec3 << v3.col(i)(0) << v3.col(i)(1) << v3.col(i)(2) << 0;
 		vec4 << 0 << 0 << 0 << 1;
-		projmat.col(0) = vec1; projmat.col(1) = vec2; projmat.col(2) = vec3; projmat.col(3) = vec4;
+		projmat.col(0) = vec1;
+		projmat.col(1) = vec2;
+		projmat.col(2) = vec3;
+		projmat.col(3) = vec4;
 
 		//Compute quaternion matrix
 		quaternion quat = (vec)q.col(i);
 		mat matrix(4, 4);
 		quat.get(matrix);
 
-		if (invert == 0) {
+		if (invert == 0)
+		{
 
 			//Compute projection
 			//mat projectedmatrix = matrix*projmat;
-			mat projectedmatrix = (matrix.t()*projmat).t(); //this one seems to work! Seems that in matrix, the three axes vectors are horitonzal
+			mat projectedmatrix = (matrix.t() * projmat).t(); //this one seems to work! Seems that in matrix, the three axes vectors are horitonzal
 			//mat projectedmatrix = projmat*matrix*pinv(projmat);
 			quaternion projectedquat;
 			projectedquat.set(projectedmatrix);
 
 			proj.col(i) = (vec)projectedquat;
 		}
-		else {
+		else
+		{
 
-			if (projmat.is_finite()) {
+			if (projmat.is_finite())
+			{
 
 				//Compute inverse projection matrix
 				mat invprojmat = pinv(projmat);
 
 				//Compute inverse projection
 				//mat projectedmatrix = matrix*invprojmat;
-				mat projectedmatrix = (matrix.t()*invprojmat).t();
+				mat projectedmatrix = (matrix.t() * invprojmat).t();
 				//mat projectedmatrix = invprojmat*matrix*projmat;
 				quaternion projectedquat;
 				projectedquat.set(projectedmatrix);
 
 				proj.col(i) = (vec)projectedquat;
 			}
-			else {
+			else
+			{
 
 				proj.col(i).fill(datum::nan);
 			}
 		}
-
-
-
 	}
 
 	return proj;
@@ -263,7 +283,7 @@ TimedMat Geometry::projection(const MoMa::TimedMat &a, const MoMa::TimedMat &b, 
 		return TimedMat(p.getTimeVec(), proj);
 }
 
-TimedMat Geometry::quatprojection(const MoMa::TimedMat & a, const MoMa::TimedMat & b, const MoMa::TimedMat & c, const MoMa::TimedMat & q, bool invert)
+TimedMat Geometry::quatprojection(const MoMa::TimedMat &a, const MoMa::TimedMat &b, const MoMa::TimedMat &c, const MoMa::TimedMat &q, bool invert)
 {
 	mat proj = quatprojection(a.getData(), b.getData(), c.getData(), q.getData(), invert);
 	if (!q.isTimed())
@@ -282,18 +302,20 @@ MoMa::Trace Geometry::projection(const MoMa::Trace &t1, const MoMa::Trace &t2, c
 	return ret;
 }
 
-MoMa::Track MoMa::Geometry::projection(const MoMa::Trace & a, const MoMa::Trace & b, const MoMa::Trace & c, const MoMa::Track & tr, bool invert)
+MoMa::Track MoMa::Geometry::projection(const MoMa::Trace &a, const MoMa::Trace &b, const MoMa::Trace &c, const MoMa::Track &tr, bool invert)
 {
 	Track ret = tr;
-	for (int n = 0; n < ret.nOfNodes(); n++) {
+	for (int n = 0; n < ret.nOfNodes(); n++)
+	{
 		TimedMat nodetracen = ret.position.col(n);
 		nodetracen = projection(a.position, b.position, c.position, nodetracen);
 		ret.position.getRefData()(span::all, span(n), span::all) = nodetracen.getData();
-
 	}
-	if (ret.hasRotation) {
+	if (ret.hasRotation)
+	{
 
-		for (int n = 0; n < ret.rotation.nOfCols(); n++) {
+		for (int n = 0; n < ret.rotation.nOfCols(); n++)
+		{
 			TimedMat bonetracen = ret.rotation.col(n);
 			bonetracen = quatprojection(a.position, b.position, c.position, bonetracen);
 			//
@@ -304,22 +326,24 @@ MoMa::Track MoMa::Geometry::projection(const MoMa::Trace & a, const MoMa::Trace 
 	return ret;
 }
 
-void MoMa::Geometry::translate(TimedCube &pos, double x, double y, double z) {
+void MoMa::Geometry::translate(TimedCube &pos, double x, double y, double z)
+{
 
 	//Works only on the 3D position TimedCube of the track
 	vec translation;
 	translation << x << y << z;
 
-	cube translateCube(1, pos.nOfRows()*pos.nOfCols(), pos.nOfFrames()); //We use first the shape of a matrix so we can use the repmat function
+	cube translateCube(1, pos.nOfRows() * pos.nOfCols(), pos.nOfFrames());						  //We use first the shape of a matrix so we can use the repmat function
 	translateCube.tube(span(0), span::all) = repmat(translation, pos.nOfCols(), pos.nOfFrames()); //Replicate the vector to make a cube with the dimensions of the track
-	translateCube.reshape(pos.nOfRows(), pos.nOfCols(), pos.nOfFrames()); //Reshape to the initial dimension
+	translateCube.reshape(pos.nOfRows(), pos.nOfCols(), pos.nOfFrames());						  //Reshape to the initial dimension
 
 	//Todo : use each_col/row/slice methods of the arma::cube (not available in this version)
 
 	pos.getRefData() += translateCube;
 }
 
-void MoMa::Geometry::translate(TimedMat &pos, double x, double y, double z) {
+void MoMa::Geometry::translate(TimedMat &pos, double x, double y, double z)
+{
 
 	//Works only on the 3D position TimedCube of the track
 	vec translation;
@@ -332,10 +356,11 @@ void MoMa::Geometry::translate(TimedMat &pos, double x, double y, double z) {
 	pos.getRefData() += translateMat;
 }
 
-void MoMa::Geometry::translate(MoMa::Track & tr, double x, double y, double z)
+void MoMa::Geometry::translate(MoMa::Track &tr, double x, double y, double z)
 {
 	bool isLocal = false;
-	if (!tr.hasGlobalCoordinate) {
+	if (!tr.hasGlobalCoordinate)
+	{
 
 		isLocal = true;
 		tr.localToGlobal();
@@ -347,7 +372,7 @@ void MoMa::Geometry::translate(MoMa::Track & tr, double x, double y, double z)
 		tr.globalToLocal();
 }
 
-void MoMa::Geometry::translate(MoMa::Track & tr, arma::mat translation)
+void MoMa::Geometry::translate(MoMa::Track &tr, arma::mat translation)
 {
 	for (uint i = 0; i < tr.nOfNodes(); i++)
 	{
@@ -355,10 +380,11 @@ void MoMa::Geometry::translate(MoMa::Track & tr, arma::mat translation)
 	}
 }
 
-void MoMa::Geometry::placeOnOrigin(MoMa::Track & tr, std::string Pelvis, std::string LHip, std::string RHip)
+void MoMa::Geometry::placeOnOrigin(MoMa::Track &tr, std::string Pelvis, std::string LHip, std::string RHip)
 {
 	bool isLocal = false;
-	if (!tr.hasGlobalCoordinate) {
+	if (!tr.hasGlobalCoordinate)
+	{
 
 		isLocal = true;
 		tr.localToGlobal();
@@ -393,10 +419,12 @@ void MoMa::Geometry::placeOnOrigin(MoMa::Track & tr, std::string Pelvis, std::st
 		tr.globalToLocal();
 }
 
-arma::mat MoMa::Geometry::centerOfMassmat(MoMa::Track & tr) {
+arma::mat MoMa::Geometry::centerOfMassmat(MoMa::Track &tr)
+{
 
 	bool isLocal = false;
-	if (!tr.hasGlobalCoordinate) {
+	if (!tr.hasGlobalCoordinate)
+	{
 
 		isLocal = true;
 		tr.localToGlobal();
@@ -406,7 +434,8 @@ arma::mat MoMa::Geometry::centerOfMassmat(MoMa::Track & tr) {
 	center.zeros(3, tr.nOfFrames());
 
 	//avoid nans on each frame
-	for (uint f = 0; f < tr.nOfFrames(); f++) {
+	for (uint f = 0; f < tr.nOfFrames(); f++)
+	{
 
 		center.col(f) = nanmean(tr.framePosition(f), 1);
 	}
@@ -417,7 +446,8 @@ arma::mat MoMa::Geometry::centerOfMassmat(MoMa::Track & tr) {
 	return center;
 }
 
-MoMa::TimedMat MoMa::Geometry::centerOfMass(MoMa::Track & tr) {
+MoMa::TimedMat MoMa::Geometry::centerOfMass(MoMa::Track &tr)
+{
 
 	mat center = centerOfMassmat(tr);
 	if (!tr.position.isTimed())
@@ -426,19 +456,21 @@ MoMa::TimedMat MoMa::Geometry::centerOfMass(MoMa::Track & tr) {
 		return TimedMat(tr.position.getTimeVec(), center);
 }
 
-MoMa::Trace MoMa::Geometry::centerOfMassTrace(MoMa::Track & tr) {
-	
+MoMa::Trace MoMa::Geometry::centerOfMassTrace(MoMa::Track &tr)
+{
+
 	Trace ret;
 	ret.setTimeFlag(tr.position.isTimed());
 	ret.position = centerOfMass(tr);
 	return ret;
 }
 
-void MoMa::Geometry::COMToOrigin(MoMa::Track & tr)
+void MoMa::Geometry::COMToOrigin(MoMa::Track &tr)
 {
 
 	bool isLocal = false;
-	if (!tr.hasGlobalCoordinate) {
+	if (!tr.hasGlobalCoordinate)
+	{
 
 		isLocal = true;
 		tr.localToGlobal();
@@ -451,10 +483,11 @@ void MoMa::Geometry::COMToOrigin(MoMa::Track & tr)
 		tr.globalToLocal();
 }
 
-void  MoMa::Geometry::stickToOrigin(MoMa::Track & tr, std::string LHip, std::string RHip)
+void MoMa::Geometry::stickToOrigin(MoMa::Track &tr, std::string LHip, std::string RHip)
 {
 	bool isLocal = false;
-	if (!tr.hasGlobalCoordinate) {
+	if (!tr.hasGlobalCoordinate)
+	{
 
 		isLocal = true;
 		tr.localToGlobal();
@@ -482,12 +515,13 @@ void  MoMa::Geometry::stickToOrigin(MoMa::Track & tr, std::string LHip, std::str
 		tr.globalToLocal();
 }
 
-void  MoMa::Geometry::stickToOriginLoose(MoMa::Track & tr, std::string rootnodename)
+void MoMa::Geometry::stickToOriginLoose(MoMa::Track &tr, std::string rootnodename)
 {
 	//placeOnOrigin(tr, Pelvis, LHip, RHip);
 
 	bool isLocal = false;
-	if (!tr.hasGlobalCoordinate) {
+	if (!tr.hasGlobalCoordinate)
+	{
 
 		isLocal = true;
 		tr.localToGlobal();
@@ -500,11 +534,10 @@ void  MoMa::Geometry::stickToOriginLoose(MoMa::Track & tr, std::string rootnoden
 		tr.globalToLocal();
 }
 
-void  MoMa::Geometry::scaleSkeleton(MoMa::Track & tr, float newsize)
+void MoMa::Geometry::scaleSkeleton(MoMa::Track &tr, float newsize)
 {
 
 	float meansize = meanSize(tr);
 	tr.position.getRefData() /= meansize;
 	tr.position.getRefData() *= newsize;
-
 }

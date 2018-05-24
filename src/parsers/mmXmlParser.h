@@ -3,16 +3,16 @@
 
 #include "mmTrack.h"
 
-namespace MoMa {
+namespace MoMa
+{
 
-	class XmlParser {
+class XmlParser
+{
 
-	public:
-
-		XmlParser( std::string const &fileName, Track *track );
-		void load( std::string const &fileName, Track *track );
-		
-	};
-}
+  public:
+	XmlParser(std::string const &fileName, Track *track);
+	void load(std::string const &fileName, Track *track);
+};
+} // namespace MoMa
 
 #endif

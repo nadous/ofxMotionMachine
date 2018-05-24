@@ -13,7 +13,6 @@ ofxMotionMachine is an openframeworks addon.
 Dependencies:	
 We add in this ofAddon the following modified libraries:
 Armadillo C++ Linear Algebra Library version 4.450 http://arma.sourceforge.net/
-ofxUi https://github.com/rezaali/ofxUI (deprecated library)
 
 # Tutorials
 

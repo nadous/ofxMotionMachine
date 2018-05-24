@@ -3,15 +3,16 @@
 
 #include "mmTrack.h"
 
-namespace MoMa {
+namespace MoMa
+{
 
-    class FlatParser {
+class FlatParser
+{
 
-      public:
-
-        FlatParser( std::string const &fileName, Track *track );
-        void load( std::string const &fileName, Track *track );
-    };
-}
+  public:
+    FlatParser(std::string const &fileName, Track *track);
+    void load(std::string const &fileName, Track *track);
+};
+} // namespace MoMa
 
 #endif

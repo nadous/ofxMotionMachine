@@ -1,6 +1,6 @@
 /** FiguresView class
 *
-* Created by Mickaël Tits on 28/07/2015
+* Created by Mickaï¿½l Tits on 28/07/2015
 *
 */
 
@@ -33,7 +33,7 @@ namespace MoMa {
     protected:
         
         SceneApp *app;
-        ofxUIRadio *modeRadio;//, *playRadio;
+        ofxGuiRadio *modeRadio;//, *playRadio;
         ofxUIToggle *playBar, *viewOptions, *hideAll;
         std::vector<MoMa::Canvas*> closedCanvas;
     };

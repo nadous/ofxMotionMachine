@@ -5,11 +5,12 @@
 
 #include "mmTrack.h"
 
-namespace MoMa {
-    class BvhParser{
-    public:
-    
-        static bool load( std::string fileName, MoMa::Track *tr, bool hasRotation =true, bool globalCoordinate=false );
-    };
-}
+namespace MoMa
+{
+class BvhParser
+{
+  public:
+    static bool load(std::string fileName, MoMa::Track *tr, bool hasRotation = true, bool globalCoordinate = false);
+};
+} // namespace MoMa
 #endif

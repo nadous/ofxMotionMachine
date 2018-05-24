@@ -33,7 +33,7 @@
 
 #include "mmSceneApp.h"
 #include "ofMain.h"
-#include "ofxUI.h"
+#include "ofxGui.h"
 
 namespace MoMa {
     
@@ -52,7 +52,7 @@ namespace MoMa {
     
     //class SceneApp;
     
-    class Canvas : public ofxUISuperCanvas {
+    class Canvas : public ofxGuiGroup {
 
     public:  
 

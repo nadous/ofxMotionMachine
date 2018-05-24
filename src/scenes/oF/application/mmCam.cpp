@@ -33,7 +33,7 @@ mmCam::~mmCam(){
 void mmCam::update(ofEventArgs & args){
     if(bMouseInputEnabled){
     
-        rotationFactor = sensitivityRot * 180 / min(viewport.width, viewport.height);
+        rotationFactor = sensitivityRot * 180 / std::min(viewport.width, viewport.height);
         if (bMouseInputEnabled) {
             updateMouse();
         }
@@ -179,7 +179,7 @@ void mmCam::updateRotation(){
         }
     }
     curRot = ofQuaternion(xRot, ofCamera::getXAxis(), yRot, ofCamera::getYAxis(), zRot, ofCamera::getZAxis());
-    setPosition((ofCamera::getGlobalPosition()-target.getGlobalPosition())*curRot +target.getGlobalPosition());
+    setPosition((ofCamera::getGlobalPosition()-target.getGlobalPosition())*curRot + target.getGlobalPosition());
     rotateLikeHuman();
 }
 //----------------------------------------

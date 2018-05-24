@@ -4,8 +4,8 @@
 using namespace std;
 using namespace MoMa;
 
-
-Parser::Parser(string const &fName, Track *tr) {
+Parser::Parser(string const &fName, Track *tr)
+{
 
     fileName = fName;
 
@@ -16,9 +16,10 @@ Parser::Parser(string const &fName, Track *tr) {
 
     extension = fileName.substr(dot + 1);
     transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
-    tr->hasGlobalCoordinate = true;//value by default
-	tr->setPathFileName(fName);
-    if (extension == "bones") {
+    tr->hasGlobalCoordinate = true; //value by default
+    tr->setPathFileName(fName);
+    if (extension == "bones")
+    {
 
         tr->clearData();
         tr->bones(fileName);
@@ -27,7 +28,8 @@ Parser::Parser(string const &fName, Track *tr) {
         tr->setJointOffsetRotation();
     }
 
-    else if (extension == "nodes") {
+    else if (extension == "nodes")
+    {
 
         tr->clearData();
         tr->nodes(fileName);
@@ -36,7 +38,8 @@ Parser::Parser(string const &fName, Track *tr) {
         tr->setJointOffsetRotation();
     }
 
-    else if (extension == "txt") {
+    else if (extension == "txt")
+    {
 
         tr->clearData();
         tr->type = FLAT;
@@ -44,17 +47,20 @@ Parser::Parser(string const &fName, Track *tr) {
 
         FlatParser flatParser(fileName, tr);
 
-        if (!tr->hasNodeList) {
+        if (!tr->hasNodeList)
+        {
 
             cout << "Warning (flat txt file parsing): you should load a nodelist before the data." << endl;
         }
 
-        if (!tr->hasBoneList) {
+        if (!tr->hasBoneList)
+        {
 
             cout << "Warning (flat txt file parsing): you should load a bonelist before the data." << endl;
         }
 
-        if (tr->hasNodeList && tr->nodeList->size() != tr->nOfNodes()) {
+        if (tr->hasNodeList && tr->nodeList->size() != tr->nOfNodes())
+        {
 
             cout << "Warning (FlatParser): the number of nodes in the data does not correponds with the number of nodes in the nodelist. You should load a corresponding nodelist before the data." << endl;
         }
@@ -64,7 +70,8 @@ Parser::Parser(string const &fName, Track *tr) {
             tr->rotation.SetValidParam();
     }
 
-    else if (extension == "v3d") {
+    else if (extension == "v3d")
+    {
         tr->clear();
         tr->init();
         tr->type = V3D;
@@ -79,7 +86,8 @@ Parser::Parser(string const &fName, Track *tr) {
         tr->setJointOffsetRotation();
     }
 
-    else if (extension == "c3d") {
+    else if (extension == "c3d")
+    {
 
         tr->clearData();
         tr->type = C3D;
@@ -87,7 +95,8 @@ Parser::Parser(string const &fName, Track *tr) {
 
         C3dParser c3dParser(fileName, tr);
 
-        if (!tr->hasBoneList) {
+        if (!tr->hasBoneList)
+        {
 
             cout << "Warning (c3d file parsing): you should load a bonelist before the data." << endl;
         }
@@ -97,7 +106,8 @@ Parser::Parser(string const &fName, Track *tr) {
             tr->rotation.SetValidParam();
     }
 
-    else if (extension == "tsv") {
+    else if (extension == "tsv")
+    {
 
         tr->clearData();
         tr->type = TSV;
@@ -105,7 +115,8 @@ Parser::Parser(string const &fName, Track *tr) {
 
         TsvParser tsvParser(fileName, tr);
 
-        if (!tr->hasBoneList) {
+        if (!tr->hasBoneList)
+        {
 
             cout << "Warning (tsv file parsing): you should load a bonelist before the data." << endl;
         }
@@ -115,7 +126,8 @@ Parser::Parser(string const &fName, Track *tr) {
             tr->rotation.SetValidParam();
     }
 
-    else if (extension == "bvh") {
+    else if (extension == "bvh")
+    {
         tr->clear();
         tr->init();
         tr->type = BVH;
@@ -127,9 +139,9 @@ Parser::Parser(string const &fName, Track *tr) {
             tr->rotation.SetValidParam();
         tr->boneList->updateBoneChildrenName();
         tr->setJointOffsetRotation();
-
     }
-    else if (extension == "cmp") {
+    else if (extension == "cmp")
+    {
 
         tr->type = CMP;
         tr->setFileName(fileName.substr(sep + 1, dot - sep - 1));
@@ -140,57 +152,61 @@ Parser::Parser(string const &fName, Track *tr) {
         if (tr->hasRotation)
             tr->rotation.SetValidParam();
         //        tr->setJointOffsetRotation(true);
-
     }
-    else if (extension == "kin") {
+    else if (extension == "kin")
+    {
 
         tr->clearData();
         tr->type = KIN;
         tr->setFileName(fileName.substr(sep + 1, dot - sep - 1));
         KinParser kinParser(fileName, tr);
-        
-        if (!tr->hasNodeList) {
+
+        if (!tr->hasNodeList)
+        {
 
             cout << "Warning (flat txt file parsing): you should load a nodelist before the data." << endl;
         }
 
-        if (!tr->hasBoneList) {
+        if (!tr->hasBoneList)
+        {
 
             cout << "Warning (flat txt file parsing): you should load a bonelist before the data." << endl;
         }
 
-        if (tr->hasNodeList && tr->nodeList->size() != tr->nOfNodes()) {
+        if (tr->hasNodeList && tr->nodeList->size() != tr->nOfNodes())
+        {
 
             cout << "Warning (FlatParser): the number of nodes in the data does not correponds with the number of nodes in the nodelist. You should load a corresponding nodelist before the data." << endl;
         }
 
         tr->position.SetValidParam();
         if (tr->hasRotation)
-            tr->rotation.SetValidParam();        
+            tr->rotation.SetValidParam();
         if (tr->hasBoneList == true)
             tr->boneList->updateBoneChildrenName();
         tr->setJointOffsetRotation();
         tr->setFrameRate(30);
     }
 
-    else if (extension == "xml") {
+    else if (extension == "xml")
+    {
 
         tr->type = XML;
         tr->setFileName(fileName.substr(sep + 1, dot - sep - 1));
-		XmlArchiver myArchiver;
-		myArchiver.load(fileName);
+        XmlArchiver myArchiver;
+        myArchiver.load(fileName);
 
         //XmlParser xmlParser(fileName, tr);
-        
-		myArchiver.getTrack(*tr);
-		tr->position.SetValidParam();
-        if (tr->hasRotation) {
+
+        myArchiver.getTrack(*tr);
+        tr->position.SetValidParam();
+        if (tr->hasRotation)
+        {
             tr->rotation.SetValidParam();
             tr->setJointOffsetRotation();
         }
-    }    
+    }
 
-    else cout << "Invalid file format" << endl;
+    else
+        cout << "Invalid file format" << endl;
 }
-
-
