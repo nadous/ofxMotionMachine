@@ -11,7 +11,7 @@ MenuView::MenuView(SceneApp* app,
         playNames.push_back( "SCRUB MODE" );
         playNames.push_back( "PLAY MODE" );*/
 
-  vector<string> focusModes;  // Mode names
+  vector<const string> focusModes;  // Mode names
   focusModes.push_back("Focus on 3D Scene");
   focusModes.push_back("Focus on 2D Figures");
   focusModes.push_back("Focus on Annotation");
@@ -21,30 +21,30 @@ MenuView::MenuView(SceneApp* app,
   for (auto it = focusModes.begin(); it != focusModes.end(); ++it, ++i) {
     ofParameter<bool> modeParam;
     focusModeGroup.add(modeParam.set(*it, i == activeFocusMode));
-    modeParam.addListener(this, &MenuView::modeToggle);
+    modeParam.addListener(this, &MenuView::focusModeToggle);
   }
 
+  container->addSpacer(0, 10);
   ofxGuiContainer* focusModeGroupUi = container->addContainer(focusModeGroup);
   focusModeGroupUi->setExclusiveToggles(true);
   focusModeGroupUi->loadTheme("theme-radio.json");
 
-  container->addSpacer(0, 10);
-
-  vector<string> viewOptionsNames;
+  vector<const string> viewOptionsNames;
   viewOptionsNames.push_back("View Player");
   viewOptionsNames.push_back("View Options");
   viewOptionsNames.push_back("View Other Canvas");
 
-  container->addContainer(viewOptionsGroup);
+  container->addSpacer(0, 10);
+  container->addContainer(uiVisbilityGroup);
 
   unsigned short i = 0;
   for (auto it = focusModes.begin(); it != focusModes.end(); ++it, ++i) {
     ofParameter<bool> viewOptionParam;
-    viewOptionsGroup.add(viewOptionParam.set(*it, i != 1));
-    viewOptionParam.addListener(this, &MenuView::viewOptionsChange);
+    focusModeGroup.add(viewOptionParam.set(*it, i != 1));
+    viewOptionParam.addListener(this, &MenuView::focusModeChange);
   }
 
-  container->addContainer(viewOptionsGroup);
+  container->addContainer(focusModeGroup);
 
   //playRadio = addRadio( "ActivePlayMode", playNames, OFX_UI_ORIENTATION_VERTICAL );
   //addSpacer();
@@ -52,7 +52,7 @@ MenuView::MenuView(SceneApp* app,
   initCanvas();
 }
 
-void MenuView::modeToggle(bool& value) {
+void MenuView::focusModeToggle(bool& value) {
   if (!value) {
     return;
   }
@@ -60,13 +60,13 @@ void MenuView::modeToggle(bool& value) {
   for (unsigned short i = 0; i < focusModeGroup.size(); ++i) {
     if (focusModeGroup[i].cast<bool>() == true && activeFocusMode != i) {
       activeFocusMode = i;
-      modeChange(focusModeGroup[i].getName());
+      focusModeChange(focusModeGroup[i].getName());
       break;
     }
   }
 }
 
-void MenuView::modeChange(const string& name) {
+void MenuView::focusModeChange(const string& name) {
   ofLog(OF_LOG_NOTICE) << "new mode selected: " << name;
 
   if (name == "Focus on 3D Scene")
@@ -83,10 +83,10 @@ void MenuView::modeChange(const string& name) {
     else if( app->activeMode == MoMa::ANNOTATE ) app->showAnnotation( true );*/
 }
 
-void MenuView::viewOptionsChange(bool& value) {
-  for (unsigned short i = 0; i < viewOptionsGroup.size(); ++i) {
-    const string& name = viewOptionsGroup[i].getName();
-    const bool& value = viewOptionsGroup[i].cast<bool>();
+void MenuView::uiVisibilityChange(bool& value) {
+  for (unsigned short i = 0; i < focusModeGroup.size(); ++i) {
+    const string& name = focusModeGroup[i].getName();
+    const bool& value = focusModeGroup[i].cast<bool>();
 
     if (name == "View Player") {
       if (value)

@@ -2,11 +2,13 @@
 
 using namespace MoMa;
 
-Options::Options( SceneApp *_app, MoMa::Position position, MoMa::Position alignment, MoMa::Canvas *parentUI, int group, bool minified ) : 
-    app(_app),
-    Canvas( _app, "View Options", position, alignment, NULL, parentUI, group, minified ) {
-
-        /*addLabelToggle( "SHOW 3D SCENE", app->is3dScene );
+Options::Options(SceneApp* app,
+                 MoMa::Position position,
+                 MoMa::Position alignment,
+                 MoMa::Canvas* parentUI,
+                 int group,
+                 bool minified) : Canvas(app, "View Options", MoMa::Canvas::Type::Panel, position, alignment, NULL, parentUI, group, minified) {
+  /*addLabelToggle( "SHOW 3D SCENE", app->is3dScene );
         addLabelToggle( "SHOW 3D GROUND", app->isGround );
         addLabelToggle( "SHOW NODE NAMES", app->isNodeNames );
         addLabelToggle( "SHOW ANNOTATIONS", app->isAnnotation );
@@ -14,26 +16,70 @@ Options::Options( SceneApp *_app, MoMa::Position position, MoMa::Position alignm
         addLabelToggle( "SHOW CAPTIONS", app->isCaptions );
         addLabelToggle( "SHOW TIMELINE", app->isTimeline );*/
 
-        addSpacer();
-        toggle3DScene = addToggle( "Show 3D Scene", app->is3dScene );
-        toggleGround = addToggle( "Show 3D Ground", app->isGround );
-        toggleNodeNames = addToggle( "Show Node Names", app->isNodeNames );
-        toggleAnnotations = addToggle( "Show Annotations", app->isAnnotation );
-        toggleFigure = addToggle( "Show 2D Figures", app->isFigure );
-        toggleCaption = addToggle( "Show Captions", app->isCaptions );
-        toggleTimeline = addToggle( "Show Timeline", app->isTimeline );
-        toggleShortcuts = addToggle("Show Shortcuts", app->shortcutDisplayed);
+  viewOptionsGroup.add(_app->is3dScene.set("Show 3D Scene", true));
+  _app->is3dScene.addListener(this, &Options::viewOptionsChange);
 
-        //addLabelButton( "RESET OSC", false);
+  viewOptionsGroup.add(_app->isGround.set("Show 3D Ground", true));
+  _app->isGround.addListener(this, &Options::viewOptionsChange);
 
-        setVisible(false);
-        initCanvas();
+  viewOptionsGroup.add(_app->isNodeNames.set("Show Node Names", false));
+  _app->isNodeNames.addListener(this, &Options::viewOptionsChange);
+
+  viewOptionsGroup.add(_app->isAnnotation.set("Show Annotations", false));
+  _app->isAnnotation.addListener(this, &Options::viewOptionsChange);
+
+  viewOptionsGroup.add(_app->isFigure.set("Show 2D Figures", true));
+  _app->isFigure.addListener(this, &Options::viewOptionsChange);
+
+  viewOptionsGroup.add(_app->isCaptions.set("Show Captions", false));
+  _app->isCaptions.addListener(this, &Options::viewOptionsChange);
+
+  viewOptionsGroup.add(_app->isTimeline.set("Show Timeline", false));
+  _app->isTimeline.addListener(this, &Options::viewOptionsChange);
+
+  viewOptionsGroup.add(_app->shortcutDisplayed.set("Show Shortcuts", true));
+  _app->shortcutDisplayed.addListener(this, &Options::viewOptionsChange);
+
+  container->addSpacer(0, 10);
+  //   toggle3DScene = container->add<ofxGuiToggle>("Show 3D Scene", _app->is3dScene);
+  //   toggleGround = container->add<ofxGuiToggle>("Show 3D Ground", _app->isGround);
+  //   toggleNodeNames = container->add<ofxGuiToggle>("Show Node Names", _app->isNodeNames);
+  //   toggleAnnotations = container->add<ofxGuiToggle>("Show Annotations", _app->isAnnotation);
+  //   toggleFigure = container->add<ofxGuiToggle>("Show 2D Figures", _app->isFigure);
+  //   toggleCaption = container->add<ofxGuiToggle>("Show Captions", _app->isCaptions);
+  //   toggleTimeline = container->add<ofxGuiToggle>("Show Timeline", _app->isTimeline);
+  //   toggleShortcuts = container->add<ofxGuiToggle>("Show Shortcuts", _app->shortcutDisplayed);
+
+  //addLabelButton( "RESET OSC", false);
+
+  setVisible(false);
+  initCanvas();
 }
 
-void Options::canvasEvent( ofxUIEventArgs &e ) {
+void Options::viewOptionsChange(bool& value) {
+  for (unsigned short i = 0; i < viewOptionsGroup.size(); ++i) {
+    const bool& value = viewOptionsGroup[i].cast<bool>();
+    const string& name = viewOptionsGroup[i].getName();
 
-    string name = e.widget->getName(); // We grab the name and test it
-    /*if( e.widget->getKind() == OFX_UI_WIDGET_LABELTOGGLE ) {
+    if (name == "Show 3D Scene")
+      _app->show3dScene(value);
+    else if (name == "Show 3D Ground")
+      _app->showGround(value);
+    else if (name == "Show Node Names")
+      _app->showNodeNames(value);
+    else if (name == "Show Annotations")
+      _app->showAnnotation(value);
+    else if (name == "Show 2D Figures")
+      _app->showFigures(value);
+    else if (name == "Show Captions")
+      _app->showCaptions(value);
+    else if (name == "Show Timeline")
+      _app->showTimeline(value);
+    else if (name == "Show Shortcuts")
+      _app->displayShortcuts(value);
+  }
+  //   string name = e.widget->getName();  // We grab the name and test it
+  /*if( e.widget->getKind() == OFX_UI_WIDGET_LABELTOGGLE ) {
 
     ofxUILabelToggle *toggle = (ofxUILabelToggle *) e.widget; // Toggle
 
@@ -46,22 +92,28 @@ void Options::canvasEvent( ofxUIEventArgs &e ) {
     else if( name == "SHOW TIMELINE" ) app->showTimeline( toggle->getValue() );
     }*/
 
-    if( e.widget->getKind() == OFX_UI_WIDGET_TOGGLE ) {
+  //   if (e.widget->getKind() == OFX_UI_WIDGET_TOGGLE) {
+  //     ofxUIToggle* toggle = (ofxUIToggle*)e.widget;  // Toggle
 
-        ofxUIToggle *toggle = (ofxUIToggle *) e.widget; // Toggle
+  //     if (name == "Show 3D Scene")
+  //       _app->show3dScene(toggle->getValue());
+  //     else if (name == "Show 3D Ground")
+  //       _app->showGround(toggle->getValue());
+  //     else if (name == "Show Node Names")
+  //       _app->showNodeNames(toggle->getValue());
+  //     else if (name == "Show Annotations")
+  //       _app->showAnnotation(toggle->getValue());
+  //     else if (name == "Show 2D Figures")
+  //       _app->showFigures(toggle->getValue());
+  //     else if (name == "Show Captions")
+  //       _app->showCaptions(toggle->getValue());
+  //     else if (name == "Show Timeline")
+  //       _app->showTimeline(toggle->getValue());
+  //     else if (name == "Show Shortcuts")
+  //       _app->displayShortcuts(toggle->getValue());
+  //   }
 
-        if( name == "Show 3D Scene" ) app->show3dScene( toggle->getValue() );
-        else if( name == "Show 3D Ground" ) app->showGround( toggle->getValue() );
-        else if( name == "Show Node Names" ) app->showNodeNames( toggle->getValue() );
-        else if( name == "Show Annotations" ) app->showAnnotation( toggle->getValue() );
-        else if( name == "Show 2D Figures" ) app->showFigures( toggle->getValue() );
-        else if( name == "Show Captions" ) app->showCaptions( toggle->getValue() );
-        else if( name == "Show Timeline" ) app->showTimeline( toggle->getValue() );
-        else if (name == "Show Shortcuts") app->displayShortcuts(toggle->getValue());
-    }
-
-
-    /*else if(e.widget->getKind() == OFX_UI_WIDGET_LABELBUTTON ) {
+  /*else if(e.widget->getKind() == OFX_UI_WIDGET_LABELBUTTON ) {
 
     if( name == "RESET OSC" ) {
 
@@ -70,15 +122,13 @@ void Options::canvasEvent( ofxUIEventArgs &e ) {
     }*/
 }
 
-
 void Options::update() {
-
-    toggle3DScene->setValue(app->is3dScene );
-    toggleGround->setValue(app->isGround );
-    toggleNodeNames->setValue(app->isNodeNames );
-    toggleAnnotations->setValue(app->isAnnotation );
-    toggleFigure->setValue(app->isFigure );
-    toggleCaption->setValue(app->isCaptions );
-    toggleTimeline->setValue(app->isTimeline );
-    toggleShortcuts->setValue(app->shortcutDisplayed);
+  viewOptionsGroup.getBool("Show 3D Scene").set(_app->is3dScene);
+  viewOptionsGroup.getBool("Show 3D Ground").set(_app->isGround);
+  viewOptionsGroup.getBool("Show Node Names").set(_app->isNodeNames);
+  viewOptionsGroup.getBool("Show Annotations").set(_app->isAnnotation);
+  viewOptionsGroup.getBool("Show 2D Figures").set(_app->isFigure);
+  viewOptionsGroup.getBool("Show Captions").set(_app->isCaptions);
+  viewOptionsGroup.getBool("Show Timeline").set(_app->isTimeline);
+  viewOptionsGroup.getBool("Show Shortcuts").set(_app->shortcutDisplayed);
 }

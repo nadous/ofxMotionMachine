@@ -1,6 +1,6 @@
 /** OptionsView class
 *
-* Created by Mickaël Tits on 02/09/2015
+* Created by Mickaï¿½l Tits on 02/09/2015
 *
 */
 
@@ -17,25 +17,22 @@
 
 namespace MoMa {
 
-    //class SceneApp;
-    //class Canvas;
+//class SceneApp;
+//class Canvas;
 
-    class Options : public MoMa::Canvas {
+class Options : public MoMa::Canvas {
+ public:
+  Options(SceneApp* app, MoMa::Position position = DEFAULT, MoMa::Position alignment = MoMa::DEFAULT, MoMa::Canvas* parentUI = NULL, int group = 0, bool minified = false);
 
-    public:
+  void update();
+//   void canvasEvent(ofxUIEventArgs& e);
+  //void initCanvas();
 
-        Options( SceneApp *app, MoMa::Position position = DEFAULT, MoMa::Position alignment = MoMa::DEFAULT, MoMa::Canvas *parentUI = NULL, int group = 0, bool minified = false );
-
-
-        void update();
-        void canvasEvent( ofxUIEventArgs &e );
-        //void initCanvas();
-
-    protected:
-
-        SceneApp *app;
-        ofxUIToggle *toggle3DScene, *toggleGround, *toggleNodeNames, *toggleAnnotations, *toggleFigure, *toggleCaption, *toggleTimeline, *toggleShortcuts;
-    };
-}
+ protected:
+  ofParameterGroup viewOptionsGroup;
+  void viewOptionsChange(bool& value);
+  ofxGuiToggle *toggle3DScene, *toggleGround, *toggleNodeNames, *toggleAnnotations, *toggleFigure, *toggleCaption, *toggleTimeline, *toggleShortcuts;
+};
+}  // namespace MoMa
 
 #endif

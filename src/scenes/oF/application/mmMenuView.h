@@ -36,20 +36,11 @@ class MenuView : public MoMa::Canvas {
  protected:
   ofParameterGroup focusModeGroup;
   unsigned short activeFocusMode = 0;
-  void modeToggle(bool& value);
-  void modeChange(const string& name);
+  void focusModeToggle(bool& value);
+  void focusModeChange(const string& name);
 
-  ofParameterGroup viewOptionsGroup;
-  void viewOptionsChange(bool& value);
-
-  //   ofParameter<bool> playbarParam;
-  //   ofxGuiToggle* playBar;
-
-  //   ofParameter<bool> viewOptionsParam;
-  //   ofxGuiToggle* viewOptions;
-
-  //   ofParameter<bool> hideAllParam;
-  //   ofxGuiToggle* hideAll;
+  ofParameterGroup uiVisbilityGroup;
+  void uiVisibilityChange(bool& value);
 };
 }  // namespace MoMa
 
