@@ -17,26 +17,40 @@
 
 namespace MoMa {
 
-    //class SceneApp;
-    //class Canvas;
+//class SceneApp;
+//class Canvas;
 
-    class MenuView : public MoMa::Canvas {
+class MenuView : public MoMa::Canvas {
+ public:
+  MenuView(SceneApp* app,
+           MoMa::Position position = DEFAULT,
+           MoMa::Position alignment = MoMa::DEFAULT,
+           MoMa::Canvas* parentUI = NULL,
+           bool minified = false);
 
-    public:
+  void update();
+  void canvasEvent(ofEventArgs& e);
+  void reopenOtherCanvas();
+  void closeOtherCanvas();
 
-        MenuView( SceneApp *app, MoMa::Position position = DEFAULT, MoMa::Position alignment = MoMa::DEFAULT, MoMa::Canvas *parentUI = NULL, bool minified = false );
+ protected:
+  ofParameterGroup focusModeGroup;
+  unsigned short activeFocusMode = 0;
+  void modeToggle(bool& value);
+  void modeChange(const string& name);
 
-        void update();
-        void canvasEvent( ofEventArgs &e );
-        void reopenOtherCanvas();
-        void closeOtherCanvas();
-    protected:
-        
-        SceneApp *app;
-        ofxGuiRadio *modeRadio;//, *playRadio;
-        ofxToggle *playBar, *viewOptions, *hideAll;
-        std::vector<MoMa::Canvas*> closedCanvas;
-    };
-}
+  ofParameterGroup viewOptionsGroup;
+  void viewOptionsChange(bool& value);
+
+  //   ofParameter<bool> playbarParam;
+  //   ofxGuiToggle* playBar;
+
+  //   ofParameter<bool> viewOptionsParam;
+  //   ofxGuiToggle* viewOptions;
+
+  //   ofParameter<bool> hideAllParam;
+  //   ofxGuiToggle* hideAll;
+};
+}  // namespace MoMa
 
 #endif

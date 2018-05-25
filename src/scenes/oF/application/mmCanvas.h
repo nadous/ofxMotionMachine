@@ -52,6 +52,8 @@ enum Position {
 //class SceneApp;
 
 class Canvas {
+  ofEvent<string> radioChange;
+
  public:
   enum Type { Container,
               Group,
@@ -98,26 +100,22 @@ class Canvas {
   void setVisible(bool value);
   bool isVisible();
 
-  ofEvent<ofEventArgs> newGUIEvent;
-
-  bool hasKeyBoard = false;
-
   /** ofxGui updates. **/
   ofxGui gui;
   ofxGuiContainer* container;
 
  protected:
+  /** _app : pointer to the application, needed to interact with it */
+  SceneApp* _app;
+  
   /** virtual methods of ofxUISuperCanvas */
   virtual void update();
-
-  /** guiEvent : virtual method called by the event newGUIEvent (see mmCanvas) */
-  virtual void guiEvent(ofEventArgs& e);
-  virtual void canvasEvent(ofEventArgs& e);
 
   /** Canvas parameters (position and alignment relative to the parent, index in the vector of Canvass, and is the canvas minified at initialization) */
   Canvas *_relative, *_parent;
   Position _position, _alignment;
-
+  static std::vector<MoMa::Canvas*> closedCanvas;
+  
   const Type& _type;
 
   int _index, _group, _allIndex;
@@ -140,9 +138,6 @@ class Canvas {
   static void mainView();
 
  private:
-  /** _app : pointer to the application, needed to interact with it */
-  SceneApp* _app;
-
   /** Static vector storing addresses of main canvas */
   static std::vector<Canvas*> mainCanvas;
 
@@ -155,7 +150,6 @@ class Canvas {
   bool _isInitialized, _isShortCutDisabled;
   static int _limit;
   int savedMode;
-  static std::vector<MoMa::Canvas*> closedCanvas;
 };
 }  // namespace MoMa
 

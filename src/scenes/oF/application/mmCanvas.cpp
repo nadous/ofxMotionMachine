@@ -91,10 +91,10 @@ void Canvas::setupCanvas(const string& title) {
     container->setHidden(true);
   }
 
-  ofAddListener(newGUIEvent, this, &Canvas::guiEvent);
-  container->setBackgroundColor(ofColor(MoMa::DarkTurquoise, 190));
-  _isInitialized = false;
   savedMode = _app->activeMode;
+  container->setBackgroundColor(ofColor(MoMa::DarkTurquoise, 190));
+
+  _isInitialized = false;
   _isShortCutDisabled = false;
 }
 
@@ -480,32 +480,4 @@ void Canvas::mainView() {
 }
 
 void Canvas::update() {
-}
-
-void Canvas::guiEvent(ofEventArgs& e) {
-  // disable shortcuts when focus is on a textbox
-  if (hasKeyBoard) {
-    _app->disableShortcuts();
-    _isShortCutDisabled = true;
-  } else if (_isShortCutDisabled) {
-    _app->enableShortcuts();
-    _isShortCutDisabled = false;
-  }
-
-  /*if(e.widget->getKind() == OFX_UI_WIDGET_TEXTINPUT) {
-
-        ofxUITextInput *ti = (ofxUITextInput *) e.widget;
-        if(ti->getInputTriggerType() == OFX_UI_TEXTINPUT_ON_FOCUS)
-        {
-        _app->disableShortcuts();
-        }
-        else if(ti->getInputTriggerType() == OFX_UI_TEXTINPUT_ON_UNFOCUS)
-        {
-        _app->enableShortcuts();
-        }
-        }*/
-  canvasEvent(e);
-}
-
-void Canvas::canvasEvent(ofEventArgs& e) {
 }
