@@ -10,7 +10,7 @@ class SceneApp;
 
 #include "ofMain.h"
 #include "ofxOsc.h"
-#include "ofxGui.h"
+#include "ofxGuiExtended.h"
 
 #include "MoMa.h"
 #include "mmCam.h"

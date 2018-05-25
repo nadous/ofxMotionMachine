@@ -27,14 +27,14 @@ namespace MoMa {
         MenuView( SceneApp *app, MoMa::Position position = DEFAULT, MoMa::Position alignment = MoMa::DEFAULT, MoMa::Canvas *parentUI = NULL, bool minified = false );
 
         void update();
-        void canvasEvent( ofxUIEventArgs &e );
+        void canvasEvent( ofEventArgs &e );
         void reopenOtherCanvas();
         void closeOtherCanvas();
     protected:
         
         SceneApp *app;
         ofxGuiRadio *modeRadio;//, *playRadio;
-        ofxUIToggle *playBar, *viewOptions, *hideAll;
+        ofxToggle *playBar, *viewOptions, *hideAll;
         std::vector<MoMa::Canvas*> closedCanvas;
     };
 }

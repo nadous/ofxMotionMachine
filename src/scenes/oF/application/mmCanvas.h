@@ -33,115 +33,130 @@
 
 #include "mmSceneApp.h"
 #include "ofMain.h"
-#include "ofxGui.h"
+#include "ofxGuiExtended.h"
 
 namespace MoMa {
-    
-    enum Position {
-        
-        DEFAULT,
-        LEFT,
-        RIGHT,
-        ABOVE,
-        BELOW,
-        LEFTSIDE,
-        RIGHTSIDE,
-        TOP,
-        BOTTOM
-    };
-    
-    //class SceneApp;
-    
-    class Canvas : public ofxGuiGroup {
 
-    public:  
+enum Position {
+  DEFAULT,
+  LEFT,
+  RIGHT,
+  ABOVE,
+  BELOW,
+  LEFTSIDE,
+  RIGHTSIDE,
+  TOP,
+  BOTTOM
+};
 
-        Canvas( SceneApp *app, std::string title, Position position = DEFAULT, Position alignment = DEFAULT, Canvas *relative = NULL, Canvas *parent = NULL, int group = 1,  bool minified = false );  
-        Canvas( SceneApp *app, std::string title, Canvas *parent, int group = 1,  bool minified = false );
+//class SceneApp;
 
-        //~Canvas();
+class Canvas {
+ public:
+  enum Type { Container,
+              Group,
+              Panel };
 
-        /** setPos : set position of the canvas relative to another */
-        void setPos(Position position, Position alignment, Canvas* relative = NULL);
-        void remove();
+  Canvas(SceneApp* app,
+         const std::string& title,
+         const Type& type,
+         Position position = DEFAULT,
+         Position alignment = DEFAULT,
+         Canvas* relative = NULL,
+         Canvas* parent = NULL,
+         int group = 1,
+         bool minified = false);
 
-        /** resetPositions (static) : reset positions of the main canvas */
-        static void resetPositions();
+  Canvas(SceneApp* app,
+         const std::string& title,
+         const Type& type,
+         Canvas* parent,
+         int group = 1,
+         bool minified = false);
 
-        /** deleteCanvas (static) : delete all canvas */
-        static void deleteCanvas();
+  // ~Canvas();
 
-        static void openMainCanvas();
-        static bool canvasOpened();
-        std::vector<Canvas*>& getAllCanvas();
-        std::vector< std::vector<Canvas*> >& getChildren();
-        static void closeMainCanvas();
-        static void closeAllCanvas();
-        static void reopenCanvas();
-        static void disableAllCanvas();
-        static void enableAllCanvas();
-        void disableCanvas();
-        void enableCanvas();
+  /** setPos : set position of the canvas relative to another */
+  void setPos(Position position, Position alignment, Canvas* relative = NULL);
+  void remove();
 
+  /** resetPositions (static) : reset positions of the main canvas */
+  static void resetPositions();
 
-    protected : 
+  /** deleteCanvas (static) : delete all canvas */
+  static void deleteCanvas();
 
-        /** virtual methods of ofxUISuperCanvas, overriden for MoMa views management (3D view, 2D view and Canvas view) */
-        virtual void onMouseMoved(ofMouseEventArgs &mouse);
-        virtual void onMousePressed(ofMouseEventArgs &mouse);
-        virtual void onMouseReleased(ofMouseEventArgs &mouse);
+  static void openMainCanvas();
+  static bool canvasOpened();
+  std::vector<Canvas*>& getAllCanvas();
+  std::vector<std::vector<Canvas*>>& getChildren();
+  static void closeMainCanvas();
+  static void closeAllCanvas();
+  static void reopenCanvas();
 
-        /** virtual methods of ofxUISuperCanvas */
-        virtual void update();
-        virtual void windowResized(int w, int h);
+  void setMinified(bool value);
+  void setVisible(bool value);
+  bool isVisible();
 
-        /** guiEvent : virtual method called by the event newGUIEvent (see mmCanvas) */
-        virtual void guiEvent( ofxUIEventArgs &e ); 
-        virtual void canvasEvent( ofxUIEventArgs &e ); 
+  ofEvent<ofEventArgs> newGUIEvent;
 
-        /** Canvas parameters (position and alignment relative to the parent, index in the vector of Canvass, and is the canvas minified at initialization) */
-        Canvas *_relative, *_parent;
-        Position _position, _alignment;
-        int _index, _group, _allIndex;
-        bool _minified;
+  bool hasKeyBoard = false;
 
-        /** setupCanvas : setup the canvas */
-        void setupCanvas();
-        void closeDropDownLists();
+  /** ofxGui updates. **/
+  ofxGui gui;
+  ofxGuiContainer* container;
 
-        /** initCanvas : initialize the canvas (size, position and minified) */
-        virtual void initCanvas();
+ protected:
+  /** virtual methods of ofxUISuperCanvas */
+  virtual void update();
 
-        /** methods to open and close canvas */
-        void openChildren(int group = 0);
-        void openChild(int index, int group = 0);
-        void closeChildren( void );
-        void closeChildren(int groupe);
-        bool childrenOpened(int group = 0);    
+  /** guiEvent : virtual method called by the event newGUIEvent (see mmCanvas) */
+  virtual void guiEvent(ofEventArgs& e);
+  virtual void canvasEvent(ofEventArgs& e);
 
-        /** close all canvas exept main canvas */
-        static void mainView();
+  /** Canvas parameters (position and alignment relative to the parent, index in the vector of Canvass, and is the canvas minified at initialization) */
+  Canvas *_relative, *_parent;
+  Position _position, _alignment;
 
-    private :
+  const Type& _type;
 
-        /** _app : pointer to the application, needed to interact with it */
-        SceneApp *_app;      
+  int _index, _group, _allIndex;
+  bool _minified;
 
-        /** Static vector storing addresses of main canvas */
-        static std::vector<Canvas*> mainCanvas;   
+  /** setupCanvas : setup the canvas */
+  void setupCanvas(const std::string& title);
 
-        /** Static vector storing addresses of all canvas */
-        static std::vector<Canvas*> allCanvas;  
+  /** initCanvas : initialize the canvas (size, position and minified) */
+  virtual void initCanvas();
 
-        /** vector of vector storing addresses of children canvas (one vector for each group) */
-        std::vector< std::vector<Canvas*> > childrenCanvas;
-        
-        bool _isInitialized, _isCanvasHit, _isShortCutDisabled;
-        static int _limit;
-        int savedMode;
-        static std::vector<MoMa::Canvas*> closedCanvas;
-        bool _isControlEnabled;
-    };
-}
+  /** methods to open and close canvas */
+  void openChildren(int group = 0);
+  void openChild(int index, int group = 0);
+  void closeChildren(void);
+  void closeChildren(int groupe);
+  bool childrenOpened(int group = 0);
+
+  /** close all canvas exept main canvas */
+  static void mainView();
+
+ private:
+  /** _app : pointer to the application, needed to interact with it */
+  SceneApp* _app;
+
+  /** Static vector storing addresses of main canvas */
+  static std::vector<Canvas*> mainCanvas;
+
+  /** Static vector storing addresses of all canvas */
+  static std::vector<Canvas*> allCanvas;
+
+  /** vector of vector storing addresses of children canvas (one vector for each group) */
+  std::vector<std::vector<Canvas*>> childrenCanvas;
+
+  bool _isInitialized, _isShortCutDisabled;
+  static int _limit;
+  int savedMode;
+  static std::vector<MoMa::Canvas*> closedCanvas;
+};
+}  // namespace MoMa
 
 #endif

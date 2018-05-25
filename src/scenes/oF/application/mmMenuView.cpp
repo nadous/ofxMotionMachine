@@ -29,7 +29,7 @@ MenuView::MenuView( SceneApp *_app, MoMa::Position position, MoMa::Position alig
         initCanvas();
 }
 
-void MenuView::canvasEvent( ofxUIEventArgs &e ) {
+void MenuView::canvasEvent( ofEventArgs &e ) {
 
     string name = e.widget->getName(); // We grab the name and test it
 

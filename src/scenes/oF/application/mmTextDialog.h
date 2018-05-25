@@ -1,6 +1,6 @@
 /** PlayBar class
 *
-* Created by Mickaël Tits on 20/08/2015
+* Created by Mickaï¿½l Tits on 20/08/2015
 *
 */
 
@@ -8,29 +8,30 @@
 #define __mmTextDialog__
 
 #include "mmCanvas.h"
+#include "ofxGui.h"
 
-namespace MoMa {
+namespace MoMa
+{
 
-    class TextDialog : public MoMa::Canvas {
+class TextDialog : public MoMa::Canvas
+{
 
-    public:
+  public:
+    TextDialog(SceneApp *app);
 
-        TextDialog(SceneApp *app);
+    void canvasEvent(ofEventArgs &e);
+    std::string getText();
+    void set(std::string &textinput);
+    void setOff();
+    void initCanvas();
 
-        void canvasEvent(ofxUIEventArgs &e);
-        std::string getText();
-        void set(std::string &textinput);
-        void setOff();
-        void initCanvas();
+  protected:
+    SceneApp *app;
+    std::string *text;
+    std::string oldtext;
+    bool isTextEntered;
+    ofxTextField *txtInput;
+};
 
-    protected:
-
-        SceneApp *app;
-        std::string *text;
-        std::string oldtext;
-        bool isTextEntered;
-        ofxUITextInput* txtInput;
-    };
-
-}
+} // namespace MoMa
 #endif
