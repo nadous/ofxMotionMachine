@@ -12,6 +12,7 @@ TextDialog::TextDialog(SceneApp* app) : Canvas(app, "Text Dialog", MoMa::Canvas:
 
   ofxGuiGroup* header = root->addGroup("header", ofJson({{"flex-direction", "row"},
                                                          {"width", "100%"},
+                                                         {"background-color", "transparent"},
                                                          {"show-header", false}}));
   ofParameter<string> txtInput;
   txtInput.set("text");
@@ -25,15 +26,15 @@ TextDialog::TextDialog(SceneApp* app) : Canvas(app, "Text Dialog", MoMa::Canvas:
                                                      {"background-color", "transparent"},
                                                      {"show-header", false}}));
 
-  ofJson submitStyle = ofJson({{"type", "fullsize"},
+  ofJson buttonStyle = ofJson({{"type", "fullsize"},
                                {"text-align", "right"},
                                {"padding", "5 10 5 8"}});
 
   ofParameter<void> okParam, cancelParam;
-  form->add<ofxGuiButton>(okParam.set("OK"), submitStyle);
+  form->add<ofxGuiButton>(okParam.set("OK"), buttonStyle);
   okParam.addListener(this, &TextDialog::inputConfirm);
 
-  form->add<ofxGuiButton>(cancelParam.set("cancel"), submitStyle);
+  form->add<ofxGuiButton>(cancelParam.set("cancel"), buttonStyle);
   cancelParam.addListener(this, &TextDialog::inputCancel);
 
   // txtInput = addTextInput("Text Input", "", OFX_UI_FONT_SMALL);
