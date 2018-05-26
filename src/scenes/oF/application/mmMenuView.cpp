@@ -27,7 +27,7 @@ MenuView::MenuView(SceneApp* app,
   container->addSpacer(0, 10);
   ofxGuiContainer* focusModeGroupUi = container->addContainer(focusModeGroup);
   focusModeGroupUi->setExclusiveToggles(true);
-  focusModeGroupUi->loadTheme("theme-radio.json");
+  focusModeGroupUi->loadTheme(getAbsoluteResPath() + "GUI/theme-radio.json");
 
   vector<const string> viewOptionsNames;
   viewOptionsNames.push_back("View Player");

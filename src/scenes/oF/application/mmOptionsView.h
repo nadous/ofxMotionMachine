@@ -25,13 +25,13 @@ class Options : public MoMa::Canvas {
   Options(SceneApp* app, MoMa::Position position = DEFAULT, MoMa::Position alignment = MoMa::DEFAULT, MoMa::Canvas* parentUI = NULL, int group = 0, bool minified = false);
 
   void update();
-//   void canvasEvent(ofxUIEventArgs& e);
+  //   void canvasEvent(ofxUIEventArgs& e);
   //void initCanvas();
 
  protected:
   ofParameterGroup viewOptionsGroup;
   void viewOptionsChange(bool& value);
-  ofxGuiToggle *toggle3DScene, *toggleGround, *toggleNodeNames, *toggleAnnotations, *toggleFigure, *toggleCaption, *toggleTimeline, *toggleShortcuts;
+  //   ofxGuiToggle *toggle3DScene, *toggleGround, *toggleNodeNames, *toggleAnnotations, *toggleFigure, *toggleCaption, *toggleTimeline, *toggleShortcuts;
 };
 }  // namespace MoMa
 

@@ -15,33 +15,30 @@
 
 #include "MoMa.h"
 
-namespace MoMa
-{
+namespace MoMa {
 
-class VideoRecorder
-{
+class VideoRecorder {
+ public:
+  VideoRecorder(void);
+  void setup(void);
+  void setVideoFileName(string name);  // Set video name
+  void startVideoRecord(string name);  // Start video recording
+  void startVideoRecord(void);         // Start video recording
+  void stopVideoRecord(void);          // Stop video recording
+  void addFrame(ofImage& frame);       // Record this frame
+  bool isRecording(void);              // Are we recording?
 
-  public:
-    VideoRecorder(void);
-    void setup(void);
-    void setVideoFileName(string name); // Set video name
-    void startVideoRecord(string name); // Start video recording
-    void startVideoRecord(void);        // Start video recording
-    void stopVideoRecord(void);         // Stop video recording
-    void addFrame(ofImage &frame);      // Record this frame
-    bool isRecording(void);             // Are we recording?
-
-  protected:
-    bool isVideoRecord; // Record?
-    string videoFileName;
+ protected:
+  bool isVideoRecord;  // Record?
+  string videoFileName;
 
 #ifdef _WIN32
-    ofxQtVideoSaver recorder;
+  ofxQtVideoSaver recorder;
 #else
-    ofxVideoRecorder recorder;
+  ofxVideoRecorder recorder;
 #endif
 };
-} // namespace MoMa
+}  // namespace MoMa
 
 #endif
 

@@ -8,30 +8,32 @@
 #define __mmTextDialog__
 
 #include "mmCanvas.h"
-#include "ofxGui.h"
 
-namespace MoMa
-{
+namespace MoMa {
 
-class TextDialog : public MoMa::Canvas
-{
+class TextDialog : public MoMa::Canvas {
+ public:
+  TextDialog(SceneApp* app);
 
-  public:
-    TextDialog(SceneApp *app);
+  // void canvasEvent(ofEventArgs& e);
+  std::string getText();
+  void set(std::string& value);
+  void setOff();
+  void initCanvas();
 
-    void canvasEvent(ofEventArgs &e);
-    std::string getText();
-    void set(std::string &textinput);
-    void setOff();
-    void initCanvas();
+ protected:
+  std::string* text;
+  std::string oldtext;
+  bool isTextEntered;
 
-  protected:
-    SceneApp *app;
-    std::string *text;
-    std::string oldtext;
-    bool isTextEntered;
-    ofxTextField *txtInput;
+  ofParameter<string> txtInput;
+
+  void inputChange(std::string& value);
+
+  void inputConfirm();
+  void inputCancel();
+  // ofxTextField* txtInput;
 };
 
-} // namespace MoMa
+}  // namespace MoMa
 #endif

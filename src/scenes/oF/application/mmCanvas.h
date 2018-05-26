@@ -107,7 +107,7 @@ class Canvas {
  protected:
   /** _app : pointer to the application, needed to interact with it */
   SceneApp* _app;
-  
+
   /** virtual methods of ofxUISuperCanvas */
   virtual void update();
 
@@ -115,7 +115,7 @@ class Canvas {
   Canvas *_relative, *_parent;
   Position _position, _alignment;
   static std::vector<MoMa::Canvas*> closedCanvas;
-  
+
   const Type& _type;
 
   int _index, _group, _allIndex;
