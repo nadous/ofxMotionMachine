@@ -40,15 +40,15 @@ Options::Options(SceneApp* app,
   viewOptionsGroup.add(_app->shortcutDisplayed.set("Show Shortcuts", true));
   _app->shortcutDisplayed.addListener(this, &Options::viewOptionsChange);
 
-  container->addSpacer(0, 10);
-  //   toggle3DScene = container->add<ofxGuiToggle>("Show 3D Scene", _app->is3dScene);
-  //   toggleGround = container->add<ofxGuiToggle>("Show 3D Ground", _app->isGround);
-  //   toggleNodeNames = container->add<ofxGuiToggle>("Show Node Names", _app->isNodeNames);
-  //   toggleAnnotations = container->add<ofxGuiToggle>("Show Annotations", _app->isAnnotation);
-  //   toggleFigure = container->add<ofxGuiToggle>("Show 2D Figures", _app->isFigure);
-  //   toggleCaption = container->add<ofxGuiToggle>("Show Captions", _app->isCaptions);
-  //   toggleTimeline = container->add<ofxGuiToggle>("Show Timeline", _app->isTimeline);
-  //   toggleShortcuts = container->add<ofxGuiToggle>("Show Shortcuts", _app->shortcutDisplayed);
+  _container->addSpacer(0, 10);
+  //   toggle3DScene = _container->add<ofxGuiToggle>("Show 3D Scene", _app->is3dScene);
+  //   toggleGround = _container->add<ofxGuiToggle>("Show 3D Ground", _app->isGround);
+  //   toggleNodeNames = _container->add<ofxGuiToggle>("Show Node Names", _app->isNodeNames);
+  //   toggleAnnotations = _container->add<ofxGuiToggle>("Show Annotations", _app->isAnnotation);
+  //   toggleFigure = _container->add<ofxGuiToggle>("Show 2D Figures", _app->isFigure);
+  //   toggleCaption = _container->add<ofxGuiToggle>("Show Captions", _app->isCaptions);
+  //   toggleTimeline = _container->add<ofxGuiToggle>("Show Timeline", _app->isTimeline);
+  //   toggleShortcuts = _container->add<ofxGuiToggle>("Show Shortcuts", _app->shortcutDisplayed);
 
   //addLabelButton( "RESET OSC", false);
 

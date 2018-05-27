@@ -66,7 +66,6 @@ class PlayBar : public MoMa::Canvas {
   //   ofxUITextInput *timeinput, *speedinput;
   //   ofxUIMinimalSlider* timeslider;  // , *frslider;
   //   string libPath;
-  bool enteringSpeed;
   bool isNext, isPrev, nextspeed, prevspeed;
   double mywidth;
 };

@@ -4,10 +4,9 @@ using namespace MoMa;
 using namespace std;
 
 TextDialog::TextDialog(SceneApp* app) : Canvas(app, "Text Dialog", MoMa::Canvas::Type::Container, NULL) {
-  gui.setupFlexBoxLayout();
-  container->addSpacer(0, 10);
+  _container->addSpacer(0, 10);
 
-  ofxGuiGroup* root = container->addGroup("root", ofJson({{"width", "100%"},
+  ofxGuiGroup* root = _container->addGroup("root", ofJson({{"width", "100%"},
                                                           {"show-header", false}}));
 
   ofxGuiGroup* header = root->addGroup("header", ofJson({{"flex-direction", "row"},
@@ -52,8 +51,8 @@ void TextDialog::initCanvas() {
   // autoSizeToFitWidgets();
   setVisible(false);
   setMinified(false);
-  container->setPosition(round(ofGetWidth() * .5f - container->getWidth() * .5f),
-                         round(ofGetHeight() * .5f - container->getHeight() * .5f));
+  _container->setPosition(round(ofGetWidth() * .5f - _container->getWidth() * .5f),
+                         round(ofGetHeight() * .5f - _container->getHeight() * .5f));
 }
 
 string TextDialog::getText() {

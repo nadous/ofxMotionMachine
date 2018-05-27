@@ -11,7 +11,7 @@ MenuView::MenuView(SceneApp* app,
         playNames.push_back( "SCRUB MODE" );
         playNames.push_back( "PLAY MODE" );*/
 
-  vector<const string> focusModes;  // Mode names
+  vector<string> focusModes;  // Mode names
   focusModes.push_back("Focus on 3D Scene");
   focusModes.push_back("Focus on 2D Figures");
   focusModes.push_back("Focus on Annotation");
@@ -24,27 +24,27 @@ MenuView::MenuView(SceneApp* app,
     modeParam.addListener(this, &MenuView::focusModeToggle);
   }
 
-  container->addSpacer(0, 10);
-  ofxGuiContainer* focusModeGroupUi = container->addContainer(focusModeGroup);
+  _container->addSpacer(0, 10);
+  ofxGuiContainer* focusModeGroupUi = _container->addContainer(focusModeGroup);
   focusModeGroupUi->setExclusiveToggles(true);
   focusModeGroupUi->loadTheme(getAbsoluteResPath() + "GUI/theme-radio.json");
 
-  vector<const string> viewOptionsNames;
+  vector<string> viewOptionsNames;
   viewOptionsNames.push_back("View Player");
   viewOptionsNames.push_back("View Options");
   viewOptionsNames.push_back("View Other Canvas");
 
-  container->addSpacer(0, 10);
-  container->addContainer(uiVisbilityGroup);
+  _container->addSpacer(0, 10);
+  _container->addContainer(uiVisbilityGroup);
 
-  unsigned short i = 0;
+  i = 0;
   for (auto it = focusModes.begin(); it != focusModes.end(); ++it, ++i) {
     ofParameter<bool> viewOptionParam;
     focusModeGroup.add(viewOptionParam.set(*it, i != 1));
-    viewOptionParam.addListener(this, &MenuView::focusModeChange);
+    viewOptionParam.addListener(this, &MenuView::focusModeToggle);
   }
 
-  container->addContainer(focusModeGroup);
+  _container->addContainer(focusModeGroup);
 
   //playRadio = addRadio( "ActivePlayMode", playNames, OFX_UI_ORIENTATION_VERTICAL );
   //addSpacer();
@@ -67,7 +67,7 @@ void MenuView::focusModeToggle(bool& value) {
 }
 
 void MenuView::focusModeChange(const string& name) {
-  ofLog(OF_LOG_NOTICE) << "new mode selected: " << name;
+  ofLog(OF_LOG_NOTICE) << "focusModeChange";
 
   if (name == "Focus on 3D Scene")
     _app->setActiveMode(MoMa::SCENE3D);

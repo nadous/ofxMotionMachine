@@ -484,6 +484,8 @@ class SceneApp : public ofBaseApp {
   MoMa::PlayBar* playBar;
   MoMa::Options* optionsView;
   MoMa::TextDialog* labelEditor;
+
+  ofxGui gui;
 };
 }  // namespace MoMa
 

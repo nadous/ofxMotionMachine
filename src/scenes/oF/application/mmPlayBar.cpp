@@ -15,9 +15,8 @@ PlayBar::PlayBar(SceneApp* app,
     buttons.push_back("STOP");
     //buttons.push_back("NEXT");
     playRadio = addRadio("Bar",buttons,OFX_UI_ORIENTATION_HORIZONTAL,OFX_UI_FONT_SMALL );*/
-  gui.setupFlexBoxLayout();
 
-  ofxGuiGroup* root = container->addGroup("root", ofJson({{"width", "100%"},
+  ofxGuiGroup* root = _container->addGroup("root", ofJson({{"width", "100%"},
                                                           {"show-header", false}}));
 
   ofxGuiGroup* header = root->addGroup("header", ofJson({{"flex-direction", "row"},
@@ -113,8 +112,8 @@ PlayBar::PlayBar(SceneApp* app,
 
 void PlayBar::initCanvas() {
   setMinified(false);
-  container->setPosition(round(ofGetWidth() * .5f - container->getWidth() * .5f),
-                         round(ofGetHeight() - 20 - container->getHeight()));
+  _container->setPosition(round(ofGetWidth() * .5f - _container->getWidth() * .5f),
+                         round(ofGetHeight() - 20 - _container->getHeight()));
 }
 
 void PlayBar::play() {
@@ -256,9 +255,9 @@ void PlayBar::update() {
 
     frslider->getLabelWidget()->setLabel("framerate: " + ofToString(app->frameRate));*/
 
-  if (next) {
+  if (isNext) {
     _app->nextIndex();
-  } else if (prev) {
+  } else if (isPrev) {
     _app->previousIndex();
   }
   if (nextspeed) {

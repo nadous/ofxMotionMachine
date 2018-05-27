@@ -37,7 +37,6 @@ Canvas::Canvas(SceneApp* app,
   setupCanvas(title);
 }
 
-template <class T>
 Canvas::Canvas(SceneApp* app,
                const string& title,
                const Type& type,
@@ -55,21 +54,21 @@ Canvas::Canvas(SceneApp* app,
 }
 
 Canvas::~Canvas() {
-  if (container != NULL) {
-    delete container;
+  if (_container != NULL) {
+    delete _container;
   }
 }
 
 void Canvas::setupCanvas(const string& title) {
   switch (_type) {
     case Container:
-      container = gui.addContainer(title);
+      _container = gui.addContainer(title);
       break;
     case Group:
-      container = gui.addGroup(title);
+      _container = gui.addGroup(title);
       break;
     case Panel:
-      container = gui.addPanel(title);
+      _container = gui.addPanel(title);
       break;
   }
 
@@ -88,11 +87,11 @@ void Canvas::setupCanvas(const string& title) {
     _index = _parent->childrenCanvas[_group].size();
     _parent->childrenCanvas[_group].push_back(this);
 
-    container->setHidden(true);
+    _container->setHidden(true);
   }
 
   savedMode = _app->activeMode;
-  container->setBackgroundColor(ofColor(MoMa::DarkTurquoise, 190));
+  _container->setBackgroundColor(ofColor(MoMa::DarkTurquoise, 190));
 
   _isInitialized = false;
   _isShortCutDisabled = false;
@@ -126,12 +125,12 @@ void Canvas::initCanvas() {
     relative->setMinified(false);
     //relative->initCanvas();
 
-    float H = container->getHeight();
-    float W = container->getWidth();
-    float relativeX = relative->container->getX();
-    float relativeY = relative->container->getY();
-    float relativeH = relative->container->getHeight();
-    float relativeW = relative->container->getWidth();
+    float H = _container->getHeight();
+    float W = _container->getWidth();
+    float relativeX = relative->_container->getX();
+    float relativeY = relative->_container->getY();
+    float relativeH = relative->_container->getHeight();
+    float relativeW = relative->_container->getWidth();
 
     relative->setMinified(tmpminified);
     relative->initCanvas();
@@ -156,7 +155,7 @@ void Canvas::initCanvas() {
       else
         alignment = LEFT;
       _limit = 2;
-    } else if (relativeX + relativeW + 10 + W < ofGetWidth() - 10 - mainCanvas[0]->container->getWidth() - 10 && _limit < 4) {  // test window right limit (taking into account the first Canvas canvas supposed to be on the top/right corner)
+    } else if (relativeX + relativeW + 10 + W < ofGetWidth() - 10 - mainCanvas[0]->_container->getWidth() - 10 && _limit < 4) {  // test window right limit (taking into account the first Canvas canvas supposed to be on the top/right corner)
 
       position = RIGHT;
       if (_limit == 2)
@@ -170,7 +169,7 @@ void Canvas::initCanvas() {
       relative = NULL;
       _limit = 4;
       cout << "Too much mainCanvas for default handle\n";
-      container->setPosition(0, 0);
+      _container->setPosition(0, 0);
       return;
     }
   }
@@ -182,8 +181,8 @@ void Canvas::initCanvas() {
 }
 
 void Canvas::setPos(Position position, Position alignment, Canvas* relative) {
-  float H = this->container->getHeight();
-  float W = this->container->getWidth();
+  float H = this->_container->getHeight();
+  float W = this->_container->getWidth();
 
   //Default : Top, Right
   float xPos = ofGetWidth() - W - 10;
@@ -203,10 +202,10 @@ void Canvas::setPos(Position position, Position alignment, Canvas* relative) {
     bool tmpminified = relative->_minified;
     relative->setMinified(false);
 
-    float relativeX = relative->container->getX();
-    float relativeY = relative->container->getY();
-    float relativeH = relative->container->getHeight();
-    float relativeW = relative->container->getWidth();
+    float relativeX = relative->_container->getX();
+    float relativeY = relative->_container->getY();
+    float relativeH = relative->_container->getHeight();
+    float relativeW = relative->_container->getWidth();
     relative->setMinified(tmpminified);
     relative->initCanvas();
 
@@ -273,7 +272,7 @@ void Canvas::setPos(Position position, Position alignment, Canvas* relative) {
     }
   }
 
-  container->setPosition(xPos, yPos);
+  _container->setPosition(xPos, yPos);
 }
 
 void Canvas::resetPositions() {
@@ -442,16 +441,23 @@ void Canvas::reopenCanvas() {
 }
 
 void Canvas::setMinified(bool value) {
+  ofLog(OF_LOG_NOTICE) << "minifying: " << value;
+  ofLog(OF_LOG_NOTICE) << "types are: " << Type::Container << "\n"
+                       << Type::Group << "\n"
+                       << Type::Panel;
   _minified = value;
-  if (container == NULL) {
+
+  if (_container == NULL) {
     return;
   }
 
-  if (_type == Container) {
+  ofLog(OF_LOG_NOTICE) << "type is: " << typeid(_type).name();
+
+  if (_type == Type::Container) {
     return;
   }
 
-  ofxGuiGroup* group = static_cast<ofxGuiGroup*>(container);
+  ofxGuiGroup* group = static_cast<ofxGuiGroup*>(_container);
   if (_minified) {
     group->minimize();
   } else {
@@ -460,18 +466,18 @@ void Canvas::setMinified(bool value) {
 }
 
 void Canvas::setVisible(bool value) {
-  if (container == NULL) {
+  if (_container == NULL) {
     return;
   }
 
-  container->setHidden(!value);
+  _container->setHidden(!value);
 }
 
 bool Canvas::isVisible() {
-  if (container == NULL) {
+  if (_container == NULL) {
     return false;
   }
-  return !container->isHidden();
+  return !_container->isHidden();
 }
 
 void Canvas::mainView() {

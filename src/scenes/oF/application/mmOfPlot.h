@@ -17,7 +17,6 @@ class ofPlot;
 
 #include "ofMain.h"
 #include "ofxOsc.h"
-#include "ofxGui.h"
 
 #include "MoMa.h"
 #include "mmCam.h"

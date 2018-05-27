@@ -76,7 +76,7 @@ class Canvas {
          int group = 1,
          bool minified = false);
 
-  // ~Canvas();
+  ~Canvas();
 
   /** setPos : set position of the canvas relative to another */
   void setPos(Position position, Position alignment, Canvas* relative = NULL);
@@ -102,7 +102,7 @@ class Canvas {
 
   /** ofxGui updates. **/
   ofxGui gui;
-  ofxGuiContainer* container;
+  ofxGuiContainer* _container;
 
  protected:
   /** _app : pointer to the application, needed to interact with it */
@@ -116,7 +116,7 @@ class Canvas {
   Position _position, _alignment;
   static std::vector<MoMa::Canvas*> closedCanvas;
 
-  const Type& _type;
+  const Type _type;
 
   int _index, _group, _allIndex;
   bool _minified;
