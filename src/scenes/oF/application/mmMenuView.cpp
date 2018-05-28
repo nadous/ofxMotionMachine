@@ -24,28 +24,24 @@ MenuView::MenuView(SceneApp* app,
     modeParam.addListener(this, &MenuView::focusModeToggle);
   }
 
-  _container->addSpacer(0, 10);
   ofxGuiContainer* focusModeGroupUi = _container->addContainer(focusModeGroup);
   focusModeGroupUi->setExclusiveToggles(true);
-  focusModeGroupUi->loadTheme(getAbsoluteResPath() + "GUI/theme-radio.json");
+  focusModeGroupUi->loadTheme(getAbsoluteResPath() + "theme-radio.json");
 
-  vector<string> viewOptionsNames;
-  viewOptionsNames.push_back("View Player");
-  viewOptionsNames.push_back("View Options");
-  viewOptionsNames.push_back("View Other Canvas");
-
-  _container->addSpacer(0, 10);
-  _container->addContainer(uiVisbilityGroup);
+  vector<string> uiOptions;
+  uiOptions.push_back("View Player");
+  uiOptions.push_back("View Options");
+  uiOptions.push_back("View Other Canvas");
 
   i = 0;
-  for (auto it = focusModes.begin(); it != focusModes.end(); ++it, ++i) {
-    ofParameter<bool> viewOptionParam;
-    focusModeGroup.add(viewOptionParam.set(*it, i != 1));
-    viewOptionParam.addListener(this, &MenuView::focusModeToggle);
+  for (auto it = uiOptions.begin(); it != uiOptions.end(); ++it, ++i) {
+    ofParameter<bool> uiVisibilityParam;
+    uiOptionsGroup.add(uiVisibilityParam.set(*it, i != 1));
+    uiVisibilityParam.addListener(this, &MenuView::focusModeToggle);
   }
 
-  _container->addContainer(focusModeGroup);
-
+  _container->addContainer(uiOptionsGroup);
+  
   //playRadio = addRadio( "ActivePlayMode", playNames, OFX_UI_ORIENTATION_VERTICAL );
   //addSpacer();
 

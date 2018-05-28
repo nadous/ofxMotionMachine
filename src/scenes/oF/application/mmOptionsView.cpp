@@ -40,7 +40,8 @@ Options::Options(SceneApp* app,
   viewOptionsGroup.add(_app->shortcutDisplayed.set("Show Shortcuts", true));
   _app->shortcutDisplayed.addListener(this, &Options::viewOptionsChange);
 
-  _container->addSpacer(0, 10);
+  _container->add(viewOptionsGroup);
+
   //   toggle3DScene = _container->add<ofxGuiToggle>("Show 3D Scene", _app->is3dScene);
   //   toggleGround = _container->add<ofxGuiToggle>("Show 3D Ground", _app->isGround);
   //   toggleNodeNames = _container->add<ofxGuiToggle>("Show Node Names", _app->isNodeNames);

@@ -16,37 +16,30 @@ PlayBar::PlayBar(SceneApp* app,
     //buttons.push_back("NEXT");
     playRadio = addRadio("Bar",buttons,OFX_UI_ORIENTATION_HORIZONTAL,OFX_UI_FONT_SMALL );*/
 
-  ofxGuiGroup* root = _container->addGroup("root", ofJson({{"width", "100%"},
-                                                          {"show-header", false}}));
+  ofxGuiGroup* root = _container->addGroup("root", ofJson({{"display", "flex"}, {"width", 500}, {"show-header", false}}));
+
+  root->add<ofxGuiFloatSlider>(timeSliderParam.set(.0f), ofJson({{"width", "100%"},
+                                                                 {"precision", 2},
+                                                                 {"border-width", 0}}));
 
   ofxGuiGroup* header = root->addGroup("header", ofJson({{"flex-direction", "row"},
                                                          {"width", "100%"},
                                                          {"background-color", "transparent"},
                                                          {"show-header", false}}));
-  ofParameter<string> playLabel;
-  playLabel.set("Player");
-  header->add<ofxGuiLabel>(playLabel, ofJson({{"width", "100%"}}));
 
-  ofxGuiGroup* player = root->addGroup("player", ofJson({{"flex-direction", "row"},
-                                                         {"align-items", "space-around"},
-                                                         {"align-self", "flex-end"},
+  header->add<ofxGuiTextField>(timeParam.set("seconds", "0.0"), ofJson({{"width", "50%"}}));
+  header->add<ofxGuiFloatInputField>(timeSpeedParam.set("speed", _app->playSpeed, .1f, 100.f), ofJson({{"width", "50%"}}));
+
+  ofxGuiGroup* player = root->addGroup("player", ofJson({{"width", "100%"},
+                                                         {"flex-direction", "row"},
                                                          {"padding", 0},
                                                          {"background-color", "transparent"},
                                                          {"show-header", false}}));
 
-  header->add<ofxGuiTextField>(timeParam.set("time", "0.0"), ofJson({{"width", "50%"}}));
-  timeParam.addListener(this, &PlayBar::timeChange);
-
-  header->add<ofxGuiFloatInputField>(timeSpeedParam.set("speed", _app->playSpeed, .1f, 100.f), ofJson({{"width", "50%"}}));
-  timeSpeedParam.addListener(this, &PlayBar::timeSpeedChange);
-
-  // ofParameter<float> timeSlider;
-  root->add<ofxGuiFloatSlider>(timeSliderParam.set(.0f), ofJson({{"width", "100%"}, {"precision", 2}}));
-  timeSliderParam.addListener(this, &PlayBar::timeSliderChange);
-
   ofJson buttonStyle = ofJson({{"type", "fullsize"},
-                               {"text-align", "right"},
-                               {"padding", "5 10 5 8"}});
+                               {"width", "20%"},
+                               {"text-align", "center"},
+                               {"padding", "5 0"}});
 
   ofParameter<void> playParam, stopParam, prevParam, nextParam;
   ofParameter<bool> reverseParam;
@@ -68,7 +61,7 @@ PlayBar::PlayBar(SceneApp* app,
   player->add<ofxGuiButton>(nextParam.set(">|"), buttonStyle);
   nextParam.addListener(this, &PlayBar::next);
 
-  reverseButton = player->add<ofxGuiToggle>(reverseParam.set("<<", false));
+  reverseButton = player->add<ofxGuiToggle>(reverseParam.set("<<", false), buttonStyle);
   reverseParam.addListener(this, &PlayBar::reverse);
 
   // this above is useless
@@ -113,7 +106,7 @@ PlayBar::PlayBar(SceneApp* app,
 void PlayBar::initCanvas() {
   setMinified(false);
   _container->setPosition(round(ofGetWidth() * .5f - _container->getWidth() * .5f),
-                         round(ofGetHeight() - 20 - _container->getHeight()));
+                          round(ofGetHeight() - 20 - _container->getHeight()));
 }
 
 void PlayBar::play() {

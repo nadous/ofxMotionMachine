@@ -16,6 +16,7 @@ using namespace MoMa;
 vector<Canvas*> Canvas::mainCanvas;
 vector<Canvas*> Canvas::allCanvas;
 vector<Canvas*> Canvas::closedCanvas;
+
 int Canvas::_limit(0);
 
 Canvas::Canvas(SceneApp* app,
@@ -62,13 +63,13 @@ Canvas::~Canvas() {
 void Canvas::setupCanvas(const string& title) {
   switch (_type) {
     case Container:
-      _container = gui.addContainer(title);
+      _container = _app->gui.addContainer(title);
       break;
     case Group:
-      _container = gui.addGroup(title);
+      _container = _app->gui.addGroup(title);
       break;
     case Panel:
-      _container = gui.addPanel(title);
+      _container = _app->gui.addPanel(title);
       break;
   }
 
@@ -441,17 +442,11 @@ void Canvas::reopenCanvas() {
 }
 
 void Canvas::setMinified(bool value) {
-  ofLog(OF_LOG_NOTICE) << "minifying: " << value;
-  ofLog(OF_LOG_NOTICE) << "types are: " << Type::Container << "\n"
-                       << Type::Group << "\n"
-                       << Type::Panel;
   _minified = value;
 
   if (_container == NULL) {
     return;
   }
-
-  ofLog(OF_LOG_NOTICE) << "type is: " << typeid(_type).name();
 
   if (_type == Type::Container) {
     return;

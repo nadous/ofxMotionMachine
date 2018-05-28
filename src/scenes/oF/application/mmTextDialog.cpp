@@ -43,7 +43,6 @@ TextDialog::TextDialog(SceneApp* app) : Canvas(app, "Text Dialog", MoMa::Canvas:
   // setWidgetPosition(OFX_UI_WIDGET_POSITION_RIGHT);
 
   text = NULL;
-
   initCanvas();
 }
 

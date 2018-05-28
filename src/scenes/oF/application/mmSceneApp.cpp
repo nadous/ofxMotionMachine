@@ -9,7 +9,7 @@ using namespace arma;
 
 void MoMa::SceneApp::setup(ofEventArgs& args) {
   gui.setupFlexBoxLayout();
-
+  
   verbose = false;
   keyEnabled = true;
   mouseEnabled = true;

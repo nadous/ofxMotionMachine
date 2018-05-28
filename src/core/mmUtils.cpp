@@ -182,7 +182,7 @@ string MoMa::getAbsoluteResPath(void)
 
     /*#ifdef NDEBUG*/
     string appDir = getAbsoluteAppPath();
-    return (appDir + "data/resources/");
+    return (appDir + "/data/resources/");
     /*#else
     string libDir = getAbsoluteLibPath();
     return( libDir + "resources/" );

@@ -39,7 +39,7 @@ class MenuView : public MoMa::Canvas {
   void focusModeToggle(bool& value);
   void focusModeChange(const string& name);
 
-  ofParameterGroup uiVisbilityGroup;
+  ofParameterGroup uiOptionsGroup;
   void uiVisibilityChange(bool& value);
 };
 }  // namespace MoMa
