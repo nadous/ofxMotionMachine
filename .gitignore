@@ -28,6 +28,8 @@
 **.app/*
 *.exe
 *.out
+*/bin/*
+!*/bin/data
 
 # Exclude build folders
 
