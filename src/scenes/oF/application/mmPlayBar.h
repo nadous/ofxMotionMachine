@@ -32,41 +32,30 @@ class PlayBar : public MoMa::Canvas {
   void update();
   // void canvasEvent( ofxUIEventArgs &e );
   void initCanvas();
-  void pause();
 
  protected:
-  void play();
+  void pause();
   void stop();
   void next();
   void prev();
   void speedUp();
   void speedDown();
 
-  void scrub(bool& value);
-  void reverse(bool& value);
+  void playChange(bool& value);
+  void scrubChange(bool& value);
+  void timeChange(float& value);
 
-  void timeChange(string& value);
-  void timeSliderChange(float& value);
-
-  void timeSpeedChange(float& value);
-
-  ofParameter<float> timeSpeedParam, timeSliderParam;
-  ofParameter<string> timeParam;
   ofParameter<bool> scrubParam;
 
-  ofxGuiButton* playButton;
-  ofxGuiToggle* reverseButton;
-//   ofxGuiFloatSlider* timSlider;
   //ofxUIImageToggle *bt_play, *bt_pause;
   //   ofxUIImageToggle* bt_scrub;
   //   ofxUIImageButton *bt_play, *bt_stop, *bt_nextFrame, *bt_prevFrame, *bt_nextSpeed, *bt_prevSpeed;
-  bool playingState, enteringFrame, enteringSpeed;
   //   ofxUITextArea *txt_index, *txt_time, *textarea;
   //   ofxUILabel* textlabel;
   //   ofxUITextInput *timeinput, *speedinput;
   //   ofxUIMinimalSlider* timeslider;  // , *frslider;
   //   string libPath;
-  bool isNext, isPrev, nextspeed, prevspeed;
+//   bool isNext, isPrev;
   double mywidth;
 };
 }  // namespace MoMa

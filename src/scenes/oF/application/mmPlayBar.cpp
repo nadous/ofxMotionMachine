@@ -19,40 +19,45 @@ PlayBar::PlayBar(SceneApp* app,
   // ofxGuiGroup* root = _container->addGroup("root", ofJson({{"width", 500}, {"show-header", false}}));
   _container->setConfig(ofJson({{"width", 500}, {"show-header", false}}));
 
-  _container->add<ofxGuiFloatSlider>(timeSliderParam.set(.0f), ofJson({{"width", "100%"},
-                                                                 {"precision", 2},
-                                                                 {"border-width", 0}}));
+  ofxGuiGroup* header = _container->addGroup("header",
+                                             ofJson({{"flex-direction", "row"},
+                                                     {"width", "100%"},
+                                                     {"background-color", "transparent"},
+                                                     {"show-header", false}}));
 
-  ofxGuiGroup* header = _container->addGroup("header", ofJson({{"flex-direction", "row"},
-                                                               {"width", "100%"},
-                                                               {"background-color", "transparent"},
-                                                               {"show-header", false}}));
+  header->add<ofxGuiFloatSlider>(_app->timeParam.set("time", .0f, _app->lowBound.time(), _app->lowBound.time()),
+                                 ofJson({{"width", "80%"},
+                                         {"precision", 2},
+                                         {"border-width", 0}}));
 
-  header->add<ofxGuiTextField>(timeParam.set("seconds", "0.0"), ofJson({{"width", "50%"}}));
-  header->add<ofxGuiFloatInputField>(timeSpeedParam.set("speed", _app->playSpeed, .1f, 100.f), ofJson({{"width", "50%"}}));
+  _app->timeParam.addListener(this, &PlayBar::timeChange);
 
-  ofxGuiGroup* player = _container->addGroup("player", ofJson({{"width", "100%"},
-                                                         {"flex-direction", "row"},
-                                                         {"padding", 0},
-                                                         {"background-color", "transparent"},
-                                                         {"show-header", false}}));
+  header->add<ofxGuiFloatSlider>(_app->speedParam.set("speed", 1.f, 0.1f, 25.f),
+                                 ofJson({{"width", "20%"},
+                                         {"precision", 1}}));
+
+  ofxGuiGroup* player = _container->addGroup("player",
+                                             ofJson({{"width", "100%"},
+                                                     {"flex-direction", "row"},
+                                                     {"padding", 0},
+                                                     {"background-color", "transparent"},
+                                                     {"show-header", false}}));
 
   ofJson buttonStyle = ofJson({{"type", "fullsize"},
                                {"width", "20%"},
                                {"text-align", "center"},
                                {"padding", "5 0"}});
 
-  ofParameter<void> playParam, stopParam, prevParam, nextParam;
-  ofParameter<bool> reverseParam;
+  ofParameter<void> stopParam, prevParam, nextParam;
 
-  playButton = player->add<ofxGuiButton>(playParam.set(">"), buttonStyle);
-  playParam.addListener(this, &PlayBar::play);
+  player->add<ofxGuiToggle>(_app->playParam, buttonStyle);
+  _app->playParam.addListener(this, &PlayBar::playChange);
 
   player->add<ofxGuiButton>(stopParam.set("X"), buttonStyle);
   stopParam.addListener(this, &PlayBar::stop);
 
   player->add<ofxGuiToggle>(scrubParam.set("<>", false), buttonStyle);
-  scrubParam.addListener(this, &PlayBar::scrub);
+  scrubParam.addListener(this, &PlayBar::scrubChange);
 
   player->addSpacer(5, 0);
 
@@ -62,8 +67,7 @@ PlayBar::PlayBar(SceneApp* app,
   player->add<ofxGuiButton>(nextParam.set(">|"), buttonStyle);
   nextParam.addListener(this, &PlayBar::next);
 
-  reverseButton = player->add<ofxGuiToggle>(reverseParam.set("<<", false), buttonStyle);
-  reverseParam.addListener(this, &PlayBar::reverse);
+  player->add<ofxGuiToggle>(_app->reverseParam.set("<<", false), buttonStyle);
 
   // this above is useless
   // isNext = false;
@@ -73,7 +77,6 @@ PlayBar::PlayBar(SceneApp* app,
   // enteringFrame = false;
   // enteringSpeed = false;
 
-  playingState = app->isPlayback;
   setVisible(true);
   initCanvas();
 
@@ -110,25 +113,33 @@ void PlayBar::initCanvas() {
                           round(ofGetHeight() - 20 - _container->getHeight()));
 }
 
-void PlayBar::play() {
-  if (playingState) {
-    pause();
-  } else {
-    _app->setPlaybackMode(MoMa::PLAY);
-    _app->play();
-    playButton->setName("||");
-    playingState = true;
-  }
+void PlayBar::pause() {
+  if (_app->playParam)
+    _app->pause();
 }
 
 void PlayBar::stop() {
   _app->setPlaybackMode(MoMa::PLAY);
+  _app->playParam = false;
   _app->stop();
-  playButton->setName(">");
-  playingState = false;
 }
 
-void PlayBar::scrub(bool& value) {
+void PlayBar::playChange(bool& value) {
+  if (value) {
+    _app->play();
+    _app->playParam.setName("||");
+  } else {
+    _app->pause();
+    _app->playParam.setName(">");
+  }
+}
+
+void PlayBar::timeChange(float& value) {
+  pause();
+  _app->appMoment.setTime(value);
+}
+
+void PlayBar::scrubChange(bool& value) {
   if (value) {
     pause();
 
@@ -144,82 +155,22 @@ void PlayBar::scrub(bool& value) {
 
 void PlayBar::prev() {
   pause();
-  isPrev = true;
-  isNext = false;
+
+  _app->previousIndex();
+  update();
 }
 
 void PlayBar::next() {
   pause();
-  isNext = true;
-  isPrev = false;
-}
 
-void PlayBar::timeChange(string& value) {
-  if (!enteringFrame) {  //Beginning typing
-
-    pause();
-    enteringFrame = true;
-    timeParam = "";
-    // timeinput->setTextString("");
-  }
-
-  enteringFrame = false;
-  double mytime;
-
-  try {
-    mytime = stof(timeParam);
-    _app->appMoment.setTime(mytime);
-  } catch (const std::invalid_argument& ia) {
-    std::cerr << "Invalid timestamp: " << timeParam << '\n';
-    // timeValue = ofStringTimesInString(_app->getAppTime())
-    timeParam = ofToString(_app->getAppTime(), 2);
-  }
-}
-
-void PlayBar::reverse(bool& value) {
-  _app->setPlaybackMode(MoMa::PLAY);
-
-  if (value) {
-    nextspeed = false;
-    prevspeed = true;
-    reverseButton->setName(">>");
-  } else {
-    nextspeed = true;
-    prevspeed = false;
-    reverseButton->setName("<<");
-  }
-}
-
-void PlayBar::timeSpeedChange(float& value) {
-  if (!enteringSpeed) {  //Beginning typing
-    _app->setPlaybackMode(MoMa::PLAY);
-    enteringSpeed = true;
-    timeSpeedParam = .0f;
-  }
-
-  enteringSpeed = false;
-  _app->playSpeed = value;
-}
-
-void PlayBar::timeSliderChange(float& value) {
-  pause();
-  _app->appMoment.setTime(value);
+  _app->nextIndex();
+  update();
 }
 
 void PlayBar::update() {
   /*if( app->isPlaying() ) playRadio->activateToggle( "PLAY" );
     else if( app->getAppIndex()>0 ) playRadio->activateToggle( "PAUSE" );
     else playRadio->activateToggle( "STOP" );*/
-
-  if (playingState != _app->isPlaying()) {
-    playingState = _app->isPlaying();
-    if (playingState)
-      playButton->setName("||");
-    // bt_play->getImage()->loadImage(libPath + "GUI/bt_pause.png");
-    else
-      playButton->setName(">");
-    // bt_play->getImage()->loadImage(libPath + "GUI/bt_play.png");
-  }
 
   if (_app->playbackMode == MoMa::SCRUB)
     scrubParam = true;
@@ -231,34 +182,12 @@ void PlayBar::update() {
   //getCanvasTitle()->setLabel(ofToString(app->getAppTime()) + " s | frame " + ofToString(app->getAppIndex()));
   //txt_index->setTextString("Index : " + ofToString(app->getAppIndex()) );
 
-  timeSliderParam.setMin(_app->lowBound.time());
-  timeSliderParam.setMax(_app->highBound.time());
-  timeSliderParam = _app->getAppTime();
-
-  timeParam = ofToString(_app->getAppTime(), 2);
-
-  if (!enteringSpeed) {
-    timeSpeedParam = _app->playSpeed;
-  }
-  if (!enteringFrame) {
-    timeParam = ofToString(_app->getAppTime(), 2);
-  }
+  _app->timeParam = _app->getAppTime();
 
   /*if (app->frameRate > frslider->getMax()) frslider->setMax(1.5*app->frameRate);
     frslider->setValue(app->frameRate);
 
     frslider->getLabelWidget()->setLabel("framerate: " + ofToString(app->frameRate));*/
-
-  if (isNext) {
-    _app->nextIndex();
-  } else if (isPrev) {
-    _app->previousIndex();
-  }
-  if (nextspeed) {
-    _app->playSpeed = min(_app->playSpeed + 0.1, 100.0);
-  } else if (prevspeed) {
-    _app->playSpeed = max(_app->playSpeed - 0.1, 0.1);
-  }
 
   //Update text label
   /*string text;
@@ -270,12 +199,4 @@ void PlayBar::update() {
     if (app->lowBound.time() == app->minBound.time() && app->highBound.time() == app->maxBound.time()) text = text + "Hold z to zoom.";
     else text = text + "Press u to unzoom.";*/
   //textlabel->setLabel(text);
-}
-
-void PlayBar::pause() {
-  _app->setPlaybackMode(MoMa::PLAY);
-  _app->pause();
-  playingState = false;
-  playButton->setName(">");
-  // bt_play->getImage()->loadImage(libPath + "GUI/bt_play.png");
 }

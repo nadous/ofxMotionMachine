@@ -9,7 +9,7 @@ using namespace arma;
 
 void MoMa::SceneApp::setup(ofEventArgs& args) {
   gui.setupFlexBoxLayout();
-  
+
   verbose = false;
   keyEnabled = true;
   mouseEnabled = true;
@@ -48,10 +48,11 @@ void MoMa::SceneApp::setup(ofEventArgs& args) {
   showFigures(true);
   showTimeline(false);
 
-  isPlayback = false;
+  playParam.set(">", false);
+  speedParam.set("speed", 1.0f);
+
   frameRate = 100.0f;
   isBegin = true;
-  playSpeed = 1.0f;
 
   lowBound.setIndex(0, frameRate);
   highBound.setIndex(1, frameRate);
@@ -93,6 +94,10 @@ void MoMa::SceneApp::setup(ofEventArgs& args) {
 }
 
 void MoMa::SceneApp::update(ofEventArgs& args) {
+  if (playBar->isVisible()) {
+    playBar->update();
+  }
+
   if (mouseEnabled) {
     switch (activeMode) {
       case SCENE3D:
@@ -148,12 +153,18 @@ void MoMa::SceneApp::update(ofEventArgs& args) {
 
     case PLAY: {
       if (ofGetElapsedTimef() > 3.0f) {
-        double timeStep = playSpeed / ofGetFrameRate();
+        double timeStep = speedParam / ofGetFrameRate();
 
-        if (isPlayback) {  // appAtPos.time = appAtPos.time + timeStep;
-          // appAtPos.index = getIndexFromTime( appAtPos.time );
+        if (playParam) {  // appAtPos.time = appAtPos.time + timeStep;
+                          // appAtPos.index = getIndexFromTime( appAtPos.time );
 
-          appMoment.setTime(appMoment.time() + timeStep, frameRate);
+          double newTime = appMoment.time();
+          if (reverseParam)
+            newTime -= timeStep;
+          else
+            newTime += timeStep;
+
+          appMoment.setTime(newTime, frameRate);
 
           if (isBegin) {
             onReachBegin();
@@ -545,10 +556,10 @@ void MoMa::SceneApp::keyPressed(ofKeyEventArgs& key) {
       if (key.key == 'l')
         isTimeline = !isTimeline;  // Show/hide timeline
       if (key.key == OF_KEY_LEFT)
-        if (isPlayback == false)
+        if (!playParam)
           --appMoment;
       if (key.key == OF_KEY_RIGHT)
-        if (isPlayback == false)
+        if (!playParam)
           ++appMoment;
     }
 
@@ -583,19 +594,21 @@ void MoMa::SceneApp::keyPressed(ofKeyEventArgs& key) {
 
     if (playbackMode == PLAY) {
       if (key.key == ' ') {  // space like most play/pause
+        playParam = !playParam;
 
-        if (isPlaying())
+        if (playParam) {
           pause();
-        else
+        } else {
           play();  // Switch it
+        }
       }
 
       if (key.key == 'r') {  // 'r' like 'reset'
-
+        playParam = false;
         stop();
       }
 
-      if (!isPlaying()) {
+      if (!playParam) {
         if (key.key == OF_KEY_LEFT) {
           previousIndex();
         }
@@ -1564,12 +1577,10 @@ double MoMa::SceneApp::getHighBoundTime(void) const {
 }
 
 void MoMa::SceneApp::play(void) {
-  isPlayback = true;
   onStart();
 }
 
 void MoMa::SceneApp::pause(void) {
-  isPlayback = false;
   onPause();
 }
 
@@ -1577,9 +1588,8 @@ void MoMa::SceneApp::stop(void) {  // appAtPos.index = lowBound.index;
   // appAtPos.time = getTimeFromIndex( appAtPos.index );
 
   appMoment.setTime(lowBound.time(), frameRate);
-
-  isPlayback = false;
   isBegin = true;
+
   onStop();
 }
 
@@ -1599,10 +1609,6 @@ void MoMa::SceneApp::nextIndex(void) {
     appMoment.setIndex(appMoment.index() + 1, frameRate);  // Increment and update time
 
   // appAtPos.time = getTimeFromIndex( appAtPos.index );
-}
-
-bool MoMa::SceneApp::isPlaying(void) {
-  return (isPlayback);
 }
 
 void MoMa::SceneApp::zoom(double tMin, double tMax) {

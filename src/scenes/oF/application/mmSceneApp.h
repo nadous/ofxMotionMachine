@@ -277,7 +277,7 @@ class SceneApp : public ofBaseApp {
   void stop(void);           // Stop the sequence
   void previousIndex(void);  // Move backward of one index
   void nextIndex(void);      // Move Forward of one index
-  bool isPlaying(void);      // Is playing?
+  // bool isPlaying(void);      // Is playing?
 
   // - Screencasting-related methods -
 
@@ -422,13 +422,15 @@ class SceneApp : public ofBaseApp {
 
   // - Playback types -
 
-  int playbackMode;        // Playback mode flag
-  float frameRate;         // Frame rate from playback
-  bool isPlayback;         // Do we keep play it back?
-  MoMa::Moment appMoment;  // Current app moment
-  float fAppMomentIndex;   // Float moment index
-  bool isBegin;            // Is begin?
-  double playSpeed;        // Speed of the player time (default : 1.0)
+  int playbackMode;               // Playback mode flag
+  float frameRate;                // Frame rate from playback
+  ofParameter<bool> playParam;    // Do we keep play it back?
+  ofParameter<bool> reverseParam;    // Do we play in reverse?
+  MoMa::Moment appMoment;         // Current app moment
+  float fAppMomentIndex;          // Float moment index
+  bool isBegin;                   // Is begin?
+  ofParameter<float> timeParam;   // Time range for slider (in seconds)
+  ofParameter<float> speedParam;  // Speed of the player time (default : 1.0)
 
   // - Video recorder -
 
