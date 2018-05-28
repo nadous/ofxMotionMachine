@@ -151,6 +151,7 @@ struct _Feature {
 
 // -- Shortcuts to SceneApp skeleton colors --
 
+static const ofColor Black = ofColor(10, 10, 10);
 static const ofColor Turquoise = ofColor(79, 178, 248);
 static const ofColor DarkTurquoise = ofColor(50, 120, 200);
 static const ofColor Green = ofColor(0, 255, 0);
@@ -422,15 +423,15 @@ class SceneApp : public ofBaseApp {
 
   // - Playback types -
 
-  int playbackMode;               // Playback mode flag
-  float frameRate;                // Frame rate from playback
-  ofParameter<bool> playParam;    // Do we keep play it back?
-  ofParameter<bool> reverseParam;    // Do we play in reverse?
-  MoMa::Moment appMoment;         // Current app moment
-  float fAppMomentIndex;          // Float moment index
-  bool isBegin;                   // Is begin?
-  ofParameter<float> timeParam;   // Time range for slider (in seconds)
-  ofParameter<float> speedParam;  // Speed of the player time (default : 1.0)
+  int playbackMode;                // Playback mode flag
+  float frameRate;                 // Frame rate from playback
+  ofParameter<bool> playParam;     // Do we keep play it back?
+  ofParameter<bool> reverseParam;  // Do we play in reverse?
+  MoMa::Moment appMoment;          // Current app moment
+  float fAppMomentIndex;           // Float moment index
+  bool isBegin;                    // Is begin?
+  ofParameter<float> timeParam;    // Time range for slider (in seconds)
+  ofParameter<float> speedParam;   // Speed of the player time (default : 1.0)
 
   // - Video recorder -
 

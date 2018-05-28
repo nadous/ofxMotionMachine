@@ -182,6 +182,13 @@ void PlayBar::update() {
   //getCanvasTitle()->setLabel(ofToString(app->getAppTime()) + " s | frame " + ofToString(app->getAppIndex()));
   //txt_index->setTextString("Index : " + ofToString(app->getAppIndex()) );
 
+  if (!timeBoundary && _app->highBound.time() != 0) {
+    timeBoundary = true;
+
+    _app->timeParam.setMin(_app->lowBound.time());
+    _app->timeParam.setMax(_app->highBound.time());
+  }
+
   _app->timeParam = _app->getAppTime();
 
   /*if (app->frameRate > frslider->getMax()) frslider->setMax(1.5*app->frameRate);

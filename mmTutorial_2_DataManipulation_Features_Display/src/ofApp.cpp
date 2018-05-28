@@ -3,7 +3,7 @@
  *  @file ofApp.cpp
  *  @brief MotionMachine source file for empty example
  *  @copyright Numediart Institute, UMONS (c) 2015
- *  @author Mickaël Tits
+ *  @author Mickaï¿½l Tits
  *
 
  TUTORIAL DESCRIPTION

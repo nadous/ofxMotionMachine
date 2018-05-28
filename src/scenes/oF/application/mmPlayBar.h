@@ -46,6 +46,7 @@ class PlayBar : public MoMa::Canvas {
   void timeChange(float& value);
 
   ofParameter<bool> scrubParam;
+  bool timeBoundary;
 
   //ofxUIImageToggle *bt_play, *bt_pause;
   //   ofxUIImageToggle* bt_scrub;

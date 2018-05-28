@@ -4,30 +4,30 @@
 #include "MoMaUI.h"
 #include "ofMain.h"
 
-class ofApp : public MoMa::SceneApp
-{
+class ofApp : public MoMa::SceneApp {
+ public:
+  void setup(void);
+  void update(void);
 
-  public:
-	void setup(void);
-	void update(void);
+  void scene3d(void);
+  void scene2d(void);
+  void annotate(void);
 
-	void scene3d(void);
-	void scene2d(void);
-	void annotate(void);
+  void keyPressed(int key);
+  void keyReleased(int key);
 
-	void keyPressed(int key);
-	void keyReleased(int key);
+  void mousePressed(int x, int y, int button);
+  void mouseReleased(int x, int y, int button);
+  void mouseDragged(int x, int y, int button);
+  void mouseMoved(int x, int y);
 
-	void mousePressed(int x, int y, int button);
-	void mouseReleased(int x, int y, int button);
-	void mouseDragged(int x, int y, int button);
-	void mouseMoved(int x, int y);
+  void windowResized(int w, int h);
+  void dragEvent(ofDragInfo dragInfo);
+  void gotMessage(ofMessage msg);
 
-	void windowResized(int w, int h);
-	void dragEvent(ofDragInfo dragInfo);
-	void gotMessage(ofMessage msg);
+  MoMa::Trace COM;
 
-	MoMa::Trace COM;
-	MoMa::Track myTrack;
-	MoMa::Frame myFrame; 
+  MoMa::TimedVec mySpeed, myFilteredSpeed;
+  MoMa::Track myTrack, myFilteredTrack;
+  MoMa::Frame myFrame, myFilteredFrame;
 };
