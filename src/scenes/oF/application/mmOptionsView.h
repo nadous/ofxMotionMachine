@@ -29,8 +29,8 @@ class Options : public MoMa::Canvas {
   //void initCanvas();
 
  protected:
-  ofParameterGroup viewOptionsGroup;
-  void viewOptionsChange(bool& value);
+  ofParameterGroup optionsGroup;
+  void optionsChange(bool& value);
   //   ofxGuiToggle *toggle3DScene, *toggleGround, *toggleNodeNames, *toggleAnnotations, *toggleFigure, *toggleCaption, *toggleTimeline, *toggleShortcuts;
 };
 }  // namespace MoMa

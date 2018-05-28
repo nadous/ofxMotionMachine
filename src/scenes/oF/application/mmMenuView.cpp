@@ -35,13 +35,13 @@ MenuView::MenuView(SceneApp* app,
 
   i = 0;
   for (auto it = uiOptions.begin(); it != uiOptions.end(); ++it, ++i) {
-    ofParameter<bool> uiVisibilityParam;
-    uiOptionsGroup.add(uiVisibilityParam.set(*it, i != 1));
-    uiVisibilityParam.addListener(this, &MenuView::focusModeToggle);
+    ofParameter<bool> uiOptionParam;
+    uiOptionsGroup.add(uiOptionParam.set(*it, i != 1));
+    uiOptionParam.addListener(this, &MenuView::uiOptionsChange);
   }
 
   _container->addContainer(uiOptionsGroup);
-  
+
   //playRadio = addRadio( "ActivePlayMode", playNames, OFX_UI_ORIENTATION_VERTICAL );
   //addSpacer();
 
@@ -63,8 +63,6 @@ void MenuView::focusModeToggle(bool& value) {
 }
 
 void MenuView::focusModeChange(const string& name) {
-  ofLog(OF_LOG_NOTICE) << "focusModeChange";
-
   if (name == "Focus on 3D Scene")
     _app->setActiveMode(MoMa::SCENE3D);
   else if (name == "Focus on 2D Figures")
@@ -79,10 +77,10 @@ void MenuView::focusModeChange(const string& name) {
     else if( app->activeMode == MoMa::ANNOTATE ) app->showAnnotation( true );*/
 }
 
-void MenuView::uiVisibilityChange(bool& value) {
-  for (unsigned short i = 0; i < focusModeGroup.size(); ++i) {
-    const string& name = focusModeGroup[i].getName();
-    const bool& value = focusModeGroup[i].cast<bool>();
+void MenuView::uiOptionsChange(bool& value) {
+  for (unsigned short i = 0; i < uiOptionsGroup.size(); ++i) {
+    const string& name = uiOptionsGroup[i].getName();
+    const bool& value = uiOptionsGroup[i].cast<bool>();
 
     if (name == "View Player") {
       if (value)

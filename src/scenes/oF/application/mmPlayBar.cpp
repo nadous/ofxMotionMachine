@@ -16,21 +16,22 @@ PlayBar::PlayBar(SceneApp* app,
     //buttons.push_back("NEXT");
     playRadio = addRadio("Bar",buttons,OFX_UI_ORIENTATION_HORIZONTAL,OFX_UI_FONT_SMALL );*/
 
-  ofxGuiGroup* root = _container->addGroup("root", ofJson({{"display", "flex"}, {"width", 500}, {"show-header", false}}));
+  // ofxGuiGroup* root = _container->addGroup("root", ofJson({{"width", 500}, {"show-header", false}}));
+  _container->setConfig(ofJson({{"width", 500}, {"show-header", false}}));
 
-  root->add<ofxGuiFloatSlider>(timeSliderParam.set(.0f), ofJson({{"width", "100%"},
+  _container->add<ofxGuiFloatSlider>(timeSliderParam.set(.0f), ofJson({{"width", "100%"},
                                                                  {"precision", 2},
                                                                  {"border-width", 0}}));
 
-  ofxGuiGroup* header = root->addGroup("header", ofJson({{"flex-direction", "row"},
-                                                         {"width", "100%"},
-                                                         {"background-color", "transparent"},
-                                                         {"show-header", false}}));
+  ofxGuiGroup* header = _container->addGroup("header", ofJson({{"flex-direction", "row"},
+                                                               {"width", "100%"},
+                                                               {"background-color", "transparent"},
+                                                               {"show-header", false}}));
 
   header->add<ofxGuiTextField>(timeParam.set("seconds", "0.0"), ofJson({{"width", "50%"}}));
   header->add<ofxGuiFloatInputField>(timeSpeedParam.set("speed", _app->playSpeed, .1f, 100.f), ofJson({{"width", "50%"}}));
 
-  ofxGuiGroup* player = root->addGroup("player", ofJson({{"width", "100%"},
+  ofxGuiGroup* player = _container->addGroup("player", ofJson({{"width", "100%"},
                                                          {"flex-direction", "row"},
                                                          {"padding", 0},
                                                          {"background-color", "transparent"},

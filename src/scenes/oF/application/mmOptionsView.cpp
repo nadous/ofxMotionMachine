@@ -7,7 +7,7 @@ Options::Options(SceneApp* app,
                  MoMa::Position alignment,
                  MoMa::Canvas* parentUI,
                  int group,
-                 bool minified) : Canvas(app, "View Options", MoMa::Canvas::Type::Panel, position, alignment, NULL, parentUI, group, minified) {
+                 bool minified) : Canvas(app, "UI Options", MoMa::Canvas::Type::Group, position, alignment, NULL, parentUI, group, minified) {
   /*addLabelToggle( "SHOW 3D SCENE", app->is3dScene );
         addLabelToggle( "SHOW 3D GROUND", app->isGround );
         addLabelToggle( "SHOW NODE NAMES", app->isNodeNames );
@@ -16,31 +16,31 @@ Options::Options(SceneApp* app,
         addLabelToggle( "SHOW CAPTIONS", app->isCaptions );
         addLabelToggle( "SHOW TIMELINE", app->isTimeline );*/
 
-  viewOptionsGroup.add(_app->is3dScene.set("Show 3D Scene", true));
-  _app->is3dScene.addListener(this, &Options::viewOptionsChange);
+  optionsGroup.add(_app->is3dScene.set("Show 3D Scene", true));
+  _app->is3dScene.addListener(this, &Options::optionsChange);
 
-  viewOptionsGroup.add(_app->isGround.set("Show 3D Ground", true));
-  _app->isGround.addListener(this, &Options::viewOptionsChange);
+  optionsGroup.add(_app->isGround.set("Show 3D Ground", true));
+  _app->isGround.addListener(this, &Options::optionsChange);
 
-  viewOptionsGroup.add(_app->isNodeNames.set("Show Node Names", false));
-  _app->isNodeNames.addListener(this, &Options::viewOptionsChange);
+  optionsGroup.add(_app->isNodeNames.set("Show Node Names", false));
+  _app->isNodeNames.addListener(this, &Options::optionsChange);
 
-  viewOptionsGroup.add(_app->isAnnotation.set("Show Annotations", false));
-  _app->isAnnotation.addListener(this, &Options::viewOptionsChange);
+  optionsGroup.add(_app->isAnnotation.set("Show Annotations", false));
+  _app->isAnnotation.addListener(this, &Options::optionsChange);
 
-  viewOptionsGroup.add(_app->isFigure.set("Show 2D Figures", true));
-  _app->isFigure.addListener(this, &Options::viewOptionsChange);
+  optionsGroup.add(_app->isFigure.set("Show 2D Figures", true));
+  _app->isFigure.addListener(this, &Options::optionsChange);
 
-  viewOptionsGroup.add(_app->isCaptions.set("Show Captions", false));
-  _app->isCaptions.addListener(this, &Options::viewOptionsChange);
+  optionsGroup.add(_app->isCaptions.set("Show Captions", false));
+  _app->isCaptions.addListener(this, &Options::optionsChange);
 
-  viewOptionsGroup.add(_app->isTimeline.set("Show Timeline", false));
-  _app->isTimeline.addListener(this, &Options::viewOptionsChange);
+  optionsGroup.add(_app->isTimeline.set("Show Timeline", false));
+  _app->isTimeline.addListener(this, &Options::optionsChange);
 
-  viewOptionsGroup.add(_app->shortcutDisplayed.set("Show Shortcuts", true));
-  _app->shortcutDisplayed.addListener(this, &Options::viewOptionsChange);
+  optionsGroup.add(_app->shortcutDisplayed.set("Show Shortcuts", true));
+  _app->shortcutDisplayed.addListener(this, &Options::optionsChange);
 
-  _container->add(viewOptionsGroup);
+  _container->add(optionsGroup);
 
   //   toggle3DScene = _container->add<ofxGuiToggle>("Show 3D Scene", _app->is3dScene);
   //   toggleGround = _container->add<ofxGuiToggle>("Show 3D Ground", _app->isGround);
@@ -57,10 +57,10 @@ Options::Options(SceneApp* app,
   initCanvas();
 }
 
-void Options::viewOptionsChange(bool& value) {
-  for (unsigned short i = 0; i < viewOptionsGroup.size(); ++i) {
-    const bool& value = viewOptionsGroup[i].cast<bool>();
-    const string& name = viewOptionsGroup[i].getName();
+void Options::optionsChange(bool& value) {
+  for (unsigned short i = 0; i < optionsGroup.size(); ++i) {
+    const bool& value = optionsGroup[i].cast<bool>();
+    const string& name = optionsGroup[i].getName();
 
     if (name == "Show 3D Scene")
       _app->show3dScene(value);
@@ -124,12 +124,12 @@ void Options::viewOptionsChange(bool& value) {
 }
 
 void Options::update() {
-  viewOptionsGroup.getBool("Show 3D Scene").set(_app->is3dScene);
-  viewOptionsGroup.getBool("Show 3D Ground").set(_app->isGround);
-  viewOptionsGroup.getBool("Show Node Names").set(_app->isNodeNames);
-  viewOptionsGroup.getBool("Show Annotations").set(_app->isAnnotation);
-  viewOptionsGroup.getBool("Show 2D Figures").set(_app->isFigure);
-  viewOptionsGroup.getBool("Show Captions").set(_app->isCaptions);
-  viewOptionsGroup.getBool("Show Timeline").set(_app->isTimeline);
-  viewOptionsGroup.getBool("Show Shortcuts").set(_app->shortcutDisplayed);
+  optionsGroup.getBool("Show 3D Scene").set(_app->is3dScene);
+  optionsGroup.getBool("Show 3D Ground").set(_app->isGround);
+  optionsGroup.getBool("Show Node Names").set(_app->isNodeNames);
+  optionsGroup.getBool("Show Annotations").set(_app->isAnnotation);
+  optionsGroup.getBool("Show 2D Figures").set(_app->isFigure);
+  optionsGroup.getBool("Show Captions").set(_app->isCaptions);
+  optionsGroup.getBool("Show Timeline").set(_app->isTimeline);
+  optionsGroup.getBool("Show Shortcuts").set(_app->shortcutDisplayed);
 }
