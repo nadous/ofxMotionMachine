@@ -46,9 +46,7 @@ void mmCam::update(ofEventArgs& args) {
 }
 //----------------------------------------
 void mmCam::updateScroll(ofMouseEventArgs& args) {
-  moveZ += args.scrollY * 2;
-  bApplyInertia = true;
-  updateTranslation();
+  setDistance(getDistance() + args.scrollY * 20);
 }
 
 //----------------------------------------
