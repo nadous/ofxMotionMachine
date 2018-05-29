@@ -88,6 +88,7 @@ class mmCam : public ofCamera {
   void updateRotation();
   void updateTranslation();
   void update(ofEventArgs& args);
+  void updateScroll(ofMouseEventArgs& args);
   void updateMouse();
   void moveLikeHuman();    // avoid camera to see under the floor.
   void rotateLikeHuman();  // correct current camera rotation to always watch upside-down.
