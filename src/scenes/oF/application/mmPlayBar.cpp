@@ -25,10 +25,10 @@ PlayBar::PlayBar(SceneApp* app,
                                                      {"background-color", "transparent"},
                                                      {"show-header", false}}));
 
-  header->add<ofxGuiFloatSlider>(_app->timeParam.set("time", .0f, _app->lowBound.time(), _app->lowBound.time()),
-                                 ofJson({{"width", "80%"},
-                                         {"precision", 2},
-                                         {"border-width", 0}}));
+  timeSlider = header->add<ofxGuiFloatSlider>(_app->timeParam.set("time", .0f, _app->lowBound.time(), _app->lowBound.time()),
+                                              ofJson({{"width", "80%"},
+                                                      {"precision", 2},
+                                                      {"border-width", 0}}));
 
   _app->timeParam.addListener(this, &PlayBar::timeChange);
 
@@ -135,8 +135,10 @@ void PlayBar::playChange(bool& value) {
 }
 
 void PlayBar::timeChange(float& value) {
-  pause();
-  _app->appMoment.setTime(value);
+  if (timeSlider->isMousePressed()) {
+    pause();
+    _app->appMoment.setTime(value);
+  }
 }
 
 void PlayBar::scrubChange(bool& value) {

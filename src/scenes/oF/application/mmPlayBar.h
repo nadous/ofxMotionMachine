@@ -45,6 +45,8 @@ class PlayBar : public MoMa::Canvas {
   void scrubChange(bool& value);
   void timeChange(float& value);
 
+  ofxGuiFloatSlider* timeSlider;
+
   ofParameter<bool> scrubParam;
   bool timeBoundary;
 
@@ -56,7 +58,7 @@ class PlayBar : public MoMa::Canvas {
   //   ofxUITextInput *timeinput, *speedinput;
   //   ofxUIMinimalSlider* timeslider;  // , *frslider;
   //   string libPath;
-//   bool isNext, isPrev;
+  //   bool isNext, isPrev;
   double mywidth;
 };
 }  // namespace MoMa

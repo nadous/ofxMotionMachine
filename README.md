@@ -1,9 +1,13 @@
 # [MotionMachine](http://motionmachine.org)
-![mmOFXGuiExtended](resources/mmOFXGuiExtended.gif)
+MotionMachine is a C++ software toolkit for rapid prototyping of motion feature extraction and motion-based interaction design. It encapsulates the complexity of motion capture data processing into an intuitive and easy-to-use set of APIs, associated with the openFrameworks environment for visualisation. MotionMachine is a new framework designed for “sense-making”, i.e. enabling the exploration of motion-related data so as to develop new kinds of analysis pipelines and/or interactive applications.
 
 ### with `ofxUI` dependency removed in favor of [ofxGuiExtended](https://github.com/frauzufall/ofxGuiExtended)...
 
-MotionMachine is a C++ software toolkit for rapid prototyping of motion feature extraction and motion-based interaction design. It encapsulates the complexity of motion capture data processing into an intuitive and easy-to-use set of APIs, associated with the openFrameworks environment for visualisation. MotionMachine is a new framework designed for “sense-making”, i.e. enabling the exploration of motion-related data so as to develop new kinds of analysis pipelines and/or interactive applications.
+![mmOFXGuiExtended](resources/mmOFXGuiExtended.gif)
+
+Tested on Linux with and compiled againt `oF 0.10.0`; annotations and features' UI panel are yet to be tested.
+
+
 
 # How to install ?
 ofxMotionMachine is an openframeworks addon. 
@@ -26,14 +30,10 @@ You can find a series of tutorials for installation and first use of MotionMachi
 
 
 Old version of MotionMachine (the following explanations are deprecated)
-----------------------------------------------------------------------
+------------------------------------------------------------------------
 
 
 [![MotionMachine Tutorials](http://i.imgur.com/7NVZphS.png)](https://youtu.be/-00fcnDebVE?list=PLBdzvc6iEN7WqJqM1oi1nwyGaLZHu_QB3 "MotionMachine Tutorials")
-
-
-
-
 
 
 Mac OS (Xcode)
