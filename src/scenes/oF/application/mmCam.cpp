@@ -20,7 +20,7 @@ mmCam::mmCam()
     bDoTranslate = false;
     bValidClick = false;
     bEnableMouseMiddleButton = true;
-    doTranslationKey = 'm';
+    doTranslationKey = OF_KEY_SHIFT;
 
     reset();
     enableMouseInput();
