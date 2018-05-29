@@ -490,7 +490,7 @@ void MoMa::SceneApp::draw(ofEventArgs& args) {
     else if (activeMode == MoMa::ANNOTATE)
       text2 = "Press 2/3 for 2D/3D focus. ";
     if (lowBound.time() == minBound.time() && highBound.time() == maxBound.time())
-      text3 = "Hold z to zoom.";
+      text3 = "Hold Ctrl to zoom.";
     else
       text3 = "Press u to unzoom.";
     ofPushStyle();
@@ -563,8 +563,10 @@ void MoMa::SceneApp::keyPressed(ofKeyEventArgs& key) {
           ++appMoment;
     }
 
-    if (key.key == 'z')
+    if (key.key == OF_KEY_CONTROL) {
       isZoom = true;  // 'z' like 'zoom'
+      ofLogNotice() << "should zoom: " << timeParam;
+    }
     if (key.key == 'u')
       showAll();  // 'u' like 'unzoom'
 
@@ -636,7 +638,7 @@ void MoMa::SceneApp::keyReleased(ofKeyEventArgs& key) {
       }
     }
 
-    if (key.key == 'z')
+    if (key.key == OF_KEY_CONTROL)
       isZoom = false;
 
     switch (activeMode) {
