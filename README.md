@@ -5,7 +5,7 @@ MotionMachine is a C++ software toolkit for rapid prototyping of motion feature 
 
 ![mmOFXGuiExtended](resources/mmOFXGuiExtended.gif)
 
-Tested on Linux with and compiled againt `oF 0.10.0`; feature's view & file drag&drop  has not been tested; uses an exposed but unimplemented `isMousePressed()` of `ofxGuiExtended`(see PR  [#67](https://github.com/frauzufall/ofxGuiExtended/pull/67)), _meaning_: currently depends on [my fork](https://github.com/nadouas/ofxGuiExtended) but is should not remain as so if pull is rejected.
+Tested on Linux with and compiled againt `oF 0.10.0`; feature's view & file drag&drop  has not been tested; uses an exposed but unimplemented `isMousePressed()` of `ofxGuiExtended`(see PR [#67](https://github.com/frauzufall/ofxGuiExtended/pull/67)), _meaning_: currently depends on [my fork](https://github.com/nadouas/ofxGuiExtended) but it should not remain as so if pull is rejected.
 
 
 # How to install ?
