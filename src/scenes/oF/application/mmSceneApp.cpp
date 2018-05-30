@@ -48,9 +48,6 @@ void MoMa::SceneApp::setup(ofEventArgs& args) {
   showFigures(true);
   showTimeline(false);
 
-  playParam.set(">", false);
-  speedParam.set("speed", 1.0f);
-
   frameRate = 100.0f;
   isBegin = true;
 
@@ -73,8 +70,9 @@ void MoMa::SceneApp::setup(ofEventArgs& args) {
   menuView = NULL;
   playBar = NULL;
   optionsView = NULL;
-  labelEditor = new TextDialog(this);
+
   addMenuView();
+  labelEditor = new TextDialog(this);
 
   hasDragEventRegTrack = false;
   hasMouseEventRegLabelList = false;
@@ -87,9 +85,6 @@ void MoMa::SceneApp::setup(ofEventArgs& args) {
   _sender.setup("127.0.0.1", oscSndPort);
   _receiver.setup(oscRcvPort);
 
-  insertNewLabel = false;
-  isLabelSelected = false;
-  isEditing = false;
   tolerance = 5;
 }
 
@@ -521,7 +516,7 @@ void MoMa::SceneApp::keyPressed(ofKeyEventArgs& key) {
     return;
 
   if (isShortcut) {
-    if (!isEditing) {
+    if (!labelEditor->isVisible()) {
       if (key.key == 'p')
         playbackMode = PLAY;  // 'p' like 'play'
       if (key.key == 's')
@@ -564,35 +559,10 @@ void MoMa::SceneApp::keyPressed(ofKeyEventArgs& key) {
     }
 
     if (key.key == OF_KEY_CONTROL) {
-      isZoom = true;  // 'z' like 'zoom'
-      ofLogNotice() << "should zoom: " << timeParam;
+      isZoom = true;
     }
     if (key.key == 'u')
       showAll();  // 'u' like 'unzoom'
-
-    switch (activeMode) {
-      case SCENE3D:
-
-        break;
-
-      case SCENE2D:
-
-        break;
-
-      case ANNOTATE:
-
-        if (!isEditing) {
-          if (key.key == 'n')
-            insertNewLabel = true;
-        }
-
-        /*else if (key.key == 'n') { // 'n' like 'new label'
-
-                insertNewLabel = true;
-            }*/
-
-        break;
-    }
 
     if (playbackMode == PLAY) {
       if (key.key == ' ') {  // space like most play/pause
@@ -630,7 +600,7 @@ void MoMa::SceneApp::keyReleased(ofKeyEventArgs& key) {
     return;
 
   if (isShortcut) {
-    if (!isEditing) {
+    if (!labelEditor->isVisible()) {
       if (key.key == 't' && isReach3D == true) {  // 't' like 'through'
 
         activeMode = beforeReachMode;
@@ -652,41 +622,12 @@ void MoMa::SceneApp::keyReleased(ofKeyEventArgs& key) {
 
       case ANNOTATE:
 
-        if (!isEditing) {
-          if (key.key == 'n')
-            insertNewLabel = false;
-        }
+        if (hasMouseEventRegLabelList && labelEditor->isVisible()) {
+          ofLogNotice() << "label is selected";
 
-        if (hasMouseEventRegLabelList && isLabelSelected) {
-          if (key.key == OF_KEY_BACKSPACE) {
-            if (isEditing) {
-              if ((*mouseEventRegLabelList)[selectedLabelIdx].name.size() > 0) {
-                (*mouseEventRegLabelList)[selectedLabelIdx].name.resize(
-                    (*mouseEventRegLabelList)[selectedLabelIdx].name.size() - 1);
-              }
-            } else {
-              (*mouseEventRegLabelList).erase((*mouseEventRegLabelList).begin() + selectedLabelIdx);
-              isLabelSelected = false;
-            }
-          } else if (key.key == OF_KEY_RETURN) {
-            if (!isEditing) {
-              labelEditor->set((*mouseEventRegLabelList)[selectedLabelIdx].name);
-              isEditing = true;
-            }
-
-            if (isEditing) {
-              (*mouseEventRegLabelList)[selectedLabelIdx].state = UNSELECTED;
-              isLabelSelected = false;
-              isEditing = false;
-            }
-            //else {                    // TODO Rewire the logic to take system text box into account
-
-            //(*mouseEventRegLabelList)[selectedLabelIdx].name = ofSystemTextBoxDialog("Enter label name:");
-            // isEditing = true;
-            // }
+          if (key.key == OF_KEY_RETURN) {
+            storeEditorValue();
           }
-          /*else if (isEditing) {                    (*mouseEventRegLabelList)[selectedLabelIdx].name.push_back(key.key);
-                }*/
         }
 
         break;
@@ -716,28 +657,30 @@ void MoMa::SceneApp::mousePressed(ofMouseEventArgs& mouse) {
 
     case ANNOTATE:
 
-      if (hasMouseEventRegLabelList) {
+      if (hasMouseEventRegLabelList && !labelEditor->isVisible()) {
         bool newLabel = true;
 
         for (int l = 0; l < (*mouseEventRegLabelList).size(); l++) {
           if ((*mouseEventRegLabelList)[l].state == HOVERED) {
             (*mouseEventRegLabelList)[l].state = SELECTED;
-            isLabelSelected = true;
+
+            labelEditor->txtInput = (*mouseEventRegLabelList)[l].name;
+            labelEditor->setVisible(true);
+
             selectedLabelIdx = l;
             newLabel = false;
           } else if ((*mouseEventRegLabelList)[l].state == SELECTED) {
             (*mouseEventRegLabelList)[l].state = UNSELECTED;
-            isLabelSelected = false;
-            newLabel = false;
           }
         }
 
-        if (insertNewLabel == true && newLabel == true) {
-          (*mouseEventRegLabelList).push_back(Label(Moment(ofMap(mouse.x, 0, ofGetWidth(), lowBound.time(), highBound.time()), frameRate), "new"));
+        if (newLabel == true) {
+          Moment cursorMoment = Moment(ofMap(mouse.x, 0, ofGetWidth(), lowBound.time(), highBound.time()), frameRate);
+          addNewLabel(cursorMoment);
+        }
 
-          selectedLabelIdx = (*mouseEventRegLabelList).size() - 1;
-          (*mouseEventRegLabelList).back().state = SELECTED;
-          isLabelSelected = true;
+        if (!isAnnotation) {  // automatically show annotations it they're not visible.
+          isAnnotation = true;
         }
       }
 
@@ -752,6 +695,18 @@ void MoMa::SceneApp::mousePressed(ofMouseEventArgs& mouse) {
 void MoMa::SceneApp::mouseReleased(ofMouseEventArgs& mouse) {
   if (!mouseEnabled)
     return;
+
+  if (activeMode == ANNOTATE) {
+    for (int l = 0; l < (*mouseEventRegLabelList).size(); l++) {
+      (*mouseEventRegLabelList)[l].state = UNSELECTED;
+    }
+
+    if (!labelEditor->isVisible()) {
+      labelEditor->setVisible(true);
+    }
+
+    labelEditor->setTitle(selectedLabelToString("Edit"));
+  }
 
   if (isZoom) {
     zoomHighBound = mouse.x;
@@ -777,20 +732,6 @@ void MoMa::SceneApp::mouseReleased(ofMouseEventArgs& mouse) {
     zoom(newMin, newMax);
   }
 
-  switch (activeMode) {
-    case SCENE3D:
-
-      break;
-
-    case SCENE2D:
-
-      break;
-
-    case ANNOTATE:
-
-      break;
-  }
-
   mouseX = mouse.x;
   mouseY = mouse.y;
   mouseReleased(mouse.x, mouse.y, mouse.button);
@@ -814,11 +755,10 @@ void MoMa::SceneApp::mouseDragged(ofMouseEventArgs& mouse) {
       break;
 
     case ANNOTATE:
-
-      if (hasMouseEventRegLabelList && isLabelSelected) {
-        (*mouseEventRegLabelList)[selectedLabelIdx].moment.setTime(ofMap(
-                                                                       mouse.x, 0, ofGetWidth(), lowBound.time(), highBound.time()),
-                                                                   frameRate);
+      const bool mousePressedOnUi = labelEditor->getContainer()->isMousePressed();
+      if (hasMouseEventRegLabelList && mouseEventRegLabelList->size() > 0 && !mousePressedOnUi) {
+        const float t = ofMap(mouse.x, 0, ofGetWidth(), lowBound.time(), highBound.time());
+        (*mouseEventRegLabelList)[selectedLabelIdx].moment.setTime(t, frameRate);
       }
 
       break;
@@ -844,7 +784,7 @@ void MoMa::SceneApp::mouseMoved(ofMouseEventArgs& mouse) {
 
     case ANNOTATE:
 
-      if (hasMouseEventRegLabelList) {
+      if (hasMouseEventRegLabelList && !labelEditor->getContainer()->isMousePressed()) {
         for (int l = 0; l < (*mouseEventRegLabelList).size(); l++) {
           int pixLabel = ofMap((*mouseEventRegLabelList)[l].moment.time(),
                                lowBound.time(), highBound.time(), 0, ofGetWidth());  // Get pixels
@@ -1341,6 +1281,12 @@ bool MoMa::SceneApp::isTrackShown(int trackId) {
   return (_track[trackId].isShown);
 }
 
+void MoMa::SceneApp::storeEditorValue() {
+  (*mouseEventRegLabelList)[selectedLabelIdx].state = UNSELECTED;
+  (*mouseEventRegLabelList)[selectedLabelIdx].name = labelEditor->txtInput;
+  labelEditor->setVisible(false);
+}
+
 void MoMa::SceneApp::setNumOfLabelLists(int nOfLabelLists) {
   _labelList.clear();  // New vec
   _labelList.resize(nOfLabelLists);
@@ -1348,6 +1294,25 @@ void MoMa::SceneApp::setNumOfLabelLists(int nOfLabelLists) {
   for (int k = 0; k < _labelList.size(); k++) {
     _labelList[k].labelList = new LabelList();
   }
+}
+
+void MoMa::SceneApp::addNewLabel(const Moment& moment) {
+  (*mouseEventRegLabelList).push_back(Label(moment, labelEditor->txtInput));
+  selectedLabelIdx = (*mouseEventRegLabelList).size() - 1;
+  (*mouseEventRegLabelList).back().state = SELECTED;
+
+  labelEditor->setTitle(selectedLabelToString("New"));
+}
+
+const string MoMa::SceneApp::selectedLabelToString(const string& append) const {
+  const Moment& moment = (*mouseEventRegLabelList)[selectedLabelIdx].moment;
+
+  stringstream ss;
+  ss << "[" << append << "] "
+     << selectedLabelIdx + 1 << " _ "
+     << ofToString(moment.time(), 2) << "s";
+
+  return ss.str();
 }
 
 void MoMa::SceneApp::addNewLabelList(std::string name, bool isShown) {
@@ -1743,6 +1708,16 @@ void MoMa::SceneApp::addMenuView(void) {
     playBar = new PlayBar(this, DEFAULT, DEFAULT, menuView, 1);
     if (optionsView)
       optionsView->remove();
+
+    is3dScene.set("Show 3D Scene", true);
+    isGround.set("Show 3D Ground", true);
+    isNodeNames.set("Show Node Names", false);
+    isAnnotation.set("Show Annotations", false);
+    isFigure.set("Show 2D Figures", true);
+    isCaptions.set("Show Captions", false);
+    isTimeline.set("Show Timeline", false);
+    shortcutDisplayed.set("Show Shortcuts", true);
+
     optionsView = new Options(this, RIGHTSIDE, BOTTOM, menuView, 2);
   }
 }
@@ -1755,11 +1730,6 @@ void MoMa::SceneApp::removeMenuView(void) {
   menuView = NULL;
   playBar = NULL;
   optionsView = NULL;
-}
-
-void MoMa::SceneApp::addPlayerBar(void) {
-  if (!playBar)
-    new PlayBar(this);
 }
 
 void MoMa::SceneApp::removePlayerBar(void) {

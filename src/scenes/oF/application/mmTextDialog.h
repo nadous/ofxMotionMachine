@@ -16,20 +16,10 @@ class TextDialog : public MoMa::Canvas {
   TextDialog(SceneApp* app);
 
   // void canvasEvent(ofEventArgs& e);
-  std::string getText();
-  void set(std::string& value);
-  void setOff();
   void initCanvas();
-
- protected:
-  std::string* text;
-  std::string oldtext;
-  bool isTextEntered;
-
   ofParameter<string> txtInput;
 
-  void inputChange(std::string& value);
-
+ protected:
   void inputConfirm();
   void inputCancel();
   // ofxTextField* txtInput;

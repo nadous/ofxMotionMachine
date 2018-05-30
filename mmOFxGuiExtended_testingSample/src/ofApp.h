@@ -30,4 +30,6 @@ class ofApp : public MoMa::SceneApp {
   MoMa::TimedVec mySpeed, myFilteredSpeed;
   MoMa::Track myTrack, myFilteredTrack;
   MoMa::Frame myFrame, myFilteredFrame;
+
+  MoMa::LabelList myLabels;
 };

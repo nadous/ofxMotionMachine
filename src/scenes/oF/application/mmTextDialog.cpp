@@ -3,27 +3,23 @@
 using namespace MoMa;
 using namespace std;
 
-TextDialog::TextDialog(SceneApp* app) : Canvas(app, "Text Dialog", MoMa::Canvas::Type::Container, NULL) {
-  _container->addSpacer(0, 10);
+TextDialog::TextDialog(SceneApp* app) : Canvas(app, "Dialog", MoMa::Canvas::Type::Group, NULL) {
+  _container->setConfig(ofJson({{"width", "100%"}}));
 
-  ofxGuiGroup* root = _container->addGroup("root", ofJson({{"width", "100%"},
-                                                          {"show-header", false}}));
+  // ofxGuiGroup* header = _container->addGroup("header", ofJson({{"flex-direction", "row"},
+  //                                                              {"width", "100%"},
+  //                                                              {"background-color", "transparent"},
+  //                                                              {"show-header", false}}));
 
-  ofxGuiGroup* header = root->addGroup("header", ofJson({{"flex-direction", "row"},
-                                                         {"width", "100%"},
-                                                         {"background-color", "transparent"},
-                                                         {"show-header", false}}));
-  ofParameter<string> txtInput;
-  txtInput.set("text");
-  txtInput.addListener(this, &TextDialog::inputChange);
-  header->add<ofxGuiTextField>(txtInput, ofJson({{"width", "100%"}}));
+  _container->add<ofxGuiTextField>(txtInput.set("label"), ofJson({{"width", 250}}));
 
-  ofxGuiGroup* form = root->addGroup("form", ofJson({{"flex-direction", "row"},
-                                                     {"width", "50%"},
-                                                     {"padding", 0},
-                                                     {"align-self", "flex-end"},
-                                                     {"background-color", "transparent"},
-                                                     {"show-header", false}}));
+  ofxGuiGroup* form = _container->addGroup("dialog_form",
+                                           ofJson({{"flex-direction", "row"},
+                                                   {"width", "50%"},
+                                                   {"padding", 0},
+                                                   {"align-self", "flex-end"},
+                                                   {"background-color", "transparent"},
+                                                   {"show-header", false}}));
 
   ofJson buttonStyle = ofJson({{"type", "fullsize"},
                                {"text-align", "right"},
@@ -36,48 +32,23 @@ TextDialog::TextDialog(SceneApp* app) : Canvas(app, "Text Dialog", MoMa::Canvas:
   form->add<ofxGuiButton>(cancelParam.set("cancel"), buttonStyle);
   cancelParam.addListener(this, &TextDialog::inputCancel);
 
-  // txtInput = addTextInput("Text Input", "", OFX_UI_FONT_SMALL);
-
-  // addButton("OK", false);
-  // addButton("Cancel", false);
-  // setWidgetPosition(OFX_UI_WIDGET_POSITION_RIGHT);
-
-  text = NULL;
   initCanvas();
 }
 
 void TextDialog::initCanvas() {
-  // autoSizeToFitWidgets();
   setVisible(false);
   setMinified(false);
   _container->setPosition(round(ofGetWidth() * .5f - _container->getWidth() * .5f),
-                         round(ofGetHeight() * .5f - _container->getHeight() * .5f));
+                          round(ofGetHeight() * .5f - _container->getHeight() * .5f));
 }
 
-string TextDialog::getText() {
-  return txtInput;
-}
-
-void TextDialog::set(string& value) {
-  setVisible(true);
-  text = &value;
-  oldtext = *text;
-  *text = "";
-  txtInput.set(*text);
-  // txtInput->setTextString(*text);
-  // txtInput->setFocus(true);
-}
-
-void TextDialog::setOff() {
+void TextDialog::inputConfirm() {
+  _app->storeEditorValue();
   setVisible(false);
-  text = NULL;
 }
 
-void TextDialog::inputChange(std::string& value) { *text = value; }
-
-void TextDialog::inputConfirm() { setOff(); }
 void TextDialog::inputCancel() {
-  isTextEntered = false;
-  *text = oldtext;
-  setOff();
+  --_app->selectedLabelIdx;
+  _app->mouseEventRegLabelList->erase(_app->mouseEventRegLabelList->end());
+  setVisible(false);
 }

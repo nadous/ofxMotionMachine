@@ -52,8 +52,6 @@ enum Position {
 //class SceneApp;
 
 class Canvas {
-  ofEvent<string> radioChange;
-
  public:
   enum Type { Container,
               Group,
@@ -102,11 +100,18 @@ class Canvas {
 
   /** ofxGui updates. **/
   ofxGui gui;
-  ofxGuiContainer* _container;
+
+  const string& getTitle() const;
+  void setTitle(const string& value);
+  ofxGuiContainer* getContainer();
 
  protected:
   /** _app : pointer to the application, needed to interact with it */
   SceneApp* _app;
+  const Type _type;
+
+  /** _container : `ofxGuiExtended` container **/
+  ofxGuiContainer* _container;
 
   /** virtual methods of ofxUISuperCanvas */
   virtual void update();
@@ -116,7 +121,6 @@ class Canvas {
   Position _position, _alignment;
   static std::vector<MoMa::Canvas*> closedCanvas;
 
-  const Type _type;
 
   int _index, _group, _allIndex;
   bool _minified;

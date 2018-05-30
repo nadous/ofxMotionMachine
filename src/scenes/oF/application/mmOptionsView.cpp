@@ -15,29 +15,28 @@ Options::Options(SceneApp* app,
         addLabelToggle( "SHOW 2D FIGURES", app->isFigure );
         addLabelToggle( "SHOW CAPTIONS", app->isCaptions );
         addLabelToggle( "SHOW TIMELINE", app->isTimeline );*/
-
-  optionsGroup.add(_app->is3dScene.set("Show 3D Scene", true));
+  optionsGroup.add(_app->is3dScene);
   _app->is3dScene.addListener(this, &Options::optionsChange);
 
-  optionsGroup.add(_app->isGround.set("Show 3D Ground", true));
+  optionsGroup.add(_app->isGround);
   _app->isGround.addListener(this, &Options::optionsChange);
 
-  optionsGroup.add(_app->isNodeNames.set("Show Node Names", false));
+  optionsGroup.add(_app->isNodeNames);
   _app->isNodeNames.addListener(this, &Options::optionsChange);
 
-  optionsGroup.add(_app->isAnnotation.set("Show Annotations", false));
+  optionsGroup.add(_app->isAnnotation);
   _app->isAnnotation.addListener(this, &Options::optionsChange);
 
-  optionsGroup.add(_app->isFigure.set("Show 2D Figures", true));
+  optionsGroup.add(_app->isFigure);
   _app->isFigure.addListener(this, &Options::optionsChange);
 
-  optionsGroup.add(_app->isCaptions.set("Show Captions", false));
+  optionsGroup.add(_app->isCaptions);
   _app->isCaptions.addListener(this, &Options::optionsChange);
 
-  optionsGroup.add(_app->isTimeline.set("Show Timeline", false));
+  optionsGroup.add(_app->isTimeline);
   _app->isTimeline.addListener(this, &Options::optionsChange);
 
-  optionsGroup.add(_app->shortcutDisplayed.set("Show Shortcuts", true));
+  optionsGroup.add(_app->shortcutDisplayed);
   _app->shortcutDisplayed.addListener(this, &Options::optionsChange);
 
   _container->add(optionsGroup);

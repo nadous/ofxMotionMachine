@@ -475,6 +475,19 @@ bool Canvas::isVisible() {
   return !_container->isHidden();
 }
 
+const string& Canvas::getTitle() const {
+  return _container->getName();
+}
+
+void Canvas::setTitle(const string& value) {
+  _container->setName(value);
+  _container->updateLayout();
+}
+
+ofxGuiContainer* Canvas::getContainer() {
+  return _container;
+}
+
 void Canvas::mainView() {
   closeAllCanvas();
   openMainCanvas();

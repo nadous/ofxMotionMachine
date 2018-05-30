@@ -6,6 +6,7 @@ class SceneApp;
 }
 
 #include <armadillo>
+#include <sstream>
 
 #include "ofMain.h"
 #include "ofxGuiExtended.h"
@@ -233,6 +234,7 @@ class SceneApp : public ofBaseApp {
 
   // - Built-in label list related methods -
 
+  void storeEditorValue();
   int nOfLabelLists(void) { return (_labelList.size()); }
   void setNumOfLabelLists(int nOfLabelLists);  // # of Label lists
   void addNewLabelList(std::string name = "", bool isShown = true);
@@ -333,7 +335,6 @@ class SceneApp : public ofBaseApp {
 
   void addMenuView(void);      // Add menu view to the canvas
   void removeMenuView(void);   // Remove menu view to the canvas
-  void addPlayerBar(void);     // Add player view to the canvas
   void removePlayerBar(void);  // Remove player view to the canvas
 
   //Disable events callbacks
@@ -385,13 +386,12 @@ class SceneApp : public ofBaseApp {
   bool isTimeTags;  // Show time stamps
   bool isCurtain;   // Show 3D curtain
 
-  ofParameter<bool> is3dScene;    // Show 3D scene
-  ofParameter<bool> isGround;     // Do we draw ground?
-  ofParameter<bool> isNodeNames;  // Show node names
-  ofParameter<bool> isCaptions;   // Show captions
-
+  ofParameter<bool> is3dScene;     // Show 3D scene
+  ofParameter<bool> isGround;      // Do we draw ground?
+  ofParameter<bool> isNodeNames;   // Show node names
   ofParameter<bool> isAnnotation;  // Show annotations
   ofParameter<bool> isFigure;      // Show 2D figures
+  ofParameter<bool> isCaptions;    // Show captions
   ofParameter<bool> isTimeline;    // Show timeline
   ofParameter<bool> isZoom;        // Are we in zoom?
 
@@ -425,8 +425,8 @@ class SceneApp : public ofBaseApp {
 
   int playbackMode;                // Playback mode flag
   float frameRate;                 // Frame rate from playback
-  ofParameter<bool> playParam;     // Do we keep play it back?
-  ofParameter<bool> reverseParam;  // Do we play in reverse?
+  ofParameter<bool> playParam;     // Are we playing a track?
+  ofParameter<bool> reverseParam;  // Is it playing in reverse?
   MoMa::Moment appMoment;          // Current app moment
   float fAppMomentIndex;           // Float moment index
   bool isBegin;                    // Is begin?
@@ -455,10 +455,7 @@ class SceneApp : public ofBaseApp {
   LabelList* mouseEventRegLabelList;  // Registered label list
   bool autoDrawLabelLists;            // Auto-draw label lists
 
-  bool insertNewLabel;   // Are we inserting a new label?
-  bool isLabelSelected;  // Is a label currently selected?
   int selectedLabelIdx;  // If yes, this is its index
-  bool isEditing;        // Are we editing (typing text)
   int tolerance;         // Tolerence for seletion
 
   // - Feature types -
@@ -489,6 +486,10 @@ class SceneApp : public ofBaseApp {
   MoMa::TextDialog* labelEditor;
 
   ofxGui gui;
+
+ protected:  // yeah, we should probably think of a better design for that fat-ass class
+  void addNewLabel(const Moment& moment);
+  const string selectedLabelToString(const string& append) const;
 };
 }  // namespace MoMa
 

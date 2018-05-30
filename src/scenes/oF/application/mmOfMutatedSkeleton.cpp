@@ -158,7 +158,7 @@ void ofMutatedSkeleton::boneLocalDraw(int index, MutatedBoneMapType::iterator it
 	if (arma::norm((arma::colvec) lpreQuat) > arma::datum::eps) {
 		double alpha, x, y, z;
 		lpreQuat.getRotate(alpha, x, y, z);
-		ofRotate(alpha, x, y, z);
+		ofRotateRad(alpha, x, y, z);
 	}
 	arma::vec3 lPreScale = it->second.preScale;
 	ofScale(lPreScale(0), lPreScale(1), lPreScale(2));
@@ -167,7 +167,7 @@ void ofMutatedSkeleton::boneLocalDraw(int index, MutatedBoneMapType::iterator it
 	if (arma::norm((arma::colvec) lquat) > arma::datum::eps) {
 		double alpha, x, y, z;
 		lquat.getRotate(alpha, x, y, z);
-		ofRotate(alpha, x, y, z);
+		ofRotateRad(alpha, x, y, z);
 		for (int bEnd = 0; bEnd < it->second.jointChildren.size(); bEnd++) {
 			if (it->second.visible)
 				bones[it->second.jointChildren[bEnd]].draw();

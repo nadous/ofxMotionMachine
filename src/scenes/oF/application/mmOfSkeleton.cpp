@@ -126,7 +126,7 @@ void ofSkeleton::boneGlobalDraw(const arma::mat &rotation, const arma::mat &posi
     else
     {
         lquat.getRotate(alpha, x, y, z);
-        ofRotate(alpha, x, y, z);
+        ofRotateRad(alpha, x, y, z);
         for (int bEnd = 0; bEnd < it->second.jointChildren.size(); bEnd++)
         {
             bones[it->second.jointChildren[bEnd]].draw();
@@ -157,7 +157,7 @@ void ofSkeleton::boneLocalDraw(const arma::mat &rotation, const arma::mat &posit
     if (arma::norm((arma::colvec)lquat) > arma::datum::eps)
     {
         lquat.getRotate(alpha, x, y, z);
-        ofRotate(alpha, x, y, z);
+        ofRotateRad(alpha, x, y, z);
         for (int bEnd = 0; bEnd < it->second.jointChildren.size(); bEnd++)
         {
             bones[it->second.jointChildren[bEnd]].draw();

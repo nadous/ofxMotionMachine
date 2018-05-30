@@ -55,6 +55,9 @@ void ofApp::setup(void) {
 
   setFrameRate(myTrack.frameRate());  // Set the framerate of the application to the framerate of the track, so that it is played at the real speed
   setPlayerSize(myTrack.nOfFrames());
+
+  // register mouse event with a list of labels;
+  registerMouseEvent(myLabels);
 }
 
 void ofApp::update(void) {
@@ -94,7 +97,7 @@ void ofApp::scene3d(void) {
 }
 
 void ofApp::scene2d(void) {
-  draw(COM);      //Draw myFrame, i.e. the frame at the running time of the application
+  draw(COM);  //Draw myFrame, i.e. the frame at the running time of the application
 
   figure(0);  //Activate the first figure for drawings
   draw(mySpeed, "Speed of unfiltered right hand");
@@ -103,6 +106,7 @@ void ofApp::scene2d(void) {
 }
 
 void ofApp::annotate(void) {
+  draw(myLabels);
 }
 
 void ofApp::keyPressed(int key) {

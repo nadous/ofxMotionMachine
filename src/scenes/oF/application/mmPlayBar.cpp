@@ -17,9 +17,9 @@ PlayBar::PlayBar(SceneApp* app,
     playRadio = addRadio("Bar",buttons,OFX_UI_ORIENTATION_HORIZONTAL,OFX_UI_FONT_SMALL );*/
 
   // ofxGuiGroup* root = _container->addGroup("root", ofJson({{"width", 500}, {"show-header", false}}));
-  _container->setConfig(ofJson({{"width", 500}, {"show-header", false}}));
+  _container->setWidth(500);
 
-  ofxGuiGroup* header = _container->addGroup("header",
+  ofxGuiGroup* header = _container->addGroup("playbar_header",
                                              ofJson({{"flex-direction", "row"},
                                                      {"width", "100%"},
                                                      {"background-color", "transparent"},
@@ -36,7 +36,7 @@ PlayBar::PlayBar(SceneApp* app,
                                  ofJson({{"width", "20%"},
                                          {"precision", 1}}));
 
-  ofxGuiGroup* player = _container->addGroup("player",
+  ofxGuiGroup* player = _container->addGroup("playbar_player",
                                              ofJson({{"width", "100%"},
                                                      {"flex-direction", "row"},
                                                      {"padding", 0},
@@ -50,7 +50,7 @@ PlayBar::PlayBar(SceneApp* app,
 
   ofParameter<void> stopParam, prevParam, nextParam;
 
-  player->add<ofxGuiToggle>(_app->playParam, buttonStyle);
+  player->add<ofxGuiToggle>(_app->playParam.set(">", false), buttonStyle);
   _app->playParam.addListener(this, &PlayBar::playChange);
 
   player->add<ofxGuiButton>(stopParam.set("X"), buttonStyle);
