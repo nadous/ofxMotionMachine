@@ -393,7 +393,6 @@ class SceneApp : public ofBaseApp {
   ofParameter<bool> isFigure;      // Show 2D figures
   ofParameter<bool> isCaptions;    // Show captions
   ofParameter<bool> isTimeline;    // Show timeline
-  ofParameter<bool> isZoom;        // Are we in zoom?
 
   bool isReach3D;       // Are we reaching 3D?
   int beforeReachMode;  // = Mode before it
@@ -465,7 +464,8 @@ class SceneApp : public ofBaseApp {
   bool sendOscFeatures;      // Send features @ OSC
 
   // - Shortcuts control -
-
+  bool dontReopenEditor;
+  bool isCtrlDown;
   bool isShortcut;                      // Shortcuts enabled?
   ofParameter<bool> shortcutDisplayed;  // Are shortcuts command displayed
 

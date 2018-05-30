@@ -43,12 +43,11 @@ void TextDialog::initCanvas() {
 }
 
 void TextDialog::inputConfirm() {
+  _app->dontReopenEditor = true;
   _app->storeEditorValue();
-  setVisible(false);
 }
 
 void TextDialog::inputCancel() {
-  --_app->selectedLabelIdx;
-  _app->mouseEventRegLabelList->erase(_app->mouseEventRegLabelList->end());
+  _app->dontReopenEditor = true;
   setVisible(false);
 }

@@ -58,7 +58,7 @@ void MoMa::SceneApp::setup(ofEventArgs& args) {
 
   zoomLowBound = -1;
   zoomHighBound = -1;
-  isZoom = false;
+  isCtrlDown = false;
 
   isReach3D = false;
 
@@ -97,7 +97,7 @@ void MoMa::SceneApp::update(ofEventArgs& args) {
     switch (activeMode) {
       case SCENE3D:
 
-        if (!isZoom)
+        if (!isCtrlDown)
           camera.enableMouseInput();
         else
           camera.disableMouseInput();
@@ -348,7 +348,7 @@ void MoMa::SceneApp::draw(ofEventArgs& args) {
     ofPopStyle();
   }
 
-  if (isZoom) {
+  if (isCtrlDown) {
     ofPushStyle();
     ofSetColor(Turquoise, 30);
     ofRect(zoomLowBound, 0, zoomHighBound - zoomLowBound, ofGetHeight());
@@ -559,7 +559,7 @@ void MoMa::SceneApp::keyPressed(ofKeyEventArgs& key) {
     }
 
     if (key.key == OF_KEY_CONTROL) {
-      isZoom = true;
+      isCtrlDown = true;
     }
     if (key.key == 'u')
       showAll();  // 'u' like 'unzoom'
@@ -609,7 +609,7 @@ void MoMa::SceneApp::keyReleased(ofKeyEventArgs& key) {
     }
 
     if (key.key == OF_KEY_CONTROL)
-      isZoom = false;
+      isCtrlDown = false;
 
     switch (activeMode) {
       case SCENE3D:
@@ -622,13 +622,9 @@ void MoMa::SceneApp::keyReleased(ofKeyEventArgs& key) {
 
       case ANNOTATE:
 
-        if (hasMouseEventRegLabelList && labelEditor->isVisible()) {
-          ofLogNotice() << "label is selected";
-
-          if (key.key == OF_KEY_RETURN) {
+        if (hasMouseEventRegLabelList && labelEditor->isVisible())
+          if (key.key == OF_KEY_RETURN)
             storeEditorValue();
-          }
-        }
 
         break;
     }
@@ -641,40 +637,45 @@ void MoMa::SceneApp::mousePressed(ofMouseEventArgs& mouse) {
   if (!mouseEnabled)
     return;
 
-  if (isZoom) {
-    zoomLowBound = mouse.x;
-    zoomHighBound = mouse.x;
-  }
-
   switch (activeMode) {
     case SCENE3D:
-
-      break;
-
     case SCENE2D:
-
+      if (isCtrlDown) {
+        zoomLowBound = mouse.x;
+        zoomHighBound = mouse.x;
+      }
       break;
 
     case ANNOTATE:
-
       if (hasMouseEventRegLabelList && !labelEditor->isVisible()) {
         bool newLabel = true;
 
-        for (int l = 0; l < (*mouseEventRegLabelList).size(); l++) {
+        for (int l = 0; l < mouseEventRegLabelList->size(); l++) {
           if ((*mouseEventRegLabelList)[l].state == HOVERED) {
-            (*mouseEventRegLabelList)[l].state = SELECTED;
+            if (isCtrlDown) {
+              mouseEventRegLabelList->remove(l);
+            } else {
+              (*mouseEventRegLabelList)[l].state = SELECTED;
+              selectedLabelIdx = l;
 
-            labelEditor->txtInput = (*mouseEventRegLabelList)[l].name;
-            labelEditor->setVisible(true);
+              labelEditor->setTitle(selectedLabelToString("Edit"));
+              labelEditor->txtInput = (*mouseEventRegLabelList)[l].name;
+              labelEditor->setVisible(true);
 
-            selectedLabelIdx = l;
-            newLabel = false;
+              newLabel = false;
+            }
           } else if ((*mouseEventRegLabelList)[l].state == SELECTED) {
-            (*mouseEventRegLabelList)[l].state = UNSELECTED;
+            if (isCtrlDown)
+              mouseEventRegLabelList->remove(l);
+            else
+              (*mouseEventRegLabelList)[l].state = UNSELECTED;
           }
         }
 
-        if (newLabel == true) {
+        if (selectedLabelIdx > mouseEventRegLabelList->size() - 1)
+          --selectedLabelIdx;
+
+        if (newLabel == true && !isCtrlDown) {
           Moment cursorMoment = Moment(ofMap(mouse.x, 0, ofGetWidth(), lowBound.time(), highBound.time()), frameRate);
           addNewLabel(cursorMoment);
         }
@@ -697,18 +698,22 @@ void MoMa::SceneApp::mouseReleased(ofMouseEventArgs& mouse) {
     return;
 
   if (activeMode == ANNOTATE) {
-    for (int l = 0; l < (*mouseEventRegLabelList).size(); l++) {
+    for (int l = 0; l < mouseEventRegLabelList->size(); l++) {
       (*mouseEventRegLabelList)[l].state = UNSELECTED;
     }
 
-    if (!labelEditor->isVisible()) {
-      labelEditor->setVisible(true);
-    }
+    if (!isCtrlDown && !dontReopenEditor) {
+      if (!labelEditor->isVisible()) {
+        labelEditor->setVisible(true);
+      }
 
-    labelEditor->setTitle(selectedLabelToString("Edit"));
+      labelEditor->setTitle(selectedLabelToString("Edit"));
+    } else if (dontReopenEditor) {
+      dontReopenEditor = false;
+    }
   }
 
-  if (isZoom) {
+  if (isCtrlDown) {
     zoomHighBound = mouse.x;
 
     if (zoomHighBound >= ofGetWidth()) {
@@ -741,7 +746,7 @@ void MoMa::SceneApp::mouseDragged(ofMouseEventArgs& mouse) {
   if (!mouseEnabled)
     return;
 
-  if (isZoom) {
+  if (isCtrlDown) {
     zoomHighBound = mouse.x;
   }
 
@@ -785,7 +790,7 @@ void MoMa::SceneApp::mouseMoved(ofMouseEventArgs& mouse) {
     case ANNOTATE:
 
       if (hasMouseEventRegLabelList && !labelEditor->getContainer()->isMousePressed()) {
-        for (int l = 0; l < (*mouseEventRegLabelList).size(); l++) {
+        for (int l = 0; l < mouseEventRegLabelList->size(); l++) {
           int pixLabel = ofMap((*mouseEventRegLabelList)[l].moment.time(),
                                lowBound.time(), highBound.time(), 0, ofGetWidth());  // Get pixels
 
@@ -1298,7 +1303,7 @@ void MoMa::SceneApp::setNumOfLabelLists(int nOfLabelLists) {
 
 void MoMa::SceneApp::addNewLabel(const Moment& moment) {
   (*mouseEventRegLabelList).push_back(Label(moment, labelEditor->txtInput));
-  selectedLabelIdx = (*mouseEventRegLabelList).size() - 1;
+  selectedLabelIdx = mouseEventRegLabelList->size() - 1;
   (*mouseEventRegLabelList).back().state = SELECTED;
 
   labelEditor->setTitle(selectedLabelToString("New"));
