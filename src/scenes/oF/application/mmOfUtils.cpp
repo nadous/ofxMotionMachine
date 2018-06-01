@@ -21,7 +21,6 @@ ofVec3f toVec3f(vec data)
 
 ofQuaternion toQuaternion(vec data)
 {
-
     // Create a oF Quaternion from a 4-dim Armadillo vector
     return (ofQuaternion(data(0), data(1), data(2), data(3)));
 }
@@ -71,7 +70,7 @@ int getNodeOriginID(std::string nodename, Track &track)
     return -1;
 }
 
-vector<unsigned int> getNoneChildrensID(std::string nodename, Track &track)
+vector<unsigned int> getNodeChildrenIDs(std::string nodename, Track &track)
 {
     vector<unsigned int> out;
     int nID = getNodeID(nodename, track);
