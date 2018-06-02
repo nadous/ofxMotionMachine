@@ -34,8 +34,8 @@ void MoMa::SceneApp::setup(ofEventArgs& args) {
   showNodeNames(false);
   showTimeTags(false);
   showCaptions(true);
+  showShortcuts(true);
   enableShortcuts();
-  displayShortcuts(true);
 
   setActiveMode(SCENE3D);
   setPlaybackMode(PLAY);
@@ -277,21 +277,21 @@ void MoMa::SceneApp::update(ofEventArgs& args) {
   update();
 
   if (sendOscFeatures) {
-    for (int f = 0; f < feature.size(); f++) {
-      if (feature[f].isFeasible && feature[f].isSent) {
+    for (int f = 0; f < features.size(); f++) {
+      if (features[f].isFeasible && features[f].isSent) {
         ofxOscMessage msg;
-        msg.setAddress(feature[f].oscHeader);
+        msg.setAddress(features[f].oscHeader);
 
-        if (feature[f].type == VECTOR) {
-          msg.addFloatArg(feature[f].feature.tvec->get(getAppTime()));
-        } else if (feature[f].type == MATRIX) {
-          for (int e = 0; e < feature[f].feature.tmat->nOfElems(); e++) {
-            msg.addFloatArg(feature[f].feature.tmat->elem(e).get(getAppTime()));
+        if (features[f].type == VECTOR) {
+          msg.addFloatArg(features[f].feature.tvec->get(getAppTime()));
+        } else if (features[f].type == MATRIX) {
+          for (int e = 0; e < features[f].feature.tmat->nOfElems(); e++) {
+            msg.addFloatArg(features[f].feature.tmat->elem(e).get(getAppTime()));
           }
-        } else if (feature[f].type == CUBE) {
-          for (int c = 0; c < feature[f].feature.tcube->nOfCols(); c++) {
-            for (int r = 0; r < feature[f].feature.tcube->nOfRows(); r++) {
-              msg.addFloatArg(feature[f].feature.tcube->col(c).elem(r).get(getAppTime()));
+        } else if (features[f].type == CUBE) {
+          for (int c = 0; c < features[f].feature.tcube->nOfCols(); c++) {
+            for (int r = 0; r < features[f].feature.tcube->nOfRows(); r++) {
+              msg.addFloatArg(features[f].feature.tcube->col(c).elem(r).get(getAppTime()));
             }
           }
         }
@@ -369,7 +369,7 @@ void MoMa::SceneApp::draw(ofEventArgs& args) {
       int nOfShownFeatures = 0;
 
       for (int f = 0; f < nOfFeatures(); f++) {
-        if (feature[f].isFeasible && feature[f].isSelected) {
+        if (features[f].isFeasible && features[f].isSelected) {
           nOfShownFeatures++;
         }
       }
@@ -379,34 +379,34 @@ void MoMa::SceneApp::draw(ofEventArgs& args) {
       setNumOfFigures(nOfShownFeatures);
 
       for (int f = 0; f < nOfFeatures(); f++) {
-        if (feature[f].isFeasible && feature[f].isSelected) {
+        if (features[f].isFeasible && features[f].isSelected) {
           figure(shownFeatureId);
 
-          if (feature[f].type == VECTOR) {
-            string name = feature[f].name;
-            if (feature[f].isSent)
+          if (features[f].type == VECTOR) {
+            string name = features[f].name;
+            if (features[f].isSent)
               name = "~ " + name;
-            if (feature[f].isWek)
+            if (features[f].isWek)
               name = "> " + name;
 
-            draw(*(feature[f].feature.tvec), name);
-          } else if (feature[f].type == MATRIX) {
-            string name = feature[f].name;
-            if (feature[f].isSent)
+            draw(*(features[f].feature.tvec), name);
+          } else if (features[f].type == MATRIX) {
+            string name = features[f].name;
+            if (features[f].isSent)
               name = "~ " + name;
-            if (feature[f].isWek)
+            if (features[f].isWek)
               name = "> " + name;
 
-            draw(*(feature[f].feature.tmat), name);
-          } else if (feature[f].type == CUBE) {
-            string name = feature[f].name;
-            if (feature[f].isSent)
+            draw(*(features[f].feature.tmat), name);
+          } else if (features[f].type == CUBE) {
+            string name = features[f].name;
+            if (features[f].isSent)
               name = "~ " + name;
-            if (feature[f].isWek)
+            if (features[f].isWek)
               name = "> " + name;
 
-            for (int s = 0; s < feature[f].feature.tcube->nOfCols(); s++) {
-              draw(feature[f].feature.tcube->col(s),
+            for (int s = 0; s < features[f].feature.tcube->nOfCols(); s++) {
+              draw(features[f].feature.tcube->col(s),
                    name + " ( " + ofToString(s) + " )");
             }
           }
@@ -1393,7 +1393,7 @@ void MoMa::SceneApp::addNewFeature(MoMa::TimedVec& feat,
   _feat.isSent = isSent;
   _feat.isWek = false;
 
-  feature.push_back(_feat);
+  features.push_back(_feat);
 }
 
 void MoMa::SceneApp::addNewFeature(MoMa::TimedMat& feat,
@@ -1414,7 +1414,7 @@ void MoMa::SceneApp::addNewFeature(MoMa::TimedMat& feat,
   _feat.isSent = isSent;
   _feat.isWek = false;
 
-  feature.push_back(_feat);
+  features.push_back(_feat);
 }
 
 void MoMa::SceneApp::addNewFeature(MoMa::TimedCube& feat,
@@ -1435,7 +1435,15 @@ void MoMa::SceneApp::addNewFeature(MoMa::TimedCube& feat,
   _feat.isSent = isSent;
   _feat.isWek = false;
 
-  feature.push_back(_feat);
+  features.push_back(_feat);
+}
+
+MoMa::TimedVec* MoMa::SceneApp::getFeature(const string& name) const {
+  for (auto feature : features)
+    if (feature.name == name)
+      return feature.feature.tvec;
+
+  return NULL;
 }
 
 void MoMa::SceneApp::setNumOfFigures(int nOfFigures) {
@@ -1693,6 +1701,10 @@ void MoMa::SceneApp::showTimeline(bool time) {
   isTimeline = time;
 }
 
+void MoMa::SceneApp::showShortcuts(bool display) {
+  shortcutDisplayed = display;
+}
+
 void MoMa::SceneApp::enableShortcuts(void) {
   isShortcut = true;
 }
@@ -1701,13 +1713,9 @@ void MoMa::SceneApp::disableShortcuts(void) {
   isShortcut = false;
 }
 
-void MoMa::SceneApp::displayShortcuts(bool display) {
-  shortcutDisplayed = display;
-}
-
 void MoMa::SceneApp::addMenuView(void) {
   if (!menuView) {
-    menuView = new MenuView(this, RIGHTSIDE, TOP);
+    menuView = new MenuView(this, RIGHT, TOP);
     if (playBar)
       playBar->remove();
     playBar = new PlayBar(this, DEFAULT, DEFAULT, menuView, 1);

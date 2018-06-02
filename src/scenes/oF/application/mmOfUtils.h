@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 #include <armadillo>
+#include "mmSceneApp.h"
 #include "mmTrack.h"
 #include "ofMain.h"
 
@@ -40,13 +41,13 @@ ofQuaternion toQuaternion(arma::vec data);
 // frankiezafe utils
 
 // structure info
-int getNodeID(std::string nodename, Track& track);
-int getNodeOriginID(std::string nodename, Track& track);
+const int getNodeID(std::string nodename, Track& track);
+const int getNodeOriginID(std::string nodename, Track& track);
 std::vector<unsigned int> getNodeChildrenIDs(std::string nodename, Track& track);
 
 // data retrieval
-ofVec3f getNodePosition(std::string nodename, Track& track, int frame);
-ofQuaternion getNodeRotation(std::string nodename, Track& track, int frame);
+const ofVec3f& getNodePosition(std::string nodename, Track& track, int frame);
+const ofQuaternion& getNodeRotation(std::string nodename, Track& track, int frame);
 }  // namespace MoMa
 
 #endif

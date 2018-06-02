@@ -76,42 +76,8 @@ void Options::optionsChange(bool& value) {
     else if (name == "Show Timeline")
       _app->showTimeline(value);
     else if (name == "Show Shortcuts")
-      _app->displayShortcuts(value);
+      _app->showShortcuts(value);
   }
-  //   string name = e.widget->getName();  // We grab the name and test it
-  /*if( e.widget->getKind() == OFX_UI_WIDGET_LABELTOGGLE ) {
-
-    ofxUILabelToggle *toggle = (ofxUILabelToggle *) e.widget; // Toggle
-
-    if( name == "SHOW 3D SCENE" ) app->show3dScene( toggle->getValue() );
-    else if( name == "SHOW 3D GROUND" ) app->showGround( toggle->getValue() );
-    else if( name == "SHOW NODE NAMES" ) app->showNodeNames( toggle->getValue() );
-    else if( name == "SHOW ANNOTATIONS" ) app->showAnnotation( toggle->getValue() );
-    else if( name == "SHOW 2D FIGURES" ) app->showFigures( toggle->getValue() );
-    else if( name == "SHOW CAPTIONS" ) app->showCaptions( toggle->getValue() );
-    else if( name == "SHOW TIMELINE" ) app->showTimeline( toggle->getValue() );
-    }*/
-
-  //   if (e.widget->getKind() == OFX_UI_WIDGET_TOGGLE) {
-  //     ofxUIToggle* toggle = (ofxUIToggle*)e.widget;  // Toggle
-
-  //     if (name == "Show 3D Scene")
-  //       _app->show3dScene(toggle->getValue());
-  //     else if (name == "Show 3D Ground")
-  //       _app->showGround(toggle->getValue());
-  //     else if (name == "Show Node Names")
-  //       _app->showNodeNames(toggle->getValue());
-  //     else if (name == "Show Annotations")
-  //       _app->showAnnotation(toggle->getValue());
-  //     else if (name == "Show 2D Figures")
-  //       _app->showFigures(toggle->getValue());
-  //     else if (name == "Show Captions")
-  //       _app->showCaptions(toggle->getValue());
-  //     else if (name == "Show Timeline")
-  //       _app->showTimeline(toggle->getValue());
-  //     else if (name == "Show Shortcuts")
-  //       _app->displayShortcuts(toggle->getValue());
-  //   }
 
   /*else if(e.widget->getKind() == OFX_UI_WIDGET_LABELBUTTON ) {
 

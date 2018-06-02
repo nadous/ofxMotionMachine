@@ -248,12 +248,13 @@ class SceneApp : public ofBaseApp {
 
   // - Built-in feature related methods -
 
-  int nOfFeatures(void) { return (feature.size()); }  // # feat
+  int nOfFeatures(void) { return (features.size()); }  // # feat
   void setAutoDrawFeatures(bool ad) { autoDrawFeatures = ad; }
   void addNewFeature(MoMa::TimedVec& feature, std::string name = "", std::string osc = "/feat", bool isShown = false, bool isSent = false);
   void addNewFeature(MoMa::TimedMat& feature, std::string name = "", std::string osc = "/feat", bool isShown = false, bool isSent = false);
   void addNewFeature(MoMa::TimedCube& feature, std::string name = "", std::string osc = "/feat", bool isShown = false, bool isSent = false);
 
+  MoMa::TimedVec* getFeature(const string& name) const;
   // - Figure-related methods -
 
   inline int nOfFigures(void) const { return (_figure.size()); }
@@ -315,16 +316,15 @@ class SceneApp : public ofBaseApp {
   void showTimeTags(bool times);   // Show time tags
   void showCaptions(bool caps);    // Show time tags
 
-  void showAnnotation(bool annot);  // Show annotations
-  void showCurtain(bool curtain);   // Show 3D curtain
-  void showFigures(bool figures);   // Show 2D figures
-  void showTimeline(bool time);     // Show timeline
+  void showAnnotation(bool annot);   // Show annotations
+  void showCurtain(bool curtain);    // Show 3D curtain
+  void showFigures(bool figures);    // Show 2D figures
+  void showTimeline(bool time);      // Show timeline
+  void showShortcuts(bool display);  // Show shortcuts commands
 
   // - Shortcuts control methods -
-
-  void enableShortcuts(void);           // Enable shortcuts
-  void disableShortcuts(void);          // Disable shortcuts
-  void displayShortcuts(bool display);  // Display or not shortcuts commands
+  void enableShortcuts(void);   // Enable shortcuts
+  void disableShortcuts(void);  // Disable shortcuts
 
   // - Misc methods -
 
@@ -459,9 +459,9 @@ class SceneApp : public ofBaseApp {
 
   // - Feature types -
 
-  vector<_Feature> feature;  // List of features
-  bool autoDrawFeatures;     // Auto-draw features
-  bool sendOscFeatures;      // Send features @ OSC
+  vector<_Feature> features;  // List of features
+  bool autoDrawFeatures;      // Auto-draw features
+  bool sendOscFeatures;       // Send features @ OSC
 
   // - Shortcuts control -
   bool dontReopenEditor;
