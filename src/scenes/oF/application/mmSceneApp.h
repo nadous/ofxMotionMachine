@@ -254,9 +254,7 @@ class SceneApp : public ofBaseApp {
   void addNewFeature(MoMa::TimedMat& feature, std::string name = "", std::string osc = "/feat", bool isShown = false, bool isSent = false);
   void addNewFeature(MoMa::TimedCube& feature, std::string name = "", std::string osc = "/feat", bool isShown = false, bool isSent = false);
 
-  MoMa::TimedVec* getFeature(const string& name) const;
   // - Figure-related methods -
-
   inline int nOfFigures(void) const { return (_figure.size()); }
   void setNumOfFigures(int nOfFigures);  // # of Figs
   void figure(int figId);                // Choose the target figure
@@ -422,15 +420,15 @@ class SceneApp : public ofBaseApp {
 
   // - Playback types -
 
-  int playbackMode;                // Playback mode flag
-  float frameRate;                 // Frame rate from playback
-  ofParameter<bool> playParam;     // Are we playing a track?
+  int playbackMode;                             // Playback mode flag
+  float frameRate;                              // Frame rate from playback
+  ofParameter<bool> playParam;      // Are we playing a track?
   ofParameter<bool> reverseParam;  // Is it playing in reverse?
-  MoMa::Moment appMoment;          // Current app moment
-  float fAppMomentIndex;           // Float moment index
-  bool isBegin;                    // Is begin?
-  ofParameter<float> timeParam;    // Time range for slider (in seconds)
-  ofParameter<float> speedParam;   // Speed of the player time (default : 1.0)
+  MoMa::Moment appMoment;                       // Current app moment
+  float fAppMomentIndex;                        // Float moment index
+  bool isBegin;                                 // Is begin?
+  ofParameter<float> timeParam;                 // Time range for slider (in seconds)
+  ofParameter<float> speedParam;                // Speed of the player time (default : 1.0)
 
   // - Video recorder -
 
@@ -458,7 +456,6 @@ class SceneApp : public ofBaseApp {
   int tolerance;         // Tolerence for seletion
 
   // - Feature types -
-
   vector<_Feature> features;  // List of features
   bool autoDrawFeatures;      // Auto-draw features
   bool sendOscFeatures;       // Send features @ OSC

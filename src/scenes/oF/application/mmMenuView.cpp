@@ -7,10 +7,6 @@ MenuView::MenuView(SceneApp* app,
                    MoMa::Position alignment,
                    MoMa::Canvas* relative,
                    bool minified) : Canvas(app, "Menu", MoMa::Canvas::Type::Group, position, alignment, relative, NULL, NULL, true) {
-  /*vector<string> playNames; // Mode names		
-        playNames.push_back( "SCRUB MODE" );
-        playNames.push_back( "PLAY MODE" );*/
-
   vector<string> focusModes;  // Mode names
   focusModes.push_back("Focus on 3D Scene");
   focusModes.push_back("Focus on 2D Figures");
@@ -34,6 +30,7 @@ MenuView::MenuView(SceneApp* app,
   uiOptions.push_back("View Other Canvas");
 
   i = 0;
+  uiOptionsGroup.setName("Display options");
   for (auto it = uiOptions.begin(); it != uiOptions.end(); ++it, ++i) {
     ofParameter<bool> uiOptionParam;
     uiOptionsGroup.add(uiOptionParam.set(*it, i != 1));
@@ -41,9 +38,6 @@ MenuView::MenuView(SceneApp* app,
   }
 
   _container->addContainer(uiOptionsGroup);
-
-  //playRadio = addRadio( "ActivePlayMode", playNames, OFX_UI_ORIENTATION_VERTICAL );
-  //addSpacer();
 
   initCanvas();
 }
@@ -69,12 +63,6 @@ void MenuView::focusModeChange(const string& name) {
     _app->setActiveMode(MoMa::SCENE2D);
   else if (name == "Focus on Annotation")
     _app->setActiveMode(MoMa::ANNOTATE);
-  //else if( name == "SCRUB MODE") app->setPlaybackMode( MoMa::SCRUB );
-  //else if( name == "PLAY MODE") app->setPlaybackMode( MoMa::PLAY );
-
-  /*if( app->activeMode == MoMa::SCENE3D ) app->show3dScene( true );
-    else if( app->activeMode == MoMa::SCENE2D ) app->showFigures( true );
-    else if( app->activeMode == MoMa::ANNOTATE ) app->showAnnotation( true );*/
 }
 
 void MenuView::uiOptionsChange(bool& value) {
@@ -103,12 +91,6 @@ void MenuView::uiOptionsChange(bool& value) {
         reopenOtherCanvas();  // Show/hide the canvas
     }
   }
-
-  /*if(name == "Options group 2") {
-
-    if(((ofxUIToggle*)(e.widget))->getValue()) openChildren(1);
-    else closeChildren();
-    }*/
 }
 
 void MenuView::update() {
@@ -119,12 +101,6 @@ void MenuView::update() {
     focusModeGroup.getBool("Focus on 2D Figures").set(true);
   else if (_app->activeMode == MoMa::ANNOTATE)
     focusModeGroup.getBool("Focus on Annotation").set(true);
-
-  // playBar->setValue(childrenOpened(0));
-  // viewOptions->setValue(childrenOpened(1));
-
-  //if( app->playbackMode == MoMa::SCRUB ) playRadio->activateToggle( "SCRUB MODE" );
-  //else if( app->playbackMode == MoMa::PLAY ) playRadio->activateToggle( "PLAY MODE" );
 }
 
 void MenuView::closeOtherCanvas() {

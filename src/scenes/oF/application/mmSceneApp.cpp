@@ -954,21 +954,23 @@ void MoMa::SceneApp::render2d(void) {
   }
 }
 
-void MoMa::SceneApp::draw(const Node& node) { /*    if( node.hasRotation() ) {            ofBoxPrimitive box; box.set( nodeSize );
+void MoMa::SceneApp::draw(const Node& node) {
+  // if (node.hasRotation()) {
+  //   ofBoxPrimitive box;
+  //   box.set(nodeSize);
 
-            box.setPosition( toVec3f( node.position ) );
-            box.setOrientation( toVec3f( node.rotation ) );
+  //   box.setPosition(toVec3f(node.position));
+  //   box.setOrientation(toVec3f(node.rotation));
 
-            box.draw();
+  //   box.draw();
 
-        } else */
-  {
-    ofSpherePrimitive sphere;
-    sphere.setRadius(nodeSize / 2);
-    sphere.setPosition(toVec3f(node.position));
+  // } else {
+  ofSpherePrimitive sphere;
+  sphere.setRadius(nodeSize / 2);
+  sphere.setPosition(toVec3f(node.position));
 
-    sphere.draw();
-  }
+  sphere.draw();
+  // }
 
   string tag = "";
   if (isNodeNames)
@@ -1137,10 +1139,10 @@ void MoMa::SceneApp::draw(const Frame& frame) {
             float s = arma::norm(frame.getPosition().col(it->second.jointParent) - frame.getPosition().col(it->second.jointChildren[bEnd]));
             bone.setPosition(toVec3f(frame.getPosition().col(it->second.jointParent)));
 
-            //if (frame.boneList->hasOrigNodeRot_as_boneRot)
-            bone.setOrientation(toQuaternion(frame.getRotationOffset().col(it->second.jointChildren[bEnd])) * toQuaternion(frame.getRotation().col(it->second.boneId)));  //
-                                                                                                                                                                          //else
-                                                                                                                                                                          //	bone.setOrientation(toQuaternion(frame.getRotationOffset().col(frame.boneList->at(b).second[bEnd])) *toQuaternion(frame.getRotation().col(frame.boneList->at(b).second[bEnd])));//
+            // if (frame.boneList->hasOrigNodeRot_as_boneRot)
+            //   bone.setOrientation(toQuaternion(frame.getRotationOffset().col(it->second.jointChildren[bEnd])) * toQuaternion(frame.getRotation().col(it->second.boneId)));  //
+            // else
+            //   bone.setOrientation(toQuaternion(frame.getRotationOffset().col(frame.boneList->at(b).second[bEnd])) * toQuaternion(frame.getRotation().col(frame.boneList->at(b).second[bEnd])));  //
             bone.setScale(s, 1, 1);
             bone.draw();
           } else {
@@ -1165,8 +1167,8 @@ void MoMa::SceneApp::draw(const Frame& frame) {
 
       ofPushStyle();
       //ofSetColor(DarkTurquoise, ofGetStyle().color.a);
+    
       ofSpherePrimitive sphere;
-
       sphere.setRadius(nodeSize / 2);  // Set position and radius
       for (int s = 0; s < frame.nOfNodes(); s++) {
         ofPushMatrix();
@@ -1436,14 +1438,6 @@ void MoMa::SceneApp::addNewFeature(MoMa::TimedCube& feat,
   _feat.isWek = false;
 
   features.push_back(_feat);
-}
-
-MoMa::TimedVec* MoMa::SceneApp::getFeature(const string& name) const {
-  for (auto feature : features)
-    if (feature.name == name)
-      return feature.feature.tvec;
-
-  return NULL;
 }
 
 void MoMa::SceneApp::setNumOfFigures(int nOfFigures) {

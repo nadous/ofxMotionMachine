@@ -6,12 +6,7 @@ using namespace std;
 TextDialog::TextDialog(SceneApp* app) : Canvas(app, "Dialog", MoMa::Canvas::Type::Group, NULL) {
   _container->setConfig(ofJson({{"width", "100%"}}));
 
-  // ofxGuiGroup* header = _container->addGroup("header", ofJson({{"flex-direction", "row"},
-  //                                                              {"width", "100%"},
-  //                                                              {"background-color", "transparent"},
-  //                                                              {"show-header", false}}));
-
-  _container->add<ofxGuiTextField>(txtInput.set("label"), ofJson({{"width", 250}}));
+  _container->add<ofxGuiTextField>(txtInput.set("label", ""), ofJson({{"width", 250}}));
 
   ofxGuiGroup* form = _container->addGroup("dialog_form",
                                            ofJson({{"flex-direction", "row"},
