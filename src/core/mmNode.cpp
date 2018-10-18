@@ -11,17 +11,16 @@
 using namespace std;
 using namespace arma;
 
-MoMa::Node::Node(string name, bool hasTime, float time)
-{
-
-    position.resize(3);
-    //    rotation.resize( 4 );
-    //   rotationOffset.resize( 4 );
-
-    position(X) = datum::nan;
-    position(Y) = datum::nan;
-    position(Z) = datum::nan;
-
+MoMa::Node::Node( string name, bool hasTime, float time) {
+    
+    position.resize( 3 );
+//    rotation.resize( 4 );
+//   rotationOffset.resize( 4 );
+    
+    position( X ) = datum::nan;
+    position( Y ) = datum::nan;
+    position( Z ) = datum::nan;
+    
     //rotation( X ) = 0.0f;
     //rotation( Y ) = 0.0f;
     //rotation( Z ) = 0.0f;
@@ -31,43 +30,42 @@ MoMa::Node::Node(string name, bool hasTime, float time)
     //rotationOffset( Y ) = 0.0f;
     //rotationOffset( Z ) = 0.0f;
     //rotationOffset( 3 ) = 1.0f;
-
+    
     //_hasRotation = false;
     _hasTime = hasTime;
     _time = time;
     _name = name;
 }
 
-MoMa::Node::Node(float x, float y, float z, string name, bool hasTime, float time)
-{
-
-    position.resize(3);
+MoMa::Node::Node( float x, float y, float z, string name, bool hasTime, float time) {
+    
+    position.resize( 3 );
     //rotation.resize( 4 );
     //rotationOffset.resize( 4 );
-
-    position(X) = x;
-    position(Y) = y;
-    position(Z) = z;
-
+    
+    position( X ) = x;
+    position( Y ) = y;
+    position( Z ) = z;
+    
     //rotation( X ) = 0.0f;
     //rotation( Y ) = 0.0f;
     //rotation( Z ) = 0.0f;
     //rotation( 3 ) = 1.0f;
-
+    
     //rotationOffset( X ) = 0.0f;
     //rotationOffset( Y ) = 0.0f;
     //rotationOffset( Z ) = 0.0f;
     //rotationOffset( 3 ) = 1.0f;
-
+    
     //_hasRotation = false;
     _hasTime = hasTime;
     _time = time;
     _name = name;
+    
 }
 
-MoMa::Node::Node(vec pos, string name, bool hasTime, float time)
-{
-
+MoMa::Node::Node(vec pos, string name, bool hasTime, float time) {
+        
     setPosition(pos);
     position.resize(3);
     _hasTime = hasTime;
@@ -128,12 +126,11 @@ MoMa::Node::Node(vec pos, string name, bool hasTime, float time)
     
 }*/
 
-void MoMa::Node::setPosition(float x, float y, float z)
-{
-
-    position(X) = x;
-    position(Y) = y;
-    position(Z) = z;
+void MoMa::Node::setPosition( float x, float y, float z ) {
+    
+    position( X ) = x;
+    position( Y ) = y;
+    position( Z ) = z;
 }
 
 /*void MoMa::Node::setRotation( float x, float y, float z, float w ) {
@@ -161,9 +158,8 @@ void MoMa::Node::setPosition(float x, float y, float z)
     }
 }*/
 
-void MoMa::Node::setPosition(arma::vec pos)
-{
-
+void MoMa::Node::setPosition( arma::vec pos ) {
+    
     position = pos;
 }
 

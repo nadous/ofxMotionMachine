@@ -13,19 +13,17 @@ using namespace MoMa;
 
 const std::string SynoList::DefaultPath = getAbsoluteResPath() + "SynoList.txt";
 
-SynoList::SynoList(string fileName)
-{
 
-    load(fileName);
+SynoList::SynoList( string fileName ) {
+
+    load( fileName );
 }
 
-bool SynoList::load(string fileName)
-{
+bool SynoList::load( string fileName ) {
 
-    ifstream synFile(fileName.c_str());
+    ifstream synFile( fileName.c_str() );
 
-    if (!synFile.is_open())
-    {
+    if( !synFile.is_open() ) {
 
         cout << "SynoList: File could not be opened!" << endl;
         return false; // Stdout alert & quit if no/wrong file!
@@ -33,69 +31,61 @@ bool SynoList::load(string fileName)
 
     syno.clear();
 
-    for (string synLine; getline(synFile, synLine);)
-    {
+    for( string synLine; getline(synFile, synLine); ) {
 
         stringstream synStrm;
 
-        if (synLine != "" && synLine != " " &&
-            synLine != "\t" && synLine != "\n")
-        {
+        if( synLine != "" && synLine != " " &&
+            synLine != "\t" && synLine != "\n" ) {
 
-            string head;
-            string oneEquiv;
+                string head;
+                string oneEquiv;
 
-            // Get stream head from text line
-            synStrm << synLine;
-            synStrm >> head;
+                // Get stream head from text line
+                synStrm << synLine;
+                synStrm >> head;
 
-            // Insert the main keyword as its own synonymous
-            syno.insert(pair<string, string>(head, head));
+                // Insert the main keyword as its own synonymous
+                syno.insert( pair<string,string>( head, head ) );
 
-            while (synStrm >> oneEquiv)
-            {
+                while( synStrm >> oneEquiv ) {
 
-                // Insert each synonymous with its main keyword
-                syno.insert(pair<string, string>(oneEquiv, head));
-            }
+                    // Insert each synonymous with its main keyword
+                    syno.insert( pair<string,string>( oneEquiv, head ) );
+                }
         }
     }
 
     return true;
 }
 
-bool SynoList::search(std::string query, std::string &answer)
-{
+bool SynoList::search( std::string query, std::string &answer ) {
 
     bool isFound = false;
 
-    map<string, string>::const_iterator it;
+    map<string,string>::const_iterator it;
 
-    it = syno.find(query);
+    it = syno.find( query );
 
-    if (it != syno.end())
-    {
+    if( it != syno.end() ) {
 
         answer = it->second;
         isFound = true;
-    }
-    else
-    {
+
+    } else {
 
         answer = NameNotFound;
         isFound = false;
     }
 
-    return (isFound);
+    return( isFound );
 }
 
-void SynoList::print(void)
-{
+void SynoList::print( void ) {
 
-    map<string, string>::const_iterator it = syno.begin();
+    map<string,string>::const_iterator it = syno.begin();
 
-    while (it != syno.end())
-    {
+    while( it != syno.end() ) {
 
         cout << it->first << " -> ";
         cout << it->second << " ";

@@ -12,11 +12,11 @@
 #define __mmSkeleton__
 class Skeleton
 {
-  public:
+public:
 	Skeleton();
 	~Skeleton();
+protected:
 
-  protected:
 };
 
-#endif // __mmSkeleton__
+#endif// __mmSkeleton__

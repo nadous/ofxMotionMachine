@@ -13,44 +13,38 @@ using namespace std;
 using namespace arma;
 using namespace MoMa;
 
-Track::Track(void)
-{
+Track::Track( void ) {
 
     init();
 }
 
-Track::Track(Frame frame)
-{
+Track::Track( Frame frame ) {
 
     init();
-    push(frame);
+    push( frame );
 
     hasNodeList = frame.hasNodeList;
-    if (hasNodeList)
-        nodeList = std::make_shared<NodeList>(*(frame.nodeList));
+    if( hasNodeList ) nodeList = std::make_shared<NodeList>( *( frame.nodeList ) );
 
     hasBoneList = frame.hasBoneList;
-    if (hasBoneList)
-        boneList = std::make_shared<BoneList>(*(frame.boneList));
+    if( hasBoneList ) boneList = std::make_shared<BoneList>( *( frame.boneList ) );
 }
 
-MoMa::Track::Track(const Track &tr) : Track()
+MoMa::Track::Track(const Track & tr) : Track()
 {
     tr.copy(*this);
 }
 
-Track::~Track(void)
-{
+Track::~Track( void ) {
 
-    if (hasNodeList)  //delete
-        nodeList = 0; // Deallocation
-    if (hasBoneList)  //delete
-        boneList = 0; // Deallocation
+    if( hasNodeList ) //delete 
+        nodeList=0; // Deallocation
+    if( hasBoneList ) //delete 
+        boneList=0; // Deallocation
     // if( hasSynoList ) delete synoList; // Deallocation
 }
 
-void Track::init(void)
-{
+void Track::init( void ) {
 
     easyName = ""; // No name
     fileName = ""; // No file name
@@ -60,26 +54,25 @@ void Track::init(void)
 
     hasRotation = false; // No rotation
 
-    nodeList = NULL;     // Not allocated
+    nodeList = NULL; // Not allocated
     hasNodeList = false; // No node name list
 
-    boneList = NULL;     // Not allocated
+    boneList = NULL; // Not allocated
     hasBoneList = false; // No node name list
     hasGlobalCoordinate = true;
     //FIXME this should not be in constructor, among other things, it causes unnecessary
     //      load of the SynoList when creating a subtrack.
-    this->synolist(SynoList::DefaultPath);
+    this->synolist( SynoList::DefaultPath );
 
-    ringSize = 0;   // Init ring buffer size
+    ringSize = 0; // Init ring buffer size
     isRing = false; // Not ring buffer
 
-    //  hasOrigNodeRot_as_boneRot=true;
+  //  hasOrigNodeRot_as_boneRot=true;
 
-    setFrameRate(177.0f); // Qualisys
+    setFrameRate( 177.0f ); // Qualisys
 }
 
-bool Track::synolist(string fileName)
-{
+bool Track::synolist( string fileName ) {
 
     /*
     if( !hasSynoList ) {
@@ -93,44 +86,39 @@ bool Track::synolist(string fileName)
     return false;
 }
 
-void Track::nodes(string fileName)
-{
+void Track::nodes( string fileName ) {
 
-    // if( hasNodeList == true ) delete nodeList;
+   // if( hasNodeList == true ) delete nodeList;
 
-    nodeList = std::make_shared<NodeList>(fileName);
+    nodeList = std::make_shared<NodeList>( fileName );
 
-    if (nOfNodes() == 0 || nOfNodes() == nodeList->size())
-    {
+    if( nOfNodes() == 0 || nOfNodes() == nodeList->size() ) {
 
         hasNodeList = true;
+
     }
-    else
-    {
+    else {
 
         cout << "Track: node number does not match frame size" << endl;
 
         hasNodeList = false;
         nodeList = 0;
-        // delete nodeList;
+       // delete nodeList;
     }
 }
 
-void Track::bones(string fileName)
-{
+void Track::bones( string fileName ) {
 
-    if (hasBoneList == true) //delete
-        boneList = 0;
+    if( hasBoneList == true ) //delete 
+        boneList=0;
 
     ifstream bonFile(fileName.c_str());
 
-    if (!bonFile.is_open())
-    { //Temporary, find a better way... such as a load function instead of the constructor so we can return a boolean telling if the bone file could be loaded.
+    if (!bonFile.is_open()) { //Temporary, find a better way... such as a load function instead of the constructor so we can return a boolean telling if the bone file could be loaded.
 
-        hasBoneList = false;
+          hasBoneList = false;
     }
-    else
-    {
+    else {
 
         bonFile.close();
         boneList = std::make_shared<BoneList>(fileName);
@@ -138,8 +126,7 @@ void Track::bones(string fileName)
     }
 }
 
-void Track::load(string const &fileName)
-{
+void Track::load( string const &fileName ) {
 
     //if( hasNodeList ) delete nodeList; // Deallocation
     //nodeList = NULL;
@@ -147,22 +134,20 @@ void Track::load(string const &fileName)
     //boneList = NULL;
 
     //init();
-    Parser parser(fileName, this);
+    Parser parser( fileName, this );
 }
 
-void Track::setRingBufferSize(int size, bool pHasRotation, bool pTimed)
-{
-    if (pTimed)
-        position.setRealTimeMode(size, 3u, nodeList->size());
+void Track::setRingBufferSize( int size, bool pHasRotation, bool pTimed ) {
+    if( pTimed )
+        position.setRealTimeMode( size, 3u, nodeList->size() );
     else
-        position.setRealTimeMode(size, _frameRate, 3u, nodeList->size());
+        position.setRealTimeMode( size, _frameRate, 3u, nodeList->size() );
 
-    if (pHasRotation)
-    {
-        if (pTimed)
-            rotation.setRealTimeMode(size, 4u, boneList->size());
+    if( pHasRotation ) {
+        if( pTimed )
+            rotation.setRealTimeMode( size, 4u, boneList->size() );
         else
-            rotation.setRealTimeMode(size, _frameRate, 4u, boneList->size());
+            rotation.setRealTimeMode( size, _frameRate, 4u, boneList->size() );
 
         hasRotation = true;
         //this->hasOrigNodeRot_as_boneRot=false;
@@ -172,208 +157,187 @@ void Track::setRingBufferSize(int size, bool pHasRotation, bool pTimed)
     isRing = true;
 }
 
-void Track::push(Frame _frame)
-{
+void Track::push( Frame _frame ) {
 
-    if (_frame.hasRotation() && ((!nOfFrames()) || hasRotation))
-    {
+    if( _frame.hasRotation() && ( ( !nOfFrames() ) || hasRotation ) ) {
 
         hasRotation = true;
 
-        if (rotation.isTimed() && _frame.hasTime())
-        {
+        if( rotation.isTimed() && _frame.hasTime() ) {
 
-            rotation.push(_frame.getRotation(), _frame.time());
+            rotation.push( _frame.getRotation(), _frame.time() );
+
         }
-        else
-        {
+        else {
 
-            rotation.push(_frame.getRotation());
+            rotation.push( _frame.getRotation() );
         }
 
-        if (rotationOffset.n_elem == 0)
-        {
+        if( rotationOffset.n_elem == 0 ) {
 
             rotationOffset = _frame.getRotationOffset();
         }
     }
 
-    if (position.isTimed() && _frame.hasTime())
-    {
+    if( position.isTimed() && _frame.hasTime() ) {
 
-        position.push(_frame.getPosition(), _frame.time());
+        position.push( _frame.getPosition(), _frame.time() );
+
     }
-    else
-    {
+    else {
 
         arma::mat temp = _frame.getPosition();
-        position.push(temp);
+        position.push( temp );
     }
 
-    if (isRing)
-    {
+    if( isRing ) {
 
-        if (position.nOfFrames() > ringSize)
-        {
-        } // position.pop(); // Ring buffer behavior
-        if (_frame.hasRotation() && (rotation.nOfFrames() > ringSize))
-        {
-        } // rotation.pop();
+        if( position.nOfFrames() > ringSize ) {}// position.pop(); // Ring buffer behavior
+        if( _frame.hasRotation() && ( rotation.nOfFrames() > ringSize ) ) {}// rotation.pop();
     }
 }
 
-bool Track::localToGlobal()
-{
+bool Track::localToGlobal() {
 
-    if (hasNodeList == false || hasBoneList == false || hasGlobalCoordinate == true)
+    if( hasNodeList == false || hasBoneList == false || hasGlobalCoordinate==true )
         return false;
-    for (int i = 0; i < boneList->rootIt.size(); i++)
-        localToGlobal(boneList->rootIt[i]);
+    for( int i = 0; i < boneList->rootIt.size(); i++)
+        localToGlobal( boneList->rootIt[i] );
     hasGlobalCoordinate = true;
-    return this->setJointOffsetRotation();
+	return this->setJointOffsetRotation();
 }
 
-void Track::localToGlobal(boneMapType::iterator it)
-{
-    int indMax = max(it->second.jointChildren.size(), it->second.boneChildrenIt.size());
-    for (int bEnd = 0; bEnd < it->second.jointChildren.size(); bEnd++)
-    {
+void Track::localToGlobal( boneMapType::iterator it ){
+    int indMax = max( it->second.jointChildren.size(), it->second.boneChildrenIt.size() );
+    for( int bEnd = 0; bEnd < it->second.jointChildren.size(); bEnd++ ) {
 
-        for (int idFrame = 0; idFrame < nOfFrames(); idFrame++)
-        {
-            MoMa::quaternion lQuat(rotation.getRefData().slice(idFrame).col(it->second.boneId));
-            if (arma::norm((arma::colvec)lQuat) < arma::datum::eps)
+
+        for( int idFrame = 0; idFrame < nOfFrames(); idFrame++ ) {
+            MoMa::quaternion lQuat( rotation.getRefData().slice( idFrame ).col( it->second.boneId ) );
+            if( arma::norm( ( arma::colvec ) lQuat ) < arma::datum::eps )
                 continue;
             arma::mat lMat, lMat2;
-            lQuat.get(lMat);
+            lQuat.get( lMat );
             //lQuat.clear();
-            lQuat.set(lMat);
-            lMat.submat(0, 3, 2, 3) = position.getData().slice(idFrame).col(it->second.jointParent); //last column is the translation column
+            lQuat.set( lMat );
+            lMat.submat( 0, 3, 2, 3 ) = position.getData().slice( idFrame ).col( it->second.jointParent );//last column is the translation column
 
-            arma::vec lVec = lMat.submat(0, 3, 2, 3);
-            lMat = lMat.submat(0, 0, 2, 2);
-            position.getRefData().slice(idFrame).col(it->second.jointChildren[bEnd]) = lMat * position.getRefData().slice(idFrame).col(it->second.jointChildren[bEnd]) + lVec;
+            arma::vec lVec = lMat.submat( 0, 3, 2, 3 );
+            lMat = lMat.submat( 0, 0, 2, 2 );
+            position.getRefData().slice( idFrame ).col( it->second.jointChildren[bEnd] ) = lMat*position.getRefData().slice( idFrame ).col( it->second.jointChildren[bEnd] ) + lVec;
+
         }
-    }
-    for (int bEnd = 0; bEnd < it->second.boneChildrenIt.size(); bEnd++)
-    {
 
-        for (int idFrame = 0; idFrame < nOfFrames(); idFrame++)
-        {
-            MoMa::quaternion lQuat(rotation.getRefData().slice(idFrame).col(it->second.boneId));
-            if (arma::norm((arma::colvec)lQuat) < arma::datum::eps)
-            {
-                throw std::runtime_error(" Track::globalToLocal, no Valid orientation for a non endpoint node");
+    }
+    for( int bEnd = 0; bEnd < it->second.boneChildrenIt.size(); bEnd++ ) {
+
+
+        for( int idFrame = 0; idFrame < nOfFrames(); idFrame++ ) {
+            MoMa::quaternion lQuat( rotation.getRefData().slice( idFrame ).col( it->second.boneId ) );
+            if( arma::norm( ( arma::colvec ) lQuat ) < arma::datum::eps ) {
+                throw std::runtime_error( " Track::globalToLocal, no Valid orientation for a non endpoint node" );
             }
             arma::mat lMat, lMat2;
-            lQuat.get(lMat);
+            lQuat.get( lMat );
             //lQuat.clear();
-            lQuat.set(lMat);
-            lMat.submat(0, 3, 2, 3) = position.getData().slice(idFrame).col(it->second.jointParent); //last column is the translation column
-
-            MoMa::quaternion lQuat2(rotation.getRefData().slice(idFrame).col(it->second.boneChildrenIt[bEnd]->second.boneId));
-
-            lQuat2.get(lMat2);
-            if (arma::norm((arma::colvec)lQuat2) > arma::datum::eps)
-            {
-                lQuat.set((arma::mat)(lMat * lMat2));
-                rotation.getRefData().slice(idFrame).col(it->second.boneChildrenIt[bEnd]->second.boneId) = lQuat;
+            lQuat.set( lMat );
+            lMat.submat( 0, 3, 2, 3 ) = position.getData().slice( idFrame ).col( it->second.jointParent );//last column is the translation column
+            
+            MoMa::quaternion lQuat2( rotation.getRefData().slice( idFrame ).col( it->second.boneChildrenIt[bEnd]->second.boneId ) );
+                
+            lQuat2.get( lMat2 );
+            if( arma::norm( ( arma::colvec ) lQuat2 ) > arma::datum::eps ) {
+                lQuat.set( ( arma::mat )( lMat*lMat2 ) );
+                rotation.getRefData().slice( idFrame ).col( it->second.boneChildrenIt[bEnd]->second.boneId ) = lQuat;
             }
-            else
-            {
-                lMat = lMat.submat(0, 0, 2, 2);
-                arma::vec lVec2 = position.getRefData().slice(idFrame).col(it->second.boneChildrenIt[bEnd]->second.jointParent);
-                for (int b2 = 0; b2 < it->second.boneChildrenIt[bEnd]->second.jointChildren.size(); b2++)
-                {
-                    arma::vec lVec3 = lMat * position.getRefData().slice(idFrame).col(it->second.boneChildrenIt[bEnd]->second.jointChildren[b2]);
-                    position.getRefData().slice(idFrame).col(it->second.boneChildrenIt[bEnd]->second.jointChildren[b2]) = lVec3 + lVec2; // = lMat*position.getRefData().slice( idFrame ).col( it->second.boneChildrenIt[bEnd]->second.jointChildren[bEnd] ) + lVec;
+            else {
+                lMat = lMat.submat( 0, 0, 2, 2 );
+                arma::vec lVec2 = position.getRefData().slice( idFrame ).col( it->second.boneChildrenIt[bEnd]->second.jointParent );
+                for( int b2 = 0; b2 < it->second.boneChildrenIt[bEnd]->second.jointChildren.size(); b2++ ) {
+                    arma::vec lVec3 = lMat*position.getRefData().slice( idFrame ).col( it->second.boneChildrenIt[bEnd]->second.jointChildren[b2] );
+                    position.getRefData().slice( idFrame ).col( it->second.boneChildrenIt[bEnd]->second.jointChildren[b2] ) = lVec3 + lVec2;// = lMat*position.getRefData().slice( idFrame ).col( it->second.boneChildrenIt[bEnd]->second.jointChildren[bEnd] ) + lVec;
                 }
             }
         }
 
-        localToGlobal(it->second.boneChildrenIt[bEnd]);
+        localToGlobal( it->second.boneChildrenIt[bEnd] );
+
+
     }
 }
 
-bool Track::globalToLocal()
-{
-    if (hasRotation == false || hasNodeList == false || hasBoneList == false || hasGlobalCoordinate == false)
+bool Track::globalToLocal() {
+    if( hasRotation==false || hasNodeList == false || hasBoneList == false || hasGlobalCoordinate==false )
         return false;
-    for (int i = 0; i < boneList->rootIt.size(); i++)
-        globalToLocal(boneList->rootIt[i]);
+    for( int i = 0; i < boneList->rootIt.size(); i++ )
+        globalToLocal( boneList->rootIt [i]);
     hasGlobalCoordinate = false;
     this->setJointOffsetRotation();
 
     return true;
+
 };
-void Track::globalToLocal(boneMapType::iterator it)
-{
-    int indMax = max(it->second.jointChildren.size(), it->second.boneChildrenIt.size());
-
-    for (int bEnd = 0; bEnd < it->second.boneChildrenIt.size(); bEnd++)
-    {
-        globalToLocal(it->second.boneChildrenIt[bEnd]);
-        for (int idFrame = 0; idFrame < nOfFrames(); idFrame++)
-        {
-            MoMa::quaternion lQuat(rotation.getRefData().slice(idFrame).col(it->second.boneId));
-            if (arma::norm((arma::colvec)lQuat) < arma::datum::eps)
-            {
-                throw std::runtime_error(" Track::globalToLocal, no Valid orientation for a non endpoint node");
+void Track::globalToLocal( boneMapType::iterator it ){
+    int indMax=max( it->second.jointChildren.size(), it->second.boneChildrenIt.size());
+   
+    for( int bEnd = 0; bEnd <  it->second.boneChildrenIt.size(); bEnd++ ) {
+        globalToLocal( it->second.boneChildrenIt[bEnd] );
+        for( int idFrame = 0; idFrame < nOfFrames(); idFrame++ ) {
+            MoMa::quaternion lQuat( rotation.getRefData().slice( idFrame ).col( it->second.boneId ) );
+            if( arma::norm( ( arma::colvec ) lQuat ) < arma::datum::eps ) {
+                throw std::runtime_error( " Track::globalToLocal, no Valid orientation for a non endpoint node" );
             }
-            arma::mat lMat, lMat2;
-            lQuat.get(lMat);
-            lMat.submat(0, 3, 2, 3) = position.getData().slice(idFrame).col(it->second.jointParent);
-            lMat = inv(lMat);
+            arma::mat lMat,lMat2;
+            lQuat.get( lMat );
+            lMat.submat( 0, 3, 2, 3 ) = position.getData().slice( idFrame ).col( it->second.jointParent );
+            lMat=inv(lMat);
 
-            MoMa::quaternion lQuat2(rotation.getRefData().slice(idFrame).col(it->second.boneChildrenIt[bEnd]->second.boneId));
+            MoMa::quaternion lQuat2( rotation.getRefData().slice( idFrame ).col( it->second.boneChildrenIt[bEnd]->second.boneId ) );
 
-            if (arma::norm((arma::colvec)lQuat2) > arma::datum::eps)
-            {
-                lQuat2.get(lMat2);
-                lQuat.set((arma::mat)(lMat * lMat2));
-                rotation.getRefData().slice(idFrame).col(it->second.boneChildrenIt[bEnd]->second.boneId) = lQuat;
+            if( arma::norm( ( arma::colvec ) lQuat2 ) > arma::datum::eps ) {
+                lQuat2.get( lMat2 );
+                lQuat.set( ( arma::mat )( lMat*lMat2 ) );
+                rotation.getRefData().slice( idFrame ).col( it->second.boneChildrenIt[bEnd]->second.boneId ) = lQuat;
             }
-            else
-            {
-                arma::vec lVec = lMat.submat(0, 3, 2, 3);
-                lMat = lMat.submat(0, 0, 2, 2);
-                arma::vec lVec2 = lMat * position.getRefData().slice(idFrame).col(it->second.boneChildrenIt[bEnd]->second.jointParent);
-                for (int b2 = 0; b2 < it->second.boneChildrenIt[bEnd]->second.jointChildren.size(); b2++)
-                {
-                    arma::vec lVec3 = lMat * position.getRefData().slice(idFrame).col(it->second.boneChildrenIt[bEnd]->second.jointChildren[b2]);
-                    position.getRefData().slice(idFrame).col(it->second.boneChildrenIt[bEnd]->second.jointChildren[b2]) = lVec3 - lVec2; // = lMat*position.getRefData().slice( idFrame ).col( it->second.boneChildrenIt[bEnd]->second.jointChildren[bEnd] ) + lVec;
+            else {
+                arma::vec lVec = lMat.submat( 0, 3, 2, 3 );
+                lMat = lMat.submat( 0, 0, 2, 2 );
+                arma::vec lVec2 = lMat*position.getRefData().slice( idFrame ).col( it->second.boneChildrenIt[bEnd]->second.jointParent );
+                for( int b2 = 0; b2 < it->second.boneChildrenIt[bEnd]->second.jointChildren.size(); b2++ ) {
+                    arma::vec lVec3 = lMat*position.getRefData().slice( idFrame ).col( it->second.boneChildrenIt[bEnd]->second.jointChildren[b2] );
+                    position.getRefData().slice( idFrame ).col( it->second.boneChildrenIt[bEnd]->second.jointChildren[b2] ) = lVec3 - lVec2;// = lMat*position.getRefData().slice( idFrame ).col( it->second.boneChildrenIt[bEnd]->second.jointChildren[bEnd] ) + lVec;
                 }
             }
         }
-    }
-    for (int bEnd = 0; bEnd < it->second.jointChildren.size(); bEnd++)
-    {
 
-        for (int idFrame = 0; idFrame < nOfFrames(); idFrame++)
-        {
-            MoMa::quaternion lQuat(rotation.getRefData().slice(idFrame).col(it->second.boneId));
-            if (arma::norm((arma::colvec)lQuat) < arma::datum::eps)
+    }
+    for( int bEnd = 0; bEnd < it->second.jointChildren.size(); bEnd++ ) {
+
+        for( int idFrame = 0; idFrame < nOfFrames(); idFrame++ ) {
+            MoMa::quaternion lQuat( rotation.getRefData().slice( idFrame ).col( it->second.boneId ) );
+            if( arma::norm( ( arma::colvec ) lQuat ) < arma::datum::eps )
                 continue;
             arma::mat lMat, lMat2;
-            lQuat.get(lMat);
-            arma::vec lVec3 = position.getData().slice(idFrame).col(it->second.jointParent);
-            lMat.submat(0, 3, 2, 3) = position.getData().slice(idFrame).col(it->second.jointParent);
-            lMat = inv(lMat);
-            arma::vec lVec = lMat.submat(0, 3, 2, 3);
-            lMat = lMat.submat(0, 0, 2, 2);
-            position.getRefData().slice(idFrame).col(it->second.jointChildren[bEnd]) = lMat * position.getRefData().slice(idFrame).col(it->second.jointChildren[bEnd]) + lVec;
+            lQuat.get( lMat );
+            arma::vec lVec3= position.getData().slice( idFrame ).col( it->second.jointParent );
+            lMat.submat( 0, 3, 2, 3 ) = position.getData().slice( idFrame ).col( it->second.jointParent );
+            lMat = inv( lMat );
+            arma::vec lVec = lMat.submat( 0, 3, 2, 3 );
+            lMat = lMat.submat( 0, 0, 2, 2 );
+            position.getRefData().slice( idFrame ).col( it->second.jointChildren[bEnd] ) = lMat*position.getRefData().slice( idFrame ).col( it->second.jointChildren[bEnd] ) + lVec;
+            
         }
+
     }
 }
 
-void Track::setName(string name)
-{
+
+void Track::setName( string name ) {
 
     easyName = name;
 }
 
-void Track::setFileName(string name)
-{
+void Track::setFileName( string name ) {
 
     fileName = name;
 
@@ -382,24 +346,21 @@ void Track::setFileName(string name)
     // in drag-and-drop scenarios ), we give the track
     // the file name as its default easy name at time.
 
-    if (easyName == "" || easyName == "Unnamed")
-    {
+    if( easyName == "" || easyName == "Unnamed" ) {
 
         easyName = name;
     }
 }
 
-int Track::index(std::string name)
-{
+int Track::index( std::string name ) {
 
     // TODO There is a better way
 
     int nIdx = -1;
 
-    if (hasNodeList)
-    {
+    if( hasNodeList ) {
 
-        nIdx = nodeList->index(name);
+        nIdx = nodeList->index( name );
     }
 
     /*
@@ -410,31 +371,28 @@ int Track::index(std::string name)
     }
     */
 
-    return (nIdx);
+    return( nIdx );
 }
 
-void Track::setFrameRate(float rate)
-{
+void Track::setFrameRate( float rate ) {
 
     _frameRate = rate;
 
-    position.setFrameRate(rate);
+    position.setFrameRate( rate );
 
-    if (hasRotation)
-    {
+    if( hasRotation ) {
 
-        rotation.setFrameRate(rate);
+        rotation.setFrameRate( rate );
     }
 }
 
-void Track::clear(void)
-{
+void Track::clear( void ) {
 
-    if (hasNodeList)  //delete
-        nodeList = 0; // Deallocation
+    if( hasNodeList ) //delete 
+        nodeList=0; // Deallocation
     //nodeList = NULL;
-    if (hasBoneList)  //delete
-        boneList = 0; // Deallocation
+    if( hasBoneList ) //delete 
+        boneList=0; // Deallocation
     //boneList = NULL;
     rotationOffset.clear();
     rotation.clear();
@@ -442,22 +400,19 @@ void Track::clear(void)
     hasRotation = false;
 }
 
-void Track::clearData(void)
-{
+void Track::clearData( void ) {
     rotation.clear();
     position.clear();
     hasRotation = false;
 }
 
-void Track::cut(int beg, int end)
-{
+void Track::cut( int beg, int end ) {
 
-    position = position.sub(beg, end);
+    position = position.sub( beg, end );
 
-    if (hasRotation)
-    {
+    if( hasRotation ) {
 
-        rotation = rotation.sub(beg, end);
+        rotation = rotation.sub( beg, end );
     }
 
     /*if (hasRotation) {
@@ -491,51 +446,45 @@ void Track::cut(int beg, int end)
     }*/
 }
 
-void Track::copy(Track &tr) const
-{
+void Track::copy( Track &tr ) const {
 
-    if (tr.nodeList)
+    if( tr.nodeList ) 
         //delete tr.nodeList;
-        tr.nodeList = 0;
-    if (tr.boneList) //delete
-        tr.boneList = 0;
+        tr.nodeList=0;
+    if( tr.boneList ) //delete 
+        tr.boneList=0;
 
     tr = *this;
     //create independant nodelist and bonelist (to avoid conflicts when modifying/deleting tracks)
-    if (hasNodeList)
-    {
+    if( hasNodeList ) {
 
         tr.nodeList = std::make_shared<NodeList>();
-        *(tr.nodeList) = *nodeList;
+        *( tr.nodeList ) = *nodeList;
     }
-    if (hasBoneList)
-    {
+    if( hasBoneList ) {
 
         tr.boneList = std::make_shared<BoneList>();
-        *(tr.boneList) = *boneList;
-        tr.boneList->updateBoneChildrenName();
+        *( tr.boneList ) = *boneList;
+		tr.boneList->updateBoneChildrenName();
     }
 }
 
-void Track::subTrack(Track &subTr, int beg, int end)
-{
+void Track::subTrack( Track &subTr, int beg, int end ) {
 
     subTr.hasNodeList = hasNodeList;
 
-    if (hasNodeList)
-    {
+    if( hasNodeList ) {
 
         subTr.nodeList = std::make_shared<NodeList>();
-        *(subTr.nodeList) = *nodeList;
+        *( subTr.nodeList ) = *nodeList;
     }
 
     subTr.hasBoneList = hasBoneList;
 
-    if (hasBoneList)
-    {
+    if( hasBoneList ) {
 
         subTr.boneList = std::make_shared<BoneList>();
-        *(subTr.boneList) = *boneList;
+        *( subTr.boneList ) = *boneList;
     }
 
     // subTr.hasSynoList = hasSynoList;
@@ -556,176 +505,154 @@ void Track::subTrack(Track &subTr, int beg, int end)
 
     subTr.hasRotation = hasRotation;
 
-    if (hasRotation)
-    {
+    if( hasRotation ) {
 
-        if (rotation.isTimed())
-        {
+        if( rotation.isTimed() ) {
 
             // TODO
 
-            subTr.rotation.setData(rotation.getTimeVec().subvec(beg, end), rotation.getData().slices(beg, end));
+            subTr.rotation.setData( rotation.getTimeVec().subvec( beg, end ), rotation.getData().slices( beg, end ) );
             subTr.rotationOffset = rotationOffset;
-            subTr.rotation.setInitialTime((double)(beg / _frameRate));
-        }
-        else
-        {
+            subTr.rotation.setInitialTime( (double)( beg / _frameRate ) );
 
-            subTr.rotation.setData(rotation.frameRate(), rotation.getData().slices(beg, end));
+        }
+        else {
+
+            subTr.rotation.setData( rotation.frameRate(), rotation.getData().slices( beg, end ) );
             subTr.rotationOffset = rotationOffset;
-            subTr.rotation.setInitialTime((double)(beg / _frameRate));
+            subTr.rotation.setInitialTime( (double)( beg / _frameRate ) );
         }
     }
 
-    if (position.isTimed())
-    {
+    if( position.isTimed() ) {
 
         // TODO
 
-        subTr.position.setData(position.getTimeVec().subvec(beg, end), position.getData().slices(beg, end));
-        subTr.position.setInitialTime((double)(beg / _frameRate));
+        subTr.position.setData( position.getTimeVec().subvec( beg, end ), position.getData().slices( beg, end ) );
+        subTr.position.setInitialTime( (double)( beg / _frameRate ) );
     }
-    else
-    {
+    else {
 
-        subTr.position.setData(position.frameRate(), position.getData().slices(beg, end));
-        subTr.position.setInitialTime((double)(beg / _frameRate));
+        subTr.position.setData( position.frameRate(), position.getData().slices( beg, end ) );
+        subTr.position.setInitialTime( (double)( beg / _frameRate ) );
     }
 }
 
-bool Track::setJointOffsetRotation()
-{
+bool Track::setJointOffsetRotation() {
 
-    if (this->hasBoneList == false || this->hasNodeList == false || !this->hasRotation)
+    if( this->hasBoneList == false || this->hasNodeList == false || !this->hasRotation )
         return false;
 
-    if (this->rotation.getData().size() == 0)
-        throw std::runtime_error("Track::setJointOffsetRotation : empty rotation matrix with a rotation true flag");
+    if( this->rotation.getData().size() == 0 )
+        throw std::runtime_error( "Track::setJointOffsetRotation : empty rotation matrix with a rotation true flag" );
     bool debug = false;
 
-    this->rotationOffset.resize(4, this->nOfNodes()); //for each mocap format, the orientation offset is stored in the destination node of the bone
-    Frame frame0 = this->frame((unsigned int)0);
-    if (this->hasGlobalCoordinate == false)
-    {
-        for (boneMapType::iterator it = this->boneList->begin(); it != this->boneList->end(); it++)
-        {
-            for (int j = 0; j < it->second.jointChildren.size(); j++)
-            { //loop on the ids of the destination joints of the current bone.
+    this->rotationOffset.resize( 4, this->nOfNodes() );//for each mocap format, the orientation offset is stored in the destination node of the bone
+    Frame frame0 = this->frame( (unsigned int)0 );
+    if( this->hasGlobalCoordinate == false ) {
+        for( boneMapType::iterator it = this->boneList->begin(); it != this->boneList->end(); it++ ) {
+            for( int j = 0; j < it->second.jointChildren.size(); j++ ) {//loop on the ids of the destination joints of the current bone.
                 int dest = it->second.jointChildren[j];
 
                 arma::colvec xVec, yVec, zVec;
-                xVec = frame0.getPosition().col(dest);
+                xVec = frame0.getPosition().col( dest );
                 yVec << 0.0 << 1.0 << 0.0;
                 zVec << -1.0 << 0.0 << 0.0;
-                yVec = arma::cross(zVec, xVec);
-                zVec = arma::cross(xVec, yVec);
-                arma::mat offsetMatrix(3, 3);
-                offsetMatrix.col(0) = arma::normalise(xVec);
-                offsetMatrix.col(1) = arma::normalise(yVec);
-                offsetMatrix.col(2) = arma::normalise(zVec);
+                yVec = arma::cross( zVec, xVec );
+                zVec = arma::cross( xVec, yVec );
+                arma::mat offsetMatrix( 3, 3 );
+                offsetMatrix.col( 0 ) = arma::normalise( xVec );
+                offsetMatrix.col( 1 ) = arma::normalise( yVec );
+                offsetMatrix.col( 2 ) = arma::normalise( zVec );
 
                 //				quaternion origQuat(frame0.node(orig).rotation);
                 quaternion offsetQuat;
-                offsetQuat.set(offsetMatrix);
-                quaternion lquat(offsetQuat);
-                this->rotationOffset.col(dest) = lquat;
+                offsetQuat.set( offsetMatrix );
+                quaternion lquat( offsetQuat );
+                this->rotationOffset.col( dest ) = lquat;
+
             }
         }
         return true;
     }
-    if (frame0.getPosition().n_elem == 0)
-        return false;
+	if (frame0.getPosition().n_elem == 0)
+		return false;
     arma::colvec frontalAxis;
     arma::colvec longAxis;
     arma::colvec tempVec;
 
-    tempVec << frame0.node("LShoulder").position[0] << frame0.node("LShoulder").position[1] << frame0.node("LShoulder").position[2];
-    frontalAxis << frame0.node("RShoulder").position[0] << frame0.node("RShoulder").position[1] << frame0.node("RShoulder").position[2];
-    frontalAxis = normalise(tempVec - frontalAxis);
+    tempVec << frame0.node( "LShoulder" ).position[0] << frame0.node( "LShoulder" ).position[1] << frame0.node( "LShoulder" ).position[2];
+    frontalAxis << frame0.node( "RShoulder" ).position[0] << frame0.node( "RShoulder" ).position[1] << frame0.node( "RShoulder" ).position[2];
+    frontalAxis = normalise( tempVec - frontalAxis );
 
     tempVec.clear();
-    tempVec << frame0.node("Head").position[0] << frame0.node("Head").position[1] << frame0.node("Head").position[2];
-    longAxis << frame0.node("Pelvis").position[0] << frame0.node("Pelvis").position[1] << frame0.node("Pelvis").position[2];
+    tempVec << frame0.node( "Head" ).position[0] << frame0.node( "Head" ).position[1] << frame0.node( "Head" ).position[2];
+    longAxis << frame0.node( "Pelvis" ).position[0] << frame0.node( "Pelvis" ).position[1] << frame0.node( "Pelvis" ).position[2];
 
-    longAxis = normalise(tempVec - longAxis);
+    longAxis = normalise( tempVec - longAxis );
     arma::colvec sagAxis;
-    sagAxis = arma::cross(frontalAxis, longAxis);
-    if (debug)
-        std::cout << "frontal" << std::endl;
-    if (debug)
-        std::cout << frontalAxis << std::endl;
-    if (debug)
-        std::cout << "long" << std::endl;
-    if (debug)
-        std::cout << longAxis << std::endl;
-    if (debug)
-        std::cout << "sag" << std::endl;
-    if (debug)
-        std::cout << sagAxis << std::endl;
+    sagAxis = arma::cross( frontalAxis, longAxis );
+    if( debug ) std::cout << "frontal" << std::endl;
+    if( debug ) std::cout << frontalAxis << std::endl;
+    if( debug ) std::cout << "long" << std::endl;
+    if( debug ) std::cout << longAxis << std::endl;
+    if( debug ) std::cout << "sag" << std::endl;
+    if( debug ) std::cout << sagAxis << std::endl;
 
     //        for (int i=0;i<this->boneList->size();i++){
 
-    for (boneMapType::iterator it = this->boneList->begin(); it != this->boneList->end(); it++)
-    {
+    for( boneMapType::iterator it = this->boneList->begin(); it != this->boneList->end(); it++ ) {
         int i = it->second.boneId;
-        int orig = it->second.jointParent; //id of the origin joint of the current bone.
-        for (int j = 0; j < it->second.jointChildren.size(); j++)
-        { //loop on the ids of the destination joints of the current bone.
+        int orig = it->second.jointParent;//id of the origin joint of the current bone.
+        for( int j = 0; j <it->second.jointChildren.size(); j++ ) {//loop on the ids of the destination joints of the current bone.
             int dest = it->second.jointChildren[j];
-            if (debug)
-            {
+            if( debug ) {
                 std::cout << orig << " " << dest << std::endl;
             }
             std::vector<float> val;
             arma::colvec tempVecX, tempVecY, tempVecZ;
-            tempVecX = frame0.getPosition().col(dest) - frame0.getPosition().col(orig); //<<  frame0.node(dest).position[0] - frame0.node(orig).position[0] << frame0.node(dest).position[1] - frame0.node(orig).position[1] << frame0.node(dest).position[2] - frame0.node(orig).position[2];
-            tempVecX = arma::normalise(tempVecX);
-            if (debug)
-            {
+            tempVecX = frame0.getPosition().col( dest ) - frame0.getPosition().col( orig );//<<  frame0.node(dest).position[0] - frame0.node(orig).position[0] << frame0.node(dest).position[1] - frame0.node(orig).position[1] << frame0.node(dest).position[2] - frame0.node(orig).position[2];
+            tempVecX = arma::normalise( tempVecX );
+            if( debug ) {
                 std::cout << tempVecX << std::endl;
             }
-            if (std::abs(arma::dot(tempVecX, sagAxis)) > std::abs(arma::dot(tempVecX, longAxis)) && std::abs(arma::dot(tempVecX, sagAxis)) > std::abs(arma::dot(tempVecX, frontalAxis)))
-            {
-                tempVecZ = arma::cross(tempVecX, frontalAxis);
-                tempVecY = arma::cross(tempVecZ, tempVecX);
+            if( std::abs( arma::dot( tempVecX, sagAxis ) )>std::abs( arma::dot( tempVecX, longAxis ) ) && std::abs( arma::dot( tempVecX, sagAxis ) ) > std::abs( arma::dot( tempVecX, frontalAxis ) ) ) {
+                tempVecZ = arma::cross( tempVecX, frontalAxis );
+                tempVecY = arma::cross( tempVecZ, tempVecX );
             }
-            else if (std::abs(arma::dot(tempVecX, frontalAxis)) > std::abs(arma::dot(tempVecX, longAxis)))
-            {
+            else if( std::abs( arma::dot( tempVecX, frontalAxis ) ) > std::abs( arma::dot( tempVecX, longAxis ) ) ) {
 
-                tempVecY = arma::cross(longAxis, tempVecX);
-                tempVecZ = arma::cross(tempVecX, tempVecY);
+                tempVecY = arma::cross( longAxis, tempVecX );
+                tempVecZ = arma::cross( tempVecX, tempVecY );
             }
-            else if (arma::dot(tempVecX, longAxis) > 0)
-            {
-                tempVecZ = arma::cross(frontalAxis, tempVecX);
-                tempVecY = arma::cross(tempVecZ, tempVecX);
+            else if( arma::dot( tempVecX, longAxis ) > 0 ) {
+                tempVecZ = arma::cross( frontalAxis, tempVecX );
+                tempVecY = arma::cross( tempVecZ, tempVecX );
             }
-            else
-            {
-                tempVecZ = arma::cross(tempVecX, frontalAxis);
-                tempVecY = arma::cross(tempVecZ, tempVecX);
+            else {
+                tempVecZ = arma::cross( tempVecX, frontalAxis );
+                tempVecY = arma::cross( tempVecZ, tempVecX );
             }
 
             arma::mat offsetMatrix;
-            offsetMatrix.eye(3, 3);
-            offsetMatrix.col(0) = arma::normalise(tempVecX);
-            offsetMatrix.col(1) = arma::normalise(tempVecY);
-            offsetMatrix.col(2) = arma::normalise(tempVecZ);
-            if (debug)
-                std::cout << offsetMatrix << std::endl;
+            offsetMatrix.eye( 3, 3 );
+            offsetMatrix.col( 0 ) = arma::normalise( tempVecX );
+            offsetMatrix.col( 1 ) = arma::normalise( tempVecY );
+            offsetMatrix.col( 2 ) = arma::normalise( tempVecZ );
+            if( debug ) std::cout << offsetMatrix << std::endl;
 
             //				quaternion origQuat(frame0.node(orig).rotation);
-            quaternion origQuat(frame0.getRotation().col(i));
+            quaternion origQuat( frame0.getRotation().col( i ) );
             quaternion offsetQuat;
-            offsetQuat.set(offsetMatrix);
-            quaternion lquat(origQuat.inverse() * offsetQuat);
+            offsetQuat.set( offsetMatrix );
+            quaternion lquat( origQuat.inverse()*offsetQuat );
 
-            if (debug)
-                std::cout << lquat(0) << " " << lquat(1) << " " << lquat(2) << " " << lquat(3) << std::endl;
+            if( debug ) std::cout << lquat( 0 ) << " " << lquat( 1 ) << " " << lquat( 2 ) << " " << lquat( 3 ) << std::endl;
 
-            this->rotationOffset.col(dest) = lquat;
+            this->rotationOffset.col( dest ) = lquat;
         }
     }
+
 
     /*    else{//Kinect
 
@@ -749,19 +676,18 @@ bool Track::setJointOffsetRotation()
     return true;
 }
 
-bool Track::initJointOffsetRotation()
-{
+bool Track::initJointOffsetRotation() {
 
-    if (this->hasBoneList == false || this->hasNodeList == false || !this->hasRotation)
-        return false;
+	if (this->hasBoneList == false || this->hasNodeList == false || !this->hasRotation)
+		return false;
 
-    if (this->rotation.getData().size() == 0)
-        throw std::runtime_error("Track::setJointOffsetRotation : empty rotation matrix with a rotation true flag");
-    bool debug = false;
+	if (this->rotation.getData().size() == 0)
+		throw std::runtime_error("Track::setJointOffsetRotation : empty rotation matrix with a rotation true flag");
+	bool debug = false;
 
-    this->rotationOffset.resize(4, this->nOfNodes()); //for each mocap format, the orientation offset is stored in the destination node of the bone
-    this->rotationOffset.zeros();
-    this->rotationOffset.row(3).ones();
+	this->rotationOffset.resize(4, this->nOfNodes());//for each mocap format, the orientation offset is stored in the destination node of the bone
+	this->rotationOffset.zeros();
+	this->rotationOffset.row(3).ones();
 
-    return true;
+	return true;
 }

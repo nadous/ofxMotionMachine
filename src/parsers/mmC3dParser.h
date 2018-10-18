@@ -3,7 +3,7 @@
 * Reads a C3D file and stores the 3D motion data in a MoMa::Track
 * Handles all standard Machine formats : Intel-PC, DEC-VAX and MIPS/SUN; and Data formats : int, float
 *
-* Created by Mickaï¿½l Tits on 05/03/2015
+* Created by Mickaël Tits on 05/03/2015
 * @file mmC3dParser.h
 * @brief MotionMachine header file for C3dParser class.
 * @copyright Numediart Institute, UMONS (c) 2014-2015
@@ -29,90 +29,92 @@
 #include <stdint.h>
 #include <cfloat>
 
+
 #include "mmTrack.h"
 
-namespace MoMa
-{
+namespace MoMa {
 
-typedef int8_t int8;
-typedef unsigned char uint8;
-typedef uint16_t int16;
-typedef int16_t sint16;
+    typedef int8_t int8;
+    typedef unsigned char uint8;
+    typedef uint16_t int16;
+    typedef int16_t sint16;
 
-struct strucEvent
-{
+    struct strucEvent {
+        
+        float time;
+        int8 value;
+        char name[4];
+        strucEvent();
+    };
 
-    float time;
-    int8 value;
-    char name[4];
-    strucEvent();
-};
+    struct structParameter {
+        
+        std::vector<std::string> data;
+        std::string name;
+        std::vector<uint8> dim;
+        std::string description;
+        std::string dataType;
+        structParameter();
+    };
 
-struct structParameter
-{
+    struct structParameterGroup {
+        
+        std::vector <structParameter> parameter;
+        std::string name;
+        std::string description;
+        structParameterGroup();
+    };
 
-    std::vector<std::string> data;
-    std::string name;
-    std::vector<uint8> dim;
-    std::string description;
-    std::string dataType;
-    structParameter();
-};
+    class C3dParser {
 
-struct structParameterGroup
-{
+      public:
 
-    std::vector<structParameter> parameter;
-    std::string name;
-    std::string description;
-    structParameterGroup();
-};
+        C3dParser( std::string const &fileName, Track *track );
+        void load( std::string const &fileName, Track *track );
+        
+        
+        
 
-class C3dParser
-{
+      private :
 
-  public:
-    C3dParser(std::string const &fileName, Track *track);
-    void load(std::string const &fileName, Track *track);
+        static void decToFloat( float* value );
+        static void swapbytes(void *object, size_t size);
+        static size_t VAXread(void * ptr, size_t size, size_t count, FILE * stream);
+        static size_t MIPSread(void * ptr, size_t size, size_t count, FILE * stream);
+        float fix( float value );
 
-  private:
-    static void decToFloat(float *value);
-    static void swapbytes(void *object, size_t size);
-    static size_t VAXread(void *ptr, size_t size, size_t count, FILE *stream);
-    static size_t MIPSread(void *ptr, size_t size, size_t count, FILE *stream);
-    float fix(float value);
+        bool debug;
+        FILE *fid;
+        int8 NrecordFirstParameterblock;
+        int8 key;
+        int8 proctype;
+        size_t (*reading) (void*, size_t, size_t, FILE *);
 
-    bool debug;
-    FILE *fid;
-    int8 NrecordFirstParameterblock;
-    int8 key;
-    int8 proctype;
-    size_t (*reading)(void *, size_t, size_t, FILE *);
+        /// Header ///
+        int16 Nmarkers, NanalogSamplesPerVideoFrame, StartFrame, EndFrame, MaxInterpolationGap, NrecordDataBlock, NanalogFramesPerVideoFrame,NanalogChannels, NvideoFrames;
+        float Scale, VideoFrameRate, AnalogFrameRate;
 
-    /// Header ///
-    int16 Nmarkers, NanalogSamplesPerVideoFrame, StartFrame, EndFrame, MaxInterpolationGap, NrecordDataBlock, NanalogFramesPerVideoFrame, NanalogChannels, NvideoFrames;
-    float Scale, VideoFrameRate, AnalogFrameRate;
+        /// Events ///
+        int16 EventIndicator, Nevents;
+        std::vector<strucEvent> Event;
 
-    /// Events ///
-    int16 EventIndicator, Nevents;
-    std::vector<strucEvent> Event;
+        /// Parameter Blocks ///
+        int8 dat1, key2, NparameterRecords, Ncharacters, deschars, type, dimnum, GroupNumber, Nparameters, testoffset;
+        int16 offset;
+        uint8 *dimension, wordlength;
+        int mult, datalength;
+        int nextrec, filepos, testpos;
+        int ParameterNumber;
+        char *GroupName, *GroupDescription, *ParameterName, *data, *description;
+        std::vector<structParameterGroup> ParameterGroup;
+        std::vector<int> ParameterNumberIndex;
 
-    /// Parameter Blocks ///
-    int8 dat1, key2, NparameterRecords, Ncharacters, deschars, type, dimnum, GroupNumber, Nparameters, testoffset;
-    int16 offset;
-    uint8 *dimension, wordlength;
-    int mult, datalength;
-    int nextrec, filepos, testpos;
-    int ParameterNumber;
-    char *GroupName, *GroupDescription, *ParameterName, *data, *description;
-    std::vector<structParameterGroup> ParameterGroup;
-    std::vector<int> ParameterNumberIndex;
+        /// Data blocks ///
 
-    /// Data blocks ///
+        float b,highbyte,lowbyte,tmp[3];
+        sint16 a;
 
-    float b, highbyte, lowbyte, tmp[3];
-    sint16 a;
-};
-} // namespace MoMa
+    };
+}
 
 #endif

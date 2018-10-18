@@ -3,16 +3,15 @@
 
 #include "mmTrack.h"
 
-namespace MoMa
-{
+namespace MoMa {
 
-class FaceCsvParser
-{
+    class FaceCsvParser {
 
-  public:
-    FaceCsvParser(std::string const &fileName, Track *track);
-    void load(std::string const &fileName, Track *track);
-};
-} // namespace MoMa
+      public:
+
+        FaceCsvParser( std::string const &fileName, Track *track );
+        void load( std::string const &fileName, Track *track );
+    };
+}
 
 #endif

@@ -3,16 +3,15 @@
 
 #include "mmTrack.h"
 
-namespace MoMa
-{
+namespace MoMa {
 
-class FaceTxtParser
-{
+    class FaceTxtParser {
 
-  public:
-    FaceTxtParser(std::string const &fileName, Track *track);
-    void load(std::string const &fileName, Track *track);
-};
-} // namespace MoMa
+      public:
+
+        FaceTxtParser( std::string const &fileName, Track *track );
+        void load( std::string const &fileName, Track *track );
+    };
+}
 
 #endif

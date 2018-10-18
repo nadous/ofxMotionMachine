@@ -10,7 +10,7 @@
 
 class sqlArchiver
 {
-  public:
+public:
 	sqlArchiver();
 	~sqlArchiver();
 
@@ -22,12 +22,12 @@ class sqlArchiver
 
 	int identify();
 	void clearDataBase();
-	void pushFrameData(double *data0, int dataSize0, double *data1, int dataSize1, int frameId, double frameRate);
-	void getFrameData(double **data0, int &dataSize0, double **data1, int &dataSize1, int id);
-	void getFrameData(double **data0, int &dataSize0, double **data1, int &dataSize1, double frameTime);
+	void pushFrameData(double* data0, int dataSize0, double* data1, int dataSize1, int frameId, double frameRate);
+	void getFrameData(double** data0, int &dataSize0, double** data1, int &dataSize1, int id);
+	void getFrameData(double** data0, int &dataSize0, double** data1, int &dataSize1, double frameTime);
 	void destroyDataBase();
+protected:
 
-  protected:
 	class DataBuf;
 	sql::Driver *driver;
 	sql::Connection *con;
