@@ -8,10 +8,7 @@
 
 #ifndef __mmOfPlot__
 #define __mmOfPlot__
-namespace MoMa
-{
-class ofPlot;
-}
+namespace MoMa { class ofPlot; }
 
 #include <armadillo>
 
@@ -26,11 +23,10 @@ class ofPlot;
 
 #include "mmSceneApp.h"
 
-namespace MoMa
-{
-class ofPlot
-{
-    /**
+namespace MoMa {
+    class ofPlot
+    {
+        /**
         * A class that provides a way to plot 2D data curves in a MotionMachine OFX windows
         *
         *
@@ -46,38 +42,37 @@ class ofPlot
         * plot->draw()
         *
         */
-  public:
-    ofPlot(const MoMa::SceneApp *pApp, int figureId = 0);
-    ~ofPlot();
-    void update();
-    void updatePlot();
-    void draw();
+    public:
+        ofPlot( const MoMa::SceneApp* pApp ,int figureId=0 );
+        ~ofPlot();
+		void update();
+		void updatePlot();
+        void draw(  );
 
-    void add(const TimedVec &tvec, int hue, std::string name = ""); // TimedVec
-    void add(const TimedVec &tvec, std::string name = "");          // TimedVec (no hue)
-    void add(const TimedMat &tmat, std::string name = "");          // TimedMat
+        void add( const TimedVec &tvec, int hue, std::string name = "" ); // TimedVec
+        void add( const TimedVec &tvec, std::string name = "" ); // TimedVec (no hue)
+        void add( const TimedMat &tmat, std::string name = "" ); // TimedMat
 
-    void add(const Trace &trace);         // Trace
-    void add(const BoneTrace &boneTrace); // BoneTrace
+        void add( const Trace &trace ); // Trace
+        void add( const BoneTrace &boneTrace ); // BoneTrace
 
-    void add(const arma::vec &data, int hue, std::string name = "");
-    void add(const arma::vec &data, std::string name = ""); // Vec
-    void add(const arma::mat &data, string name = "");      // and Mat
+        void add( const arma::vec &data, int hue, std::string name = "" );
+        void add( const arma::vec &data, std::string name = "" ); // Vec
+        void add( const arma::mat &data, string name = "" ); // and Mat
 
-    void clean();
-    void setNofFigure(int noff) { nofFigure = noff; };
-    void setFigureId(int id) { mFigureId = id; };
-    void setLineWidth(float lineWidth) { mLineWidth = lineWidth; };
-
-  protected:
-    const MoMa::SceneApp *app;
-    Figure _figure;
-    double curLowBoundTime;
-    double curHighBoundTime;
-    int curWidth;
-    int nofFigure;
-    int mFigureId;
-    float mLineWidth;
-};
-} // namespace MoMa
-#endif //__mmOfPlot__
+        void clean();
+        void setNofFigure( int noff ) { nofFigure = noff; };
+        void setFigureId( int id ) { mFigureId = id; };
+		void setLineWidth(float lineWidth) { mLineWidth = lineWidth; };
+    protected:
+        const MoMa::SceneApp* app;
+        Figure _figure;
+        double curLowBoundTime;
+        double curHighBoundTime;
+        int curWidth;
+        int nofFigure;
+        int mFigureId;
+		float mLineWidth;
+    };
+}
+#endif//__mmOfPlot__

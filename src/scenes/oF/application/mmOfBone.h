@@ -12,17 +12,15 @@
 #include <stdio.h>
 #include "ofMain.h"
 
-namespace MoMa
-{
-class ofBone : public of3dPrimitive
-{
-  public:
-    ofBone();
-    void setDefaultColor();
-
-  protected:
-    std::vector<ofFloatColor> defaultColor;
-};
-} // namespace MoMa
+namespace MoMa{
+    class ofBone: public of3dPrimitive{
+    public:
+        ofBone();
+		void setDefaultColor();
+	protected:
+		std::vector<ofFloatColor> defaultColor;
+        
+    };
+}
 
 #endif
